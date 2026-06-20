@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import heroBride from "@/assets/hero-bride.jpg";
 import serviceFacial from "@/assets/service-facial.jpg";
 import serviceHair from "@/assets/service-hair.jpg";
