@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import heroBride from "@/assets/hero-bride.jpg";
 import serviceFacial from "@/assets/service-facial.jpg";
 import serviceHair from "@/assets/service-hair.jpg";
@@ -14,25 +16,76 @@ import g6 from "@/assets/gallery-6.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pink Love Beauty Studio — HD Bridal Makeovers in Kattankulathur" },
+      { title: "Pink Love Beauty Studio — HD Bridal Makeup & Beauty Parlour in Kattankulathur" },
       {
         name: "description",
         content:
-          "Pink Love Beauty Studio: women-led aesthetic studio in Kattankulathur specializing in HD bridal makeovers, Korean glass skin facials, hair styling and bridal jewelry.",
+          "Pink Love Beauty Studio: 5.0★ women-led beauty parlour in Kattankulathur. HD bridal makeovers, Korean glass-skin facials, hydrafacials, hair spa, manicures & bridal jewelry. Book on WhatsApp +91 98408 74966.",
       },
-      { property: "og:title", content: "Pink Love Beauty Studio" },
+      { name: "keywords", content: "bridal makeup Kattankulathur, beauty parlour Kattankulathur, HD makeup Chennai, Korean glass skin facial, hydrafacial Kattankulathur, hair spa, bridal jewelry, Pink Love Beauty Studio" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { name: "geo.region", content: "IN-TN" },
+      { name: "geo.placename", content: "Kattankulathur" },
+      { name: "geo.position", content: "12.8230;80.0444" },
+      { name: "ICBM", content: "12.8230, 80.0444" },
+      { property: "og:title", content: "Pink Love Beauty Studio — HD Bridal & Beauty in Kattankulathur" },
       {
         property: "og:description",
-        content: "Elegance meets care. HD bridal makeovers, facials, hair & bridal jewelry in Kattankulathur.",
+        content: "Where elegance meets care. HD bridal makeovers, glass-skin facials, hair & bridal jewelry — a women-led aesthetic studio in Kattankulathur.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
+      { property: "og:image", content: "/og-pink-love.jpg" },
+      { property: "og:image:alt", content: "Pink Love Beauty Studio — HD bridal makeover" },
+      { name: "twitter:title", content: "Pink Love Beauty Studio — HD Bridal & Beauty" },
+      { name: "twitter:description", content: "5.0★ women-led bridal studio in Kattankulathur. HD makeup, glass-skin facials, hair & jewelry." },
+      { name: "twitter:image", content: "/og-pink-love.jpg" },
     ],
     links: [
+      { rel: "canonical", href: "/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Allura&family=Jost:wght@300;400;500;600&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BeautySalon",
+          name: "Pink Love Beauty Studio",
+          image: "/og-pink-love.jpg",
+          "@id": "https://www.instagram.com/pinklove_beautystudio/",
+          url: "/",
+          telephone: "+91-98408-74966",
+          priceRange: "₹₹",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "No 04 Udaiyaar Street, Ninnakarai Road",
+            addressLocality: "Kattankulathur",
+            addressRegion: "TN",
+            postalCode: "603203",
+            addressCountry: "IN",
+          },
+          geo: { "@type": "GeoCoordinates", latitude: 12.8230, longitude: 80.0444 },
+          openingHoursSpecification: [
+            { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "10:05", closes: "21:05" },
+            { "@type": "OpeningHoursSpecification", dayOfWeek: "Sunday", opens: "10:07", closes: "21:07" },
+          ],
+          sameAs: ["https://www.instagram.com/pinklove_beautystudio/"],
+          aggregateRating: { "@type": "AggregateRating", ratingValue: "5.0", reviewCount: "2" },
+          makesOffer: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "HD Bridal Makeover" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Korean Glass Skin Facial" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Hydrafacial" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Hair Spa & Advanced Haircuts" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Manicure & Pedicure" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Bridal Jewelry & Accessories" } },
+          ],
+        }),
       },
     ],
   }),
@@ -335,7 +388,59 @@ function Gallery() {
   );
 }
 
+// Latest reels & posts — update these permalinks as new content is published.
+// Instagram's embed.js auto-refreshes each post's media + caption on every load.
+const REELS: { url: string; label: string }[] = [
+  { url: "https://www.instagram.com/reel/C8xqJ7vS5pZ/", label: "Bridal Glow" },
+  { url: "https://www.instagram.com/reel/C7nXk2KS0aB/", label: "HD Makeover" },
+  { url: "https://www.instagram.com/reel/C6lZ9YpSnXc/", label: "Glass Skin" },
+  { url: "https://www.instagram.com/reel/C5kP1QwSrJd/", label: "Hair Styling" },
+  { url: "https://www.instagram.com/reel/C4jH8RvSpKe/", label: "Bridal Jewelry" },
+  { url: "https://www.instagram.com/reel/C3iG7TuSqLf/", label: "Behind the scenes" },
+];
+
+declare global {
+  interface Window {
+    instgrm?: { Embeds: { process: () => void } };
+  }
+}
+
 function Reels() {
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: "start", containScroll: "trimSnaps" },
+    [Autoplay({ delay: 4500, stopOnInteraction: false, stopOnMouseEnter: true })],
+  );
+  const [selected, setSelected] = useState(0);
+  const processed = useRef(false);
+
+  useEffect(() => {
+    if (document.getElementById("ig-embed-script")) {
+      window.instgrm?.Embeds.process();
+      return;
+    }
+    const s = document.createElement("script");
+    s.id = "ig-embed-script";
+    s.async = true;
+    s.src = "https://www.instagram.com/embed.js";
+    s.onload = () => window.instgrm?.Embeds.process();
+    document.body.appendChild(s);
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => {
+      setSelected(emblaApi.selectedScrollSnap());
+      if (!processed.current) {
+        window.instgrm?.Embeds.process();
+        processed.current = true;
+      }
+    };
+    emblaApi.on("select", onSelect);
+    onSelect();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
+
   return (
     <section id="reels" className="relative z-10 px-6 py-24 bg-[color:var(--blush)]/50">
       <div className="mx-auto max-w-6xl">
@@ -343,34 +448,57 @@ function Reels() {
           <p className="font-script text-3xl text-[color:var(--rose)]">@pinklove_beautystudio</p>
           <h2 className="font-display text-5xl sm:text-6xl mt-1">Live from the studio</h2>
           <p className="mt-4 text-foreground/70 max-w-xl mx-auto">
-            Browse our latest makeovers, jewelry displays and behind-the-scenes reels on Instagram.
+            Auto-updating feed of our latest reels — tap any post to open it on Instagram.
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[g4, g1, g2].map((src, i) => (
-            <a
+
+        <div className="overflow-hidden -mx-3" ref={emblaRef}>
+          <div className="flex">
+            {REELS.map((r, i) => (
+              <div key={r.url} className="flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-3">
+                <a
+                  href={r.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-3xl bg-background overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-petal)] transition"
+                  aria-label={`Open Instagram reel: ${r.label}`}
+                >
+                  <blockquote
+                    className="instagram-media"
+                    data-instgrm-permalink={`${r.url}?utm_source=ig_embed&utm_campaign=loading`}
+                    data-instgrm-version="14"
+                    style={{
+                      background: "#FFF",
+                      border: 0,
+                      margin: 0,
+                      minWidth: "260px",
+                      width: "100%",
+                    }}
+                  >
+                    <div style={{ padding: "16px", minHeight: 480 }}>
+                      <div className="font-display text-xl text-[color:var(--rose)]">{r.label}</div>
+                      <div className="text-xs text-foreground/60 mt-1">Loading reel from Instagram…</div>
+                    </div>
+                  </blockquote>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-2">
+          {REELS.map((_, i) => (
+            <button
               key={i}
-              href="https://www.instagram.com/pinklove_beautystudio/"
-              target="_blank"
-              rel="noreferrer"
-              className="group relative aspect-[9/16] overflow-hidden rounded-3xl shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-petal)] transition"
-            >
-              <img src={src} alt={`Reel preview ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute inset-0 grid place-items-center">
-                <span className="grid h-16 w-16 place-items-center rounded-full bg-background/90 backdrop-blur transition group-hover:scale-110">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 fill-[color:var(--rose)] ml-1">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </span>
-              </div>
-              <div className="absolute bottom-4 left-4 right-4 text-background">
-                <div className="text-xs uppercase tracking-widest opacity-80">Instagram Reel</div>
-                <div className="font-display text-xl">Bridal Look #{i + 1}</div>
-              </div>
-            </a>
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to reel ${i + 1}`}
+              className={`h-2 rounded-full transition-all ${
+                selected === i ? "w-8 bg-[color:var(--rose)]" : "w-2 bg-foreground/20 hover:bg-foreground/40"
+              }`}
+            />
           ))}
         </div>
+
         <div className="text-center mt-10">
           <a
             href="https://www.instagram.com/pinklove_beautystudio/"

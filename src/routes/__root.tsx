@@ -77,14 +77,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Pink Love Beauty Studio" },
-      { name: "description", content: "HD Bridal Makeovers, facials, hair & jewelry in Kattankulathur." },
       { name: "author", content: "Pink Love Beauty Studio" },
-      { property: "og:title", content: "Pink Love Beauty Studio" },
-      { property: "og:description", content: "Where elegance meets care — HD bridal & beauty in Kattankulathur." },
+      { property: "og:site_name", content: "Pink Love Beauty Studio" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:locale", content: "en_IN" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@pinklove_beautystudio" },
     ],
     links: [
       {
