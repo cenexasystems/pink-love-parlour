@@ -199,6 +199,7 @@ function Index() {
       <Services />
       <MenuBook />
       <LookFinder />
+      <StudioTour />
       <Gallery />
       <Reels />
       <Reviews />
@@ -260,7 +261,7 @@ function Nav() {
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
-          {["About", "Services", "Menu", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
+          {["About", "Services", "Menu", "Studio", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
             <a key={l} href={`#${l.toLowerCase()}`} className="text-foreground/70 hover:text-[color:var(--rose)] transition hover-underline-expand py-1">
               {l}
             </a>
@@ -817,6 +818,84 @@ function LookFinder() {
               </span>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const STUDIO_TOUR = [
+  { src: studio1, label: "Main Salon Floor", caption: "Marble floors, chandeliers & rose-gold mirrors" },
+  { src: studio2, label: "Wash & Spa Chairs", caption: "Premium reclining wash stations" },
+  { src: studio3, label: "Makeup Vanity", caption: "Hollywood-lit bridal makeup stations" },
+  { src: studio4, label: "Facial Treatment Room", caption: "Calm, sanitized & spa-grade" },
+  { src: studio5, label: "Reception Lounge", caption: "Plush velvet waiting area" },
+];
+
+function StudioTour() {
+  const [emblaRef, embla] = useEmblaCarousel(
+    { loop: true, align: "start" },
+    [Autoplay({ delay: 3800, stopOnInteraction: false })],
+  );
+  const [selected, setSelected] = useState(0);
+  const scrollTo = useCallback((i: number) => embla?.scrollTo(i), [embla]);
+  useEffect(() => {
+    if (!embla) return;
+    const onSel = () => setSelected(embla.selectedScrollSnap());
+    embla.on("select", onSel);
+    onSel();
+    return () => {
+      embla.off("select", onSel);
+    };
+  }, [embla]);
+
+  return (
+    <section id="studio" className="relative z-10 px-6 py-24 bg-[color:var(--blush)]/30">
+      <div className="mx-auto max-w-7xl">
+        <div className="text-center mb-14">
+          <p className="font-script text-3xl text-[color:var(--rose)]">step inside</p>
+          <h2 className="font-display text-5xl sm:text-6xl">Tour our studio</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-foreground/70">
+            From plush wash chairs to Hollywood-lit vanities — every corner is designed for your comfort and glow.
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-[2rem] shadow-[var(--shadow-petal)]" ref={emblaRef}>
+          <div className="flex">
+            {STUDIO_TOUR.map((s, i) => (
+              <div key={i} className="relative shrink-0 grow-0 basis-full md:basis-2/3 lg:basis-1/2 pr-2">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem]">
+                  <img
+                    src={s.src}
+                    alt={`Pink Love Beauty Studio — ${s.label}`}
+                    loading="lazy"
+                    width={1280}
+                    height={896}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.25_0.12_5/0.7)] via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-background">
+                    <p className="text-[10px] tracking-[0.35em] uppercase text-background/80">{`0${i + 1} / 0${STUDIO_TOUR.length}`}</p>
+                    <h3 className="mt-1 font-display text-2xl sm:text-3xl">{s.label}</h3>
+                    <p className="mt-1 text-sm text-background/85">{s.caption}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-3">
+          {STUDIO_TOUR.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all ${
+                selected === i ? "w-10 bg-[color:var(--rose)]" : "w-4 bg-foreground/20 hover:bg-foreground/40"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
