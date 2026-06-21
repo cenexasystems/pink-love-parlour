@@ -190,7 +190,7 @@ const GALLERY = [g1, g2, g3, g4, g5, g6];
 
 function Index() {
   return (
-    <div className="relative overflow-x-hidden bg-background text-foreground">
+    <div className="relative overflow-x-hidden bg-background text-foreground pb-24 md:pb-0">
       <Petals />
       <Nav />
       <Hero />
@@ -206,6 +206,7 @@ function Index() {
       <FAQ />
       <Visit />
       <Footer />
+      <MobileStickyNav />
     </div>
   );
 }
@@ -1521,5 +1522,88 @@ function Footer() {
       <p className="mt-2 text-xs uppercase tracking-[0.4em] text-foreground/60">Beauty Studio · Kattankulathur</p>
       <p className="mt-8 text-xs text-foreground/50">© {new Date().getFullYear()} Pink Love Beauty Studio. Made with love & a touch of pink.</p>
     </footer>
+  );
+}
+
+function MobileStickyNav() {
+  const handleMenuClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const menuSection = document.getElementById("menu");
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-5 pt-3 md:hidden bg-background/80 backdrop-blur-lg border-t border-rose-200/30 shadow-[0_-10px_30px_rgba(219,112,147,0.15)] flex items-center justify-between gap-3">
+      {/* Call Us Button */}
+      <a
+        href="tel:+919840874966"
+        className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl bg-muted/65 hover:bg-muted text-foreground transition-all duration-300 active:scale-95 border border-[color:var(--rose)]/10"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-[color:var(--rose)] mb-1 animate-pulse"
+        >
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.7 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+        <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/80">Call Us</span>
+      </a>
+
+      {/* WhatsApp Book Button (Hero Action) */}
+      <a
+        href="https://wa.me/919840874966?text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability."
+        target="_blank"
+        rel="noreferrer"
+        className="flex-[1.5] flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white shadow-lg shadow-rose-200/30 transition-all duration-300 active:scale-95 text-center font-bold"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+        </svg>
+        <span className="text-xs tracking-wider uppercase whitespace-nowrap">WhatsApp Book</span>
+      </a>
+
+      {/* Menu Book Button */}
+      <a
+        href="#menu"
+        onClick={handleMenuClick}
+        className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl bg-muted/65 hover:bg-muted text-foreground transition-all duration-300 active:scale-95 border border-[color:var(--rose)]/10"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-[color:var(--rose)] mb-1"
+        >
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+        <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/80">Menu Book</span>
+      </a>
+    </div>
   );
 }
