@@ -427,7 +427,12 @@ const REVIEWS = [
 ];
 
 // Core App Layout Component
+import { Admin } from "@/components/Admin";
+
 export default function App() {
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+    return <Admin />;
+  }
   return (
     <div className="relative overflow-x-hidden bg-background text-foreground pb-24 md:pb-0">
       <Petals />
@@ -448,6 +453,7 @@ export default function App() {
     </div>
   );
 }
+
 
 // Subcomponents
 function Petals() {
