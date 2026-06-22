@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import heroBride from "@/assets/hero-bride.jpg";
@@ -12,11 +12,6 @@ import g3 from "@/assets/gallery-3.jpg";
 import g4 from "@/assets/gallery-4.jpg";
 import g5 from "@/assets/gallery-5.jpg";
 import g6 from "@/assets/gallery-6.jpg";
-import studio1 from "@/assets/studio-interior-1.jpg";
-import studio2 from "@/assets/studio-interior-2.jpg";
-import studio3 from "@/assets/studio-interior-3.jpg";
-import studio4 from "@/assets/studio-interior-4.jpg";
-import studio5 from "@/assets/studio-interior-5.jpg";
 import type { IgPost } from "@/lib/instagram.types";
 import { fetchInstagramPosts } from "@/lib/instagram.server";
 import logo from "@/assets/logo.png";
@@ -185,8 +180,39 @@ const SERVICES = [
     img: serviceJewelry,
   },
 ];
+interface GalleryImage {
+  src: string;
+  cloudinaryId?: string;
+  alt: string;
+}
 
-const GALLERY = [g1, g2, g3, g4, g5, g6];
+const GALLERY: GalleryImage[] = [
+  {
+    src: "",
+    cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
+    alt: "Pink Love bridal makeup close-up and jewelry styling"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023994/WhatsApp_Image_2026-06-20_at_12.54.43_1_sjgp4x",
+    alt: "Bridal floral hair styling and traditional look"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023986/WhatsApp_Image_2026-06-20_at_12.54.44_toqhbp",
+    alt: "Gorgeous wedding look and makeup highlights"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023979/WhatsApp_Image_2026-06-20_at_12.54.45_xqtej2",
+    alt: "Saree pre-pleating and elegant drape detail"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023975/WhatsApp_Image_2026-06-20_at_12.54.45_1_pzb8wx",
+    alt: "Client review: radiant bridal look session"
+  }
+];
 
 function Index() {
   return (
@@ -199,7 +225,6 @@ function Index() {
       <Services />
       <MenuBook />
       <LookFinder />
-      <StudioTour />
       <Gallery />
       <Reels />
       <Reviews />
@@ -254,6 +279,8 @@ function Nav() {
           <img
             src={logo}
             alt="Pink Love Beauty Studio Logo"
+            width={44}
+            height={44}
             className="h-11 w-11 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
           />
           <span className="flex flex-col leading-tight">
@@ -262,7 +289,7 @@ function Nav() {
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
-          {["About", "Services", "Menu", "Studio", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
+          {["About", "Services", "Menu", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
             <a key={l} href={`#${l.toLowerCase()}`} className="text-foreground/70 hover:text-[color:var(--rose)] transition hover-underline-expand py-1">
               {l}
             </a>
@@ -334,7 +361,13 @@ function Hero() {
             </div>
             <div className="lg:col-span-5 relative">
               <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] shadow-[var(--shadow-petal)] animate-float-slow">
-                <img src={heroBride} alt="HD bridal makeover at Pink Love Beauty Studio" className="h-full w-full object-cover" />
+                <img
+                  src={heroBride}
+                  alt="HD bridal makeover at Pink Love Beauty Studio"
+                  width={600}
+                  height={800}
+                  className="h-full w-full object-cover"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.4_0.15_5/0.4)] via-transparent to-transparent" />
               </div>
               <div className="absolute -bottom-6 -left-6 rounded-2xl bg-background/95 backdrop-blur px-5 py-4 shadow-[var(--shadow-soft)] max-w-[220px]">
@@ -377,6 +410,8 @@ function About() {
           <img
             src={logo}
             alt="Pink Love Beauty Studio Logo"
+            width={96}
+            height={96}
             className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover shadow-[var(--shadow-petal)] border border-rose-200/50"
           />
           <div>
@@ -825,85 +860,10 @@ function LookFinder() {
   );
 }
 
-const STUDIO_TOUR = [
-  { src: studio1, label: "Main Salon Floor", caption: "Marble floors, chandeliers & rose-gold mirrors" },
-  { src: studio2, label: "Wash & Spa Chairs", caption: "Premium reclining wash stations" },
-  { src: studio3, label: "Makeup Vanity", caption: "Hollywood-lit bridal makeup stations" },
-  { src: studio4, label: "Facial Treatment Room", caption: "Calm, sanitized & spa-grade" },
-  { src: studio5, label: "Reception Lounge", caption: "Plush velvet waiting area" },
-];
-
-function StudioTour() {
-  const [emblaRef, embla] = useEmblaCarousel(
-    { loop: true, align: "start" },
-    [Autoplay({ delay: 3800, stopOnInteraction: false })],
-  );
-  const [selected, setSelected] = useState(0);
-  const scrollTo = useCallback((i: number) => embla?.scrollTo(i), [embla]);
-  useEffect(() => {
-    if (!embla) return;
-    const onSel = () => setSelected(embla.selectedScrollSnap());
-    embla.on("select", onSel);
-    onSel();
-    return () => {
-      embla.off("select", onSel);
-    };
-  }, [embla]);
-
-  return (
-    <section id="studio" className="relative z-10 px-6 py-24 bg-[color:var(--blush)]/30">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-14">
-          <p className="font-script text-3xl text-[color:var(--rose)]">step inside</p>
-          <h2 className="font-display text-5xl sm:text-6xl">Tour our studio</h2>
-          <p className="mt-4 max-w-2xl mx-auto text-foreground/70">
-            From plush wash chairs to Hollywood-lit vanities — every corner is designed for your comfort and glow.
-          </p>
-        </div>
-
-        <div className="overflow-hidden rounded-[2rem] shadow-[var(--shadow-petal)]" ref={emblaRef}>
-          <div className="flex">
-            {STUDIO_TOUR.map((s, i) => (
-              <div key={i} className="relative shrink-0 grow-0 basis-full md:basis-2/3 lg:basis-1/2 pr-2">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem]">
-                  <img
-                    src={s.src}
-                    alt={`Pink Love Beauty Studio — ${s.label}`}
-                    loading="lazy"
-                    width={1280}
-                    height={896}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.25_0.12_5/0.7)] via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-background">
-                    <p className="text-[10px] tracking-[0.35em] uppercase text-background/80">{`0${i + 1} / 0${STUDIO_TOUR.length}`}</p>
-                    <h3 className="mt-1 font-display text-2xl sm:text-3xl">{s.label}</h3>
-                    <p className="mt-1 text-sm text-background/85">{s.caption}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-8 flex items-center justify-center gap-3">
-          {STUDIO_TOUR.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => scrollTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all ${
-                selected === i ? "w-10 bg-[color:var(--rose)]" : "w-4 bg-foreground/20 hover:bg-foreground/40"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Gallery() {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+
   return (
     <section id="gallery" className="relative z-10 px-6 py-24">
       <div className="mx-auto max-w-7xl">
@@ -911,23 +871,28 @@ function Gallery() {
           <p className="font-script text-3xl text-[color:var(--rose)]">our brides</p>
           <h2 className="font-display text-5xl sm:text-6xl">Pink love portfolio</h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {GALLERY.map((src, i) => (
-            <div
-              key={i}
-              className={`relative overflow-hidden rounded-2xl group ${
-                i === 0 ? "md:row-span-2 md:col-span-1 aspect-[3/4] md:aspect-auto" : "aspect-[3/4]"
-              }`}
-            >
-              <img
-                src={src}
-                alt={`Pink Love bridal portfolio ${i + 1}`}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.4_0.15_5/0.6)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
-            </div>
-          ))}
+        
+        {/* Pinterest-style Masonry Grid */}
+        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 [column-fill:_balance]">
+          {GALLERY.map((item, i) => {
+            const imageUrl = item.cloudinaryId
+              ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${item.cloudinaryId}`
+              : item.src;
+            return (
+              <div
+                key={i}
+                className="break-inside-avoid mb-6 relative overflow-hidden rounded-2xl group border border-[color:var(--rose)]/10 shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_15px_30px_rgba(219,112,147,0.15)] bg-card"
+              >
+                <img
+                  src={imageUrl}
+                  alt={item.alt || `Pink Love bridal portfolio ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.4_0.15_5/0.6)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -949,8 +914,14 @@ interface VideoModalProps {
 function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
   if (!isOpen || !post) return null;
 
-  const { permalink, localVideoUrl } = post;
+  const { permalink, localVideoUrl, cloudinaryPublicId } = post;
   const embedUrl = permalink.split("?")[0].replace(/\/$/, "") + "/embed/";
+
+  // Cloudinary URL construction with auto format and quality
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+  const cloudinaryUrl = cloudinaryPublicId
+    ? `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto/${cloudinaryPublicId}`
+    : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-opacity duration-300">
@@ -971,12 +942,23 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
 
         {/* Video / Iframe container */}
         <div className="relative w-full bg-black flex items-center justify-center p-1" style={{ minHeight: "540px" }}>
-          {localVideoUrl ? (
+          {cloudinaryUrl ? (
+            <video
+              src={cloudinaryUrl}
+              controls
+              autoPlay
+              playsInline
+              loop
+              preload="metadata"
+              className="w-full h-[580px] sm:h-[620px] rounded-2xl object-cover"
+            />
+          ) : localVideoUrl ? (
             <video
               src={localVideoUrl}
               controls
               autoPlay
               playsInline
+              loop
               preload="metadata"
               className="w-full h-[580px] sm:h-[620px] rounded-2xl object-cover"
             />
@@ -1009,15 +991,61 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
 }
 
 function ReelCard({ post, onOpen }: { post: IgPost; onOpen: (post: IgPost) => void }) {
-  const thumb = post.thumbnail_url ?? post.media_url ?? "";
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 0.1, rootMargin: "100px" } // trigger when near to viewport
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isIntersecting) {
+      videoRef.current.play().catch(() => {
+        // Autoplay policy blocker
+      });
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isIntersecting]);
+
+  const thumb = post.cloudinaryPublicId
+    ? `https://res.cloudinary.com/${cloudName}/video/upload/c_fill,g_center,h_640,w_360/f_auto,q_auto/${post.cloudinaryPublicId}.jpg`
+    : (post.thumbnail_url ?? post.media_url ?? "");
+
+  const videoUrl = post.cloudinaryPublicId
+    ? `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto/${post.cloudinaryPublicId}`
+    : post.localVideoUrl;
   
   return (
     <button
+      ref={containerRef}
       onClick={() => onOpen(post)}
       className="block w-full text-left rounded-[28px] bg-zinc-900 overflow-hidden border border-white/5 hover:border-[color:var(--rose)]/30 hover:shadow-[0_15px_30px_rgba(219,112,147,0.15)] transition-all duration-300 group relative aspect-[9/16]"
       aria-label={post.caption?.slice(0, 60) ?? "Play Reel"}
     >
-      {thumb ? (
+      {videoUrl && isIntersecting ? (
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          muted
+          loop
+          playsInline
+          poster={thumb}
+          preload="none"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      ) : thumb ? (
         <img
           src={thumb}
           alt={post.caption?.slice(0, 80) ?? "Instagram post"}
@@ -1031,14 +1059,14 @@ function ReelCard({ post, onOpen }: { post: IgPost; onOpen: (post: IgPost) => vo
       )}
 
       {/* Glassmorphic Play Overlay Button */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="h-16 w-16 rounded-full bg-black/60 text-[color:var(--gold)] flex items-center justify-center backdrop-blur-md border border-[color:var(--gold)]/30 opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
           <span className="ml-1 text-2xl">▶</span>
         </div>
       </div>
 
       {/* Bottom caption overlay */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/50 to-transparent p-6 pt-16">
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/50 to-transparent p-6 pt-16 pointer-events-none">
         <p className="text-white text-xs sm:text-sm line-clamp-2 leading-relaxed font-medium">
           {post.caption?.replace(/#\S+/g, "").trim() ?? "Watch Bridal Experience"}
         </p>
@@ -1051,55 +1079,62 @@ function ReelCard({ post, onOpen }: { post: IgPost; onOpen: (post: IgPost) => vo
   );
 }
 
-const FALLBACK_POSTS: IgPost[] = [
+const CLOUDINARY_VIDEOS: IgPost[] = [
   {
-    id: "fb1",
+    id: "c_vid_1",
     media_type: "VIDEO",
-    media_url: g4,
-    permalink: "https://www.instagram.com/reel/C8xqJ7vS5pZ/",
-    caption: "Radiant bridal glow for our gorgeous bride! HD makeup that lasts all day. 💖 #bridalmakeup #chennaibride",
-    timestamp: "2024-06-25T12:00:00Z",
-    localVideoUrl: "/videos/landing_page.mp4",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Experience premium bridal & beauty rituals at Pink Love Beauty Studio! 💖",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: import.meta.env.VITE_CLOUDINARY_VIDEO_1_ID || "v1782022649/WhatsApp_Video_2026-06-18_at_20.10.19_u02gvp",
   },
   {
-    id: "fb2",
+    id: "c_vid_2",
     media_type: "VIDEO",
-    media_url: g1,
-    permalink: "https://www.instagram.com/reel/C7nXk2KS0aB/",
-    caption: "Flawless HD Bridal Makeover. Where elegance meets care. ✨ #hdmakeup #bride",
-    timestamp: "2024-05-28T14:30:00Z",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Flawless HD Makeup and elegant styling session for our beautiful bride! ✨💍",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782022984/WhatsApp_Video_2026-06-18_at_20.10.21_pgwcqd",
   },
   {
-    id: "fb3",
+    id: "c_vid_3",
     media_type: "VIDEO",
-    media_url: serviceFacial,
-    permalink: "https://www.instagram.com/reel/C6lZ9YpSnXc/",
-    caption: "Korean Glass Skin Facial ritual for that dewy, lit-from-within glow. 💧✨ #glassskin #facial",
-    timestamp: "2024-05-02T10:15:00Z",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Healthy hair transformation: Nourishing hair spa and styling finish. 💇‍♀️✨",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782023182/WhatsApp_Video_2026-06-18_at_20.10.22_zqvb5z",
   },
   {
-    id: "fb4",
+    id: "c_vid_4",
     media_type: "VIDEO",
-    media_url: serviceHair,
-    permalink: "https://www.instagram.com/reel/C5kP1QwSrJd/",
-    caption: "Hair makeover: Volumizing layers & nourishing hair spa treatment. 💇‍♀️✨ #hairtransformation",
-    timestamp: "2024-04-10T16:00:00Z",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Professional haircut and custom layers for a fresh, volume look! 💇‍♀️💖",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782023428/WhatsApp_Video_2026-06-18_at_20.10.25_nqm7sw",
   },
   {
-    id: "fb5",
+    id: "c_vid_5",
     media_type: "VIDEO",
-    media_url: serviceJewelry,
-    permalink: "https://www.instagram.com/reel/C4jH8RvSpKe/",
-    caption: "Completing the look with our exclusive bridal jewelry & accessories collection. 👑 #bridaljewelry",
-    timestamp: "2024-03-12T11:45:00Z",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Traditional South Indian bridal preparation and makeup highlights. 💍🌸",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782023413/WhatsApp_Video_2026-06-18_at_20.10.26_fex5zv",
   },
   {
-    id: "fb6",
+    id: "c_vid_6",
     media_type: "VIDEO",
-    media_url: g3,
-    permalink: "https://www.instagram.com/reel/C3iG7TuSqLf/",
-    caption: "Behind the scenes at Pink Love Beauty Studio. Pampering our lovely clients. 💕 #makeupstudio",
-    timestamp: "2024-02-15T09:00:00Z",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Flawless saree draping and styling to complete the perfect bridal look. 👗✨",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782023397/WhatsApp_Video_2026-06-18_at_20.10.27_mgksgd",
+  },
+  {
+    id: "c_vid_7",
+    media_type: "VIDEO",
+    permalink: "https://www.instagram.com/pinklove_beautystudio/",
+    caption: "Client feedback: Celebrating premium beauty rituals at Pink Love! 💕✨",
+    timestamp: new Date().toISOString(),
+    cloudinaryPublicId: "v1782023189/WhatsApp_Video_2026-06-18_at_20.10.28_qux8au",
   },
 ];
 
@@ -1107,36 +1142,8 @@ function Reels() {
   const { instagramPosts } = Route.useLoaderData();
   const apiPosts = instagramPosts?.data ?? [];
   
-  const localVideoPost: IgPost = {
-    id: "local_video_1",
-    media_type: "VIDEO",
-    media_url: g4,
-    permalink: "https://www.instagram.com/pinklove_beautystudio/",
-    caption: "Experience premium bridal & beauty rituals at Pink Love Beauty Studio! 💖",
-    timestamp: new Date().toISOString(),
-    localVideoUrl: "/videos/landing_page.mp4",
-  };
-
-  const posts = [localVideoPost, ...(apiPosts.length > 0 ? apiPosts : FALLBACK_POSTS.slice(1))];
-
+  const posts = apiPosts.length > 0 ? apiPosts : CLOUDINARY_VIDEOS;
   const [activePost, setActivePost] = useState<IgPost | null>(null);
-  const items = posts;
-  const hasItems = items.length > 0;
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: hasItems, align: "start", containScroll: "trimSnaps" },
-    hasItems ? [Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })] : [],
-  );
-  const [selected, setSelected] = useState(0);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
-    emblaApi.on("select", onSelect);
-    onSelect();
-  }, [emblaApi]);
-
-  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
 
   return (
     <section id="reels" className="relative z-10 px-6 py-24 bg-neutral-950 text-white">
@@ -1154,32 +1161,15 @@ function Reels() {
           </p>
         </div>
 
-        <div className="overflow-hidden -mx-3" ref={emblaRef}>
-          <div className="flex">
-            {items.map((post, i) => (
-              <div key={post?.id ?? i} className="flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-3">
-                <ReelCard post={post} onOpen={(p) => setActivePost(p)} />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+          {posts.map((post, i) => (
+            <div key={post?.id ?? i} className="w-full">
+              <ReelCard post={post} onOpen={(p) => setActivePost(p)} />
+            </div>
+          ))}
         </div>
 
-        {hasItems && (
-          <div className="mt-8 flex items-center justify-center gap-2">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => scrollTo(i)}
-                aria-label={`Go to post ${i + 1}`}
-                className={`h-2 rounded-full transition-all ${
-                  selected === i ? "w-8 bg-[color:var(--rose)]" : "w-2 bg-white/20 hover:bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <a
             href="https://www.instagram.com/pinklove_beautystudio/"
             target="_blank"
@@ -1411,45 +1401,54 @@ function FAQ() {
           <p className="font-script text-3xl text-[color:var(--rose)]">got questions?</p>
           <h2 className="font-display text-5xl sm:text-6xl mt-1">Frequently asked</h2>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {FAQ_ITEMS.map((item, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-foreground/10 bg-card overflow-hidden shadow-[var(--shadow-soft)]"
+              className={`rounded-2xl border bg-card overflow-hidden transition-all duration-300 ${
+                open === i 
+                  ? "border-[color:var(--rose)]/30 shadow-[0_15px_30px_-5px_rgba(219,112,147,0.12)] bg-zinc-900/10" 
+                  : "border-foreground/10 shadow-[var(--shadow-soft)] hover:border-foreground/20"
+              }`}
             >
               <button
                 id={`faq-q-${i}`}
                 aria-expanded={open === i}
                 aria-controls={`faq-a-${i}`}
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-[color:var(--blush)]/40 transition"
+                className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 transition-colors duration-300"
               >
                 <span className="font-display text-lg sm:text-xl">{item.q}</span>
                 <span
-                  className="shrink-0 h-7 w-7 rounded-full border border-foreground/20 flex items-center justify-center text-[color:var(--rose)] transition-transform duration-300"
-                  style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)" }}
+                  className={`shrink-0 h-7 w-7 rounded-full border border-foreground/20 flex items-center justify-center text-[color:var(--rose)] transition-all duration-300 ${
+                    open === i ? "bg-[color:var(--rose)] text-white border-transparent rotate-45" : "rotate-0"
+                  }`}
                 >
                   +
                 </span>
               </button>
+              
+              {/* CSS Grid Smooth Height Transition */}
               <div
                 id={`faq-a-${i}`}
                 role="region"
                 aria-labelledby={`faq-q-${i}`}
-                style={{
-                  maxHeight: open === i ? "400px" : "0px",
-                  transition: "max-height 0.35s ease",
-                  overflow: "hidden",
-                }}
+                className={`grid transition-all duration-300 ease-in-out ${
+                  open === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                }`}
               >
-                <p className="px-6 pb-6 text-foreground/70 leading-relaxed">{item.a}</p>
+                <div className="overflow-hidden">
+                  <p className="px-6 pb-6 text-foreground/75 leading-relaxed text-sm sm:text-base">
+                    {item.a}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
         </div>
         <p className="text-center mt-10 text-foreground/60 text-sm">
           More questions?{" "}
-          <a href="https://wa.me/919840874966" className="text-[color:var(--rose)] underline underline-offset-4">
+          <a href="https://wa.me/919840874966" className="text-[color:var(--rose)] underline underline-offset-4 font-semibold hover:text-[color:var(--petal)] transition-colors">
             Chat with us on WhatsApp
           </a>
         </p>
@@ -1515,6 +1514,8 @@ function Footer() {
         <img
           src={logo}
           alt="Pink Love Beauty Studio Logo"
+          width={64}
+          height={64}
           className="h-16 w-16 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
         />
       </div>

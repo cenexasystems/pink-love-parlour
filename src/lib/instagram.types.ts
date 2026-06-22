@@ -7,4 +7,5 @@ export type IgPost = {
   caption?: string;
   timestamp: string;
   localVideoUrl?: string;
+  cloudinaryPublicId?: string;
 };
