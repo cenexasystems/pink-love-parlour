@@ -14,7 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      combo_items: {
+        Row: {
+          created_at: string
+          id: string
+          page: number
+          price: string
+          services: string[]
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page?: number
+          price: string
+          services?: string[]
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page?: number
+          price?: string
+          services?: string[]
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      individual_services: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          price: string
+          side: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          price: string
+          side?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          price?: string
+          side?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
