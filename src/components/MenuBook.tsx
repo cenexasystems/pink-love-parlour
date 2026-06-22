@@ -104,7 +104,7 @@ const LEFT_INDIVIDUAL_CATEGORIES: IndividualCategory[] = [
       { name: "Lise treatment", price: "2000 to 3500" },
       { name: "Hair colouring", price: "500 to 3000" },
       { name: "Keratin", price: "5000 to 15000" },
-      { name: "Botox", price: "5000 to 15000" },
+      { name: "Botex", price: "5000 to 15000" },
     ],
   },
   {
@@ -223,6 +223,8 @@ export function MenuBook() {
               <img
                 src={logo}
                 alt="Pink Love Beauty Studio Logo"
+                width={44}
+                height={44}
                 className="h-11 w-11 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
               />
               <div className="flex items-center gap-3">
