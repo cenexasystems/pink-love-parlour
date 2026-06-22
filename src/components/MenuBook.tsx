@@ -346,12 +346,12 @@ export function MenuBook() {
                           href={getWhatsAppLinkForService(item.name, item.price)}
                           target="_blank"
                           rel="noreferrer"
-                          className="group flex items-baseline justify-between hover:text-[color:var(--rose)] transition-all py-1.5 block cursor-pointer"
+                          className="group flex items-center justify-between hover:text-[color:var(--rose)] transition-all py-2 cursor-pointer"
                         >
                           <span className="font-display font-semibold text-sm sm:text-base tracking-wide uppercase">
                             {item.name}
                           </span>
-                          <span className="flex-grow border-b border-dotted border-rose-300/40 mx-2 relative top-[-4px] group-hover:border-rose-400" />
+                          <span className="flex-grow border-b border-dotted border-rose-300/40 mx-2 group-hover:border-rose-400" />
                           <span className="font-display font-bold text-xs sm:text-sm text-[color:var(--rose)] bg-[color:var(--blush)] px-2.5 py-0.5 rounded-lg border border-[color:var(--rose)]/10 group-hover:bg-[color:var(--rose)] group-hover:text-white transition-all whitespace-nowrap">
                             {item.price}
                           </span>
@@ -376,12 +376,12 @@ export function MenuBook() {
                           href={getWhatsAppLinkForService(item.name, item.price)}
                           target="_blank"
                           rel="noreferrer"
-                          className="group flex items-baseline justify-between hover:text-[color:var(--rose)] transition-all py-1.5 block cursor-pointer"
+                          className="group flex items-center justify-between hover:text-[color:var(--rose)] transition-all py-2 cursor-pointer"
                         >
                           <span className="font-display font-semibold text-sm sm:text-base tracking-wide uppercase">
                             {item.name}
                           </span>
-                          <span className="flex-grow border-b border-dotted border-rose-300/40 mx-2 relative top-[-4px] group-hover:border-rose-400" />
+                          <span className="flex-grow border-b border-dotted border-rose-300/40 mx-2 group-hover:border-rose-400" />
                           <span className="font-display font-bold text-xs sm:text-sm text-[color:var(--rose)] bg-[color:var(--blush)] px-2.5 py-0.5 rounded-lg border border-[color:var(--rose)]/10 group-hover:bg-[color:var(--rose)] group-hover:text-white transition-all whitespace-nowrap">
                             {item.price}
                           </span>

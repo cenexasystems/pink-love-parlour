@@ -126,160 +126,154 @@ const VIBES: Record<string, QuizOption[]> = {
 const MATCHES: Record<string, Record<string, LookMatch>> = {
   bridal: {
     royal: {
-      title: "Royal HD Bridal Makeover Package",
-      price: "₹15,000 - ₹25,000",
-      desc: "Our signature luxury bridal package. Flawless HD makeup designed to look regal under professional studio lighting, complete with traditional hair accessories and saree draping.",
+      title: "Kryolan & MAC Royal Bridal Package",
+      price: "₹7,000 - ₹12,000",
+      desc: "Traditional royal bridal makeovers utilizing professional Kryolan and MAC products. Specially designed to enhance your features for gorgeous South Indian and North Indian wedding celebrations.",
       features: [
-        "Premium HD Foundation Base",
-        "Waterproof & 16-Hour Sweatproof",
-        "Bridal Hair Styling & Saree Draping",
-        "Luxury lashes & jewelry setting",
-        "Complimentary trial makeup consultation"
+        "Full face makeup using Kryolan or MAC",
+        "Bridal hair styling & fresh flower setting",
+        "Saree prepleating & drape setting",
+        "Jewelry setting & placement"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Royal HD Bridal Makeover Package'. I'd love to check dates and package details!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Kryolan & MAC Royal Bridal Package' (₹7,000 - ₹12,000). I'd love to check dates and package details!"
     },
     dewy: {
-      title: "Korean Glass-Skin Bridal Look",
-      price: "₹18,000 - ₹28,000",
-      desc: "An ultra-modern, luminous, dewy finish inspired by high-end luxury aesthetic studios. Perfect for brides who want their skin to look fresh, natural, and lit-from-within.",
+      title: "Airbrush Luminous Bridal Package",
+      price: "₹25,000",
+      desc: "The ultimate modern, dewy finish using state-of-the-art airbrush technology. Perfect for a flawless, lit-from-within glow that looks natural and behaves beautifully under HD cameras.",
       features: [
-        "Hydrating Korean Ampoule Prep",
-        "Airbrush & Luminous Glass-Skin Finish",
-        "Soft-glam eye highlight & glossy lips",
-        "Elegant modern hair styling",
-        "Saree/Gown draping & lash extensions"
+        "Full HD Airbrush makeup base",
+        "Dewy glass-skin look prep",
+        "Advanced bridal hair styling",
+        "Luxury lash extensions & saree draping"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Korean Glass-Skin Bridal Look'. I'd love to check your availability!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Airbrush Luminous Bridal Package' (₹25,000). I'd love to check availability!"
     },
     bold: {
-      title: "Ultimate Bold HD Glam Bridal",
-      price: "₹16,000 - ₹26,000",
-      desc: "For the bold bride who wants to turn heads. Precision contouring, gorgeous defined eyes, and matte lipstick paired with contemporary bridal hair and jewelry setting.",
+      title: "HD Sweat & Water-Proof Bridal Package",
+      price: "₹15,000 - ₹20,000",
+      desc: "High-definition bold makeup designed to resist sweat and moisture for up to 16 hours. Perfect for wedding stages and high-temperature outdoor setups.",
       features: [
-        "Full Airbrush/HD matte base",
-        "3D highlight, contour, & defined eye drama",
-        "Transfer-proof lipstick & custom lashes",
-        "Bridal hair design (contemporary braid/bun)",
-        "Saree draping & jewelry placement"
+        "Genuine HD base cosmetics",
+        "100% Sweat-proof & Water-proof finish",
+        "Defined eye drama & premium false lashes",
+        "Traditional or contemporary hair design"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Ultimate Bold HD Glam Bridal'. I'd love to learn more!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'HD Sweat & Water-Proof Bridal Package' (₹15,000 - ₹20,000). I'd love to check details!"
     }
   },
   party: {
     soft: {
-      title: "Lite / Birthday Glow Glam",
+      title: "Lite Party Makeover",
       price: "₹1,500 - ₹2,500",
-      desc: "A gorgeous, lightweight glam look. Perfect for birthday parties, bridesmaid attendance, or casual family get-togethers.",
+      desc: "A gorgeous, lightweight makeup and hair setup. Ideal for bridesmaids, birthday parties, or attending family gatherings.",
       features: [
-        "Lightweight dewy foundation base",
-        "Nude lip shade & soft cheek blush",
-        "Soft eye shimmer & mascara",
+        "Lightweight dewy base application",
+        "Soft blush & natural lipstick",
+        "Simple eye shimmer & mascara",
         "Simple hair styling (blow dry or curls)"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Lite / Birthday Glow Glam'. I'd like to book a session!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Lite Party Makeover' (₹1,500 - ₹2,500). I'd like to book a session!"
     },
     dramatic: {
-      title: "Dazzling Eye & Party Glam",
-      price: "₹2,500 - ₹3,500",
-      desc: "Focuses on eye artistry. Smokey eyes, halo glitter, or precise winged liners matched with a flawless base and hair setup.",
+      title: "Premium Dramatic Party Glam",
+      price: "₹3,000 - ₹4,000",
+      desc: "Focuses on bold eyes, glitter lids, or smokey accents, matched with a flawless base and contemporary hair styling.",
       features: [
-        "Flawless evening matte base",
-        "Glitter/Smokey eye makeup art",
-        "Premium falsies (optional)",
-        "Trendy hair styling (braids, half-updo)"
-      ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Dazzling Eye & Party Glam'. I'd love to check availability!"
-    },
-    classic: {
-      title: "Elegant Classic Party Makeover",
-      price: "₹2,000 - ₹3,000",
-      desc: "Timeless sophistication. A clean, classic makeup finish featuring red lips, sharp eyeliner, and a sleek hairstyle.",
-      features: [
-        "Clean semi-matte base",
-        "Classic bold red lip & winged liner",
-        "Volumizing blowout or sleek straight hair",
+        "Flawless evening base makeup",
+        "Dramatic/Smokey eye makeup",
+        "Trendy hairstyle or half-updo",
         "Saree/Outfit draping assistance"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Elegant Classic Party Makeover'. I'd love to book this look!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Premium Dramatic Party Glam' (₹3,000 - ₹4,000). I'd like to book this look!"
+    },
+    classic: {
+      title: "Classic Elegant Party Makeover",
+      price: "₹2,000 - ₹3,000",
+      desc: "Timeless sophistication featuring sharp winged eyeliner, classical red or nude lips, and a neat blow dry finish.",
+      features: [
+        "Clean semi-matte base makeup",
+        "Classic winged liner & bold lip shade",
+        "Volumizing blowout or sleek straight hair",
+        "Outfit prepleating/draping assistance"
+      ],
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Classic Elegant Party Makeover' (₹2,000 - ₹3,000). I'd love to book this style!"
     }
   },
   skin: {
     dewy_skin: {
-      title: "Korean Glass Skin Facial Ritual",
-      price: "₹2,500 - ₹3,500",
-      desc: "Indulge in a premium multi-step skin therapy session. Restores collagen, unclogs pores, and infuses active hyaluronic serum for an instant glass-skin shine.",
+      title: "Whitening, Brightening & Glowing Facial",
+      price: "₹1,500 each",
+      desc: "An intensive whitening and brightening facial to bring out a dewy, glowing complexion for upcoming celebrations.",
       features: [
-        "Double oil & foam cleanse",
-        "Gentle enzyme peel exfoliation",
-        "Serum infusion with ultrasound massage",
-        "Soothing collagen jelly mask",
-        "SPF & hydration finish"
+        "Deep double cleansing",
+        "Whitening scrub & tan-clear wrap",
+        "Brightening massage therapy",
+        "Instantly glowing facial pack"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Korean Glass Skin Facial'. I'd love to schedule a facial session!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Whitening, Brightening & Glowing Facial' (₹1,500 each). I'd like to schedule a session!"
     },
     plump: {
-      title: "Advanced HydraFacial Glow Therapy",
-      price: "₹3,500 - ₹5,000",
-      desc: "Our most advanced machine-based skin therapy. Uses vortex suction to extract impurities while simultaneously bathing the skin in rich antioxidant serums.",
+      title: "Advanced Hydrafacial + D-Tan Combo",
+      price: "₹1,999",
+      desc: "Our best-selling hydration facial combo. Deeply exfoliates pores while infusing moisture for a plump, smooth glass-skin finish.",
       features: [
-        "Vortex deep cleanse & exfoliation",
-        "Acid peel prep & blackhead extraction",
-        "Hydration vortex serum infusion",
-        "Cold hammer skin tightening massage",
-        "LED phototherapy light mask"
+        "Vortex deep cleanse Hydrafacial",
+        "Full-face D-Tan treatment",
+        "Eyebrow threading alignment",
+        "Hydrating glow serum massage"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Advanced HydraFacial Glow Therapy'. I'd love to book a Hydrafacial!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Advanced Hydrafacial + D-Tan Combo' (₹1,999). I'd love to book it!"
     },
     detox: {
-      title: "Tan-Clear Gold Radiance Facial",
-      price: "₹2,000 - ₹3,000",
-      desc: "Perfect for sun-damaged or dull skin. Removes tanning, brightens skin cells, and infuses real 24k gold essence for a sparkling bridal glow.",
+      title: "Gold Facial & D-Tan Detox Combo",
+      price: "₹1,500",
+      desc: "A full skin detox and brighten combo. Removes tanning from the face and neck, and rejuvenates feet with a deep pedicure.",
       features: [
-        "De-tan cream pack application",
-        "Gold dust exfoliating scrub",
-        "Radiance-boosting cream massage",
-        "Brightening peel-off gold mask",
-        "Vitamin C glowing serum wrap"
+        "Genuine Gold Facial treatment",
+        "Face + Neck D-Tan application",
+        "Soothing foot pedicure session",
+        "Anti-tan cell revitalization"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Tan-Clear Gold Radiance Facial'. I'd love to make an appointment!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Gold Facial & D-Tan Detox Combo' (₹1,500). I'd love to book an appointment!"
     }
   },
   hair: {
     waves: {
-      title: "Volumizing Hair Transformation",
-      price: "₹1,500 - ₹2,500",
-      desc: "Change your look with bouncy, voluminous hair styling. Includes deep wash, moisturizing, and advanced iron styling.",
+      title: "Butterfly Cut & Volumizing Hairwash Combo",
+      price: "₹800",
+      desc: "Transform your hair with bouncy, trendy layers. Includes a deep professional wash and iron-style finish.",
       features: [
-        "Shampoo wash & hair mask conditioning",
-        "Volumizing blowout",
-        "Soft curling iron waves",
-        "Holding mist application"
+        "Shampoo wash & conditioning",
+        "Butterfly haircut styling",
+        "Volumizing blowout curls",
+        "Premium styling serum application"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Volumizing Hair Transformation'. I'd love to schedule a hair styling session!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Butterfly Cut & Volumizing Hairwash Combo' (₹800). I'd love to book this style!"
     },
     sleek: {
-      title: "Sleek Smooth Hair Spa Treatment",
-      price: "₹2,000 - ₹3,500",
-      desc: "Nourishes dry, frizzy hair from root to tip. Infuses keratin proteins and deep moisture to give you a sleek, straight, and healthy finish.",
+      title: "Keratin & Smoothning Treatment",
+      price: "₹3,000 - ₹15,000",
+      desc: "Eliminates frizz and creates long-lasting sleekness. Custom keratin or smoothing treatments tailored to your hair type.",
       features: [
-        "Steam hair spa & massage",
-        "Keratin-rich deep hair mask",
-        "Serum wrap protection",
-        "Sleek blow dry & hair straightening"
+        "Keratin-rich deep hair treatment",
+        "Professional straight blow dry & iron finish",
+        "Silk-shine protective serum application",
+        "Post-treatment care counseling"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Sleek Smooth Hair Spa Treatment'. I'd love to schedule a hair spa!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Keratin & Smoothning Treatment' (₹3,000 - ₹15,000). I'd like to consult for my hair!"
     },
     traditional: {
-      title: "Traditional Bridal Flower Braid Design",
-      price: "₹2,500 - ₹4,000",
-      desc: "For the traditional bride. A beautifully crafted long braid adorned with fresh flowers (Jasmine, Roses) and gold accessories.",
+      title: "Advance Saree Prepleating & Styling",
+      price: "₹600 - ₹800",
+      desc: "Traditional prepleating services paired with elegant hair setups. Perfect for school, college, or family celebrations.",
       features: [
-        "Hair texturizing & extensions padding",
-        "Neat classic long plait braid",
-        "Flower setting (Venis & Jasmine wrap)",
-        "Gold billa/accessories placement"
+        "Advance saree prepleating & box folding",
+        "Draping & waist pin alignment",
+        "Basic haircut & eyebrow threading",
+        "Neat hair styling finish"
       ],
-      waText: "Hi Pink Love Studio! I did your Look Finder quiz and matched with the 'Traditional Bridal Flower Braid Design'. I'd love to book this style!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Advance Saree Prepleating & Styling' (₹600 - ₹800). I'd love to book it!"
     }
   }
 };
