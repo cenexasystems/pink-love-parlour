@@ -3,6 +3,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { 
+  Plus, 
+  Trash2, 
+  Save, 
+  Lock, 
+  Unlock, 
+  Eye, 
+  Sparkles, 
+  Scissors, 
+  FolderOpen
+} from "lucide-react";
 
 const PASSCODE = "0265";
 const STORAGE_KEY = "pl_admin_ok";
@@ -12,7 +26,7 @@ type ComboItem = {
   page: number;
   services: string[];
   price: string;
-  sort_order: number;
+  created_at: string;
 };
 
 type IndividualRow = {
@@ -21,7 +35,7 @@ type IndividualRow = {
   category: string;
   name: string;
   price: string;
-  sort_order: number;
+  created_at: string;
 };
 
 export function Admin() {
@@ -33,61 +47,111 @@ export function Admin() {
 
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[color:var(--blush)]/30 to-background p-6">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-100/50 via-background to-amber-50/30 p-6">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             if (code === PASSCODE) {
               sessionStorage.setItem(STORAGE_KEY, "1");
               setAuthed(true);
-            } else setErr("Incorrect passcode");
+              toast.success("Welcome back, Admin!");
+            } else {
+              setErr("Incorrect passcode");
+              toast.error("Access denied");
+            }
           }}
-          className="w-full max-w-sm bg-card rounded-2xl border border-[color:var(--rose)]/20 shadow-xl p-8 space-y-4"
+          className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl border border-rose-100 shadow-2xl p-8 sm:p-10 space-y-6"
         >
-          <h1 className="font-display text-3xl text-[color:var(--rose)]">Admin Access</h1>
-          <p className="text-sm text-foreground/70">Enter the passcode to manage menu items.</p>
-          <Input
-            type="password"
-            inputMode="numeric"
-            placeholder="Passcode"
-            value={code}
-            onChange={(e) => {
-              setCode(e.target.value);
-              setErr("");
-            }}
-            autoFocus
-          />
-          {err && <p className="text-sm text-destructive">{err}</p>}
-          <Button type="submit" className="w-full">Unlock</Button>
+          <div className="text-center space-y-2">
+            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 mb-2">
+              <Lock className="w-5 h-5" />
+            </div>
+            <h1 className="font-display text-3xl font-extrabold tracking-tight text-rose-600">Admin Access</h1>
+            <p className="text-sm text-muted-foreground">Enter the passcode to manage your menu items.</p>
+          </div>
+
+          <div className="space-y-3">
+            <Input
+              type="password"
+              inputMode="numeric"
+              placeholder="Passcode"
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value);
+                setErr("");
+              }}
+              className="text-center text-lg tracking-widest h-12 focus-visible:ring-rose-400"
+              autoFocus
+            />
+            {err && <p className="text-sm text-center text-destructive font-medium">{err}</p>}
+          </div>
+
+          <Button type="submit" className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300">
+            Unlock Dashboard
+          </Button>
         </form>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-8">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <header className="flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-b from-rose-50/20 via-background to-background p-4 sm:p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-rose-100">
           <div>
-            <h1 className="font-display text-3xl sm:text-4xl text-[color:var(--rose)]">Menu Admin</h1>
-            <p className="text-sm text-foreground/70">Manage combos and individual services. Changes save instantly.</p>
+            <h1 className="font-display text-4xl font-extrabold tracking-tight bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">
+              Studio Menu Admin
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Easily add, edit, and remove packages and services. Changes appear on the live site instantly.
+            </p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => (window.location.href = "/")}>View site</Button>
+          <div className="flex gap-2.5 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => (window.location.href = "/")} 
+              className="flex-1 sm:flex-initial gap-2 border-rose-200 text-rose-700 hover:bg-rose-50"
+            >
+              <Eye className="w-4 h-4" /> View Site
+            </Button>
             <Button
               variant="ghost"
               onClick={() => {
                 sessionStorage.removeItem(STORAGE_KEY);
                 setAuthed(false);
+                toast.info("Logged out successfully");
               }}
+              className="flex-1 sm:flex-initial gap-2 text-muted-foreground hover:text-rose-600"
             >
-              Lock
+              <Unlock className="w-4 h-4" /> Lock
             </Button>
           </div>
         </header>
 
-        <CombosPanel />
-        <IndividualsPanel />
+        <Tabs defaultValue="combos" className="space-y-6">
+          <TabsList className="flex items-center justify-between w-full max-w-md mx-auto bg-rose-50/60 p-1 rounded-full border border-rose-100 shadow-sm h-12">
+            <TabsTrigger 
+              value="combos" 
+              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 mr-2" /> Value Combos
+            </TabsTrigger>
+            <TabsTrigger 
+              value="alacarte" 
+              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer"
+            >
+              <Scissors className="w-4 h-4 mr-2" /> Individual Services
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="combos" className="space-y-6">
+            <CombosPanel />
+          </TabsContent>
+
+          <TabsContent value="alacarte" className="space-y-6">
+            <IndividualsPanel />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
@@ -98,7 +162,6 @@ function CombosPanel() {
   const [page, setPage] = useState(1);
   const [servicesText, setServicesText] = useState("");
   const [price, setPrice] = useState("");
-  const [sortOrder, setSortOrder] = useState(100);
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
@@ -106,7 +169,7 @@ function CombosPanel() {
       .from("combo_items")
       .select("*")
       .order("page")
-      .order("sort_order");
+      .order("created_at", { ascending: true });
     setItems((data || []) as ComboItem[]);
   };
 
@@ -119,66 +182,161 @@ function CombosPanel() {
       .split(/\n|,/)
       .map((s) => s.trim())
       .filter(Boolean);
-    if (!services.length || !price) return;
+    if (!services.length) {
+      toast.error("Please enter at least one service name.");
+      return;
+    }
+    if (!price) {
+      toast.error("Please enter a price.");
+      return;
+    }
     setBusy(true);
-    await supabase.from("combo_items").insert({ page, services, price, sort_order: sortOrder });
-    setServicesText("");
-    setPrice("");
+    const { error } = await supabase.from("combo_items").insert({ page, services, price });
     setBusy(false);
-    load();
+
+    if (error) {
+      toast.error("Failed to add combo package.");
+      console.error(error);
+    } else {
+      toast.success("Combo package added successfully!");
+      setServicesText("");
+      setPrice("");
+      load();
+    }
   };
 
   const update = async (it: ComboItem, patch: Partial<ComboItem>) => {
-    await supabase.from("combo_items").update(patch).eq("id", it.id);
-    load();
+    const { error } = await supabase.from("combo_items").update(patch).eq("id", it.id);
+    if (error) {
+      toast.error("Failed to update combo package.");
+      console.error(error);
+    } else {
+      toast.success("Changes saved!");
+      load();
+    }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this combo?")) return;
-    await supabase.from("combo_items").delete().eq("id", id);
-    load();
+    if (!confirm("Are you sure you want to delete this combo?")) return;
+    const { error } = await supabase.from("combo_items").delete().eq("id", id);
+    if (error) {
+      toast.error("Failed to delete combo package.");
+      console.error(error);
+    } else {
+      toast.success("Combo package deleted");
+      load();
+    }
   };
 
-  return (
-    <section className="space-y-4">
-      <h2 className="font-display text-2xl text-[color:var(--rose)]">Combo Packages</h2>
+  const page1Combos = items.filter((it) => it.page === 1);
+  const page2Combos = items.filter((it) => it.page === 2);
 
-      <div className="rounded-2xl border border-[color:var(--rose)]/20 bg-card p-5 grid sm:grid-cols-2 gap-3">
-        <div className="sm:col-span-2 font-semibold">Add new combo</div>
-        <label className="text-sm space-y-1">
-          Page
-          <select
-            className="w-full h-9 rounded-md border border-input bg-transparent px-3"
-            value={page}
-            onChange={(e) => setPage(Number(e.target.value))}
-          >
-            <option value={1}>Page 1</option>
-            <option value={2}>Page 2</option>
-          </select>
-        </label>
-        <label className="text-sm space-y-1">
-          Price
-          <Input value={price} onChange={(e) => setPrice(e.target.value)} placeholder="₹1500" />
-        </label>
-        <label className="text-sm space-y-1 sm:col-span-2">
-          Services (one per line or comma-separated)
-          <Textarea rows={3} value={servicesText} onChange={(e) => setServicesText(e.target.value)} placeholder="GOLD FACIAL\nD-TAN\nPEDICURE" />
-        </label>
-        <label className="text-sm space-y-1">
-          Sort order
-          <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} />
-        </label>
-        <div className="flex items-end">
-          <Button onClick={add} disabled={busy} className="w-full">Add combo</Button>
+  return (
+    <div className="space-y-8">
+      <Card className="border-rose-100 shadow-md overflow-hidden bg-white/70 backdrop-blur-sm rounded-2xl">
+        <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6">
+          <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
+            <Plus className="w-5 h-5 text-rose-500" /> Create New Value Combo
+          </CardTitle>
+          <CardDescription>Add a new multi-service package to Page 1 or Page 2 of the menu card.</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Page Location</label>
+              <select
+                className="w-full h-10 rounded-lg border border-rose-100 bg-white px-3 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm font-semibold"
+                value={page}
+                onChange={(e) => setPage(Number(e.target.value))}
+              >
+                <option value={1}>Page 1 (Left Page)</option>
+                <option value={2}>Page 2 (Right Page)</option>
+              </select>
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Price tag</label>
+              <Input 
+                value={price} 
+                onChange={(e) => setPrice(e.target.value)} 
+                placeholder="e.g. ₹1500 or ₹500 each" 
+                className="h-10 border-rose-100 focus-visible:ring-rose-400 font-semibold"
+              />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">
+              Services Included (one per line or comma-separated)
+            </label>
+            <Textarea 
+              rows={3} 
+              value={servicesText} 
+              onChange={(e) => setServicesText(e.target.value)} 
+              placeholder="e.g.&#10;GOLD FACIAL&#10;D-TAN (FACE + NECK)&#10;PEDICURE" 
+              className="border-rose-100 focus-visible:ring-rose-400 font-medium"
+            />
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button 
+              onClick={add} 
+              disabled={busy} 
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold h-10 rounded-lg px-6 shadow-md transition-all gap-2"
+            >
+              <Plus className="w-4 h-4" /> Add Combo Package
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        <h2 className="font-display text-2xl font-bold text-rose-900 px-1 border-b border-rose-100 pb-2">Current Combo Packages</h2>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Page 1 (Left Page) Column */}
+          <div className="space-y-4 bg-rose-50/10 p-4 sm:p-5 rounded-2xl border border-rose-100">
+            <div className="flex justify-between items-center px-1 border-b border-rose-100/50 pb-2">
+              <h3 className="font-display text-lg font-bold text-rose-800 flex items-center gap-2">
+                <span>Page 1</span>
+                <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">Left Page</span>
+              </h3>
+              <span className="text-xs text-muted-foreground font-semibold">{page1Combos.length} items</span>
+            </div>
+            {page1Combos.length === 0 ? (
+              <div className="text-center py-10 bg-white/40 rounded-xl border border-dashed border-rose-200 text-muted-foreground text-sm">
+                No combos on Page 1.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3.5">
+                {page1Combos.map((it) => (
+                  <ComboRow key={it.id} item={it} onUpdate={update} onDelete={remove} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Page 2 (Right Page) Column */}
+          <div className="space-y-4 bg-rose-50/10 p-4 sm:p-5 rounded-2xl border border-rose-100">
+            <div className="flex justify-between items-center px-1 border-b border-rose-100/50 pb-2">
+              <h3 className="font-display text-lg font-bold text-rose-800 flex items-center gap-2">
+                <span>Page 2</span>
+                <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">Right Page</span>
+              </h3>
+              <span className="text-xs text-muted-foreground font-semibold">{page2Combos.length} items</span>
+            </div>
+            {page2Combos.length === 0 ? (
+              <div className="text-center py-10 bg-white/40 rounded-xl border border-dashed border-rose-200 text-muted-foreground text-sm">
+                No combos on Page 2.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3.5">
+                {page2Combos.map((it) => (
+                  <ComboRow key={it.id} item={it} onUpdate={update} onDelete={remove} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="space-y-3">
-        {items.map((it) => (
-          <ComboRow key={it.id} item={it} onUpdate={update} onDelete={remove} />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }
 
@@ -194,51 +352,66 @@ function ComboRow({
   const [services, setServices] = useState(item.services.join("\n"));
   const [price, setPrice] = useState(item.price);
   const [page, setPage] = useState(item.page);
-  const [sort, setSort] = useState(item.sort_order);
-  const dirty =
-    services !== item.services.join("\n") || price !== item.price || page !== item.page || sort !== item.sort_order;
+  
+  const dirty = services !== item.services.join("\n") || price !== item.price || page !== item.page;
 
   return (
-    <div className="rounded-xl border border-[color:var(--rose)]/15 bg-card p-4 grid sm:grid-cols-12 gap-3">
-      <div className="sm:col-span-1">
-        <label className="text-xs text-foreground/60">Page</label>
-        <select
-          className="w-full h-9 rounded-md border border-input bg-transparent px-2"
-          value={page}
-          onChange={(e) => setPage(Number(e.target.value))}
-        >
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-        </select>
+    <div className="rounded-xl border border-rose-100 bg-white p-4 shadow-sm hover:shadow-md transition-all duration-300 space-y-3">
+      <div>
+        <label className="text-[9px] font-extrabold uppercase text-rose-500 tracking-wider block mb-1">Services</label>
+        <Textarea 
+          rows={Math.max(2, item.services.length)} 
+          value={services} 
+          onChange={(e) => setServices(e.target.value)} 
+          className="min-h-9 border-rose-100 focus-visible:ring-rose-400 text-sm font-semibold py-1"
+        />
       </div>
-      <div className="sm:col-span-5">
-        <label className="text-xs text-foreground/60">Services</label>
-        <Textarea rows={3} value={services} onChange={(e) => setServices(e.target.value)} />
-      </div>
-      <div className="sm:col-span-2">
-        <label className="text-xs text-foreground/60">Price</label>
-        <Input value={price} onChange={(e) => setPrice(e.target.value)} />
-      </div>
-      <div className="sm:col-span-2">
-        <label className="text-xs text-foreground/60">Sort</label>
-        <Input type="number" value={sort} onChange={(e) => setSort(Number(e.target.value))} />
-      </div>
-      <div className="sm:col-span-2 flex flex-col gap-2 justify-end">
-        <Button
-          size="sm"
-          disabled={!dirty}
-          onClick={() =>
-            onUpdate(item, {
-              services: services.split(/\n|,/).map((s) => s.trim()).filter(Boolean),
-              price,
-              page,
-              sort_order: sort,
-            })
-          }
-        >
-          Save
-        </Button>
-        <Button size="sm" variant="destructive" onClick={() => onDelete(item.id)}>Delete</Button>
+
+      <div className="flex items-center gap-3 pt-2.5 border-t border-rose-50">
+        <div className="w-24 shrink-0">
+          <select
+            className="w-full h-8.5 rounded-lg border border-rose-100 bg-white px-1.5 focus:outline-none focus:ring-1 focus:ring-rose-400 text-xs font-semibold"
+            value={page}
+            onChange={(e) => setPage(Number(e.target.value))}
+          >
+            <option value={1}>Page 1</option>
+            <option value={2}>Page 2</option>
+          </select>
+        </div>
+
+        <div className="flex-1">
+          <Input 
+            value={price} 
+            onChange={(e) => setPrice(e.target.value)} 
+            className="h-8.5 border-rose-100 focus-visible:ring-rose-400 text-xs font-bold text-rose-700"
+            placeholder="Price"
+          />
+        </div>
+
+        <div className="flex gap-1.5 shrink-0">
+          <Button
+            size="sm"
+            disabled={!dirty}
+            onClick={() =>
+              onUpdate(item, {
+                services: services.split(/\n|,/).map((s) => s.trim()).filter(Boolean),
+                price,
+                page,
+              })
+            }
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 text-xs px-2.5 gap-1"
+          >
+            <Save className="w-3.5 h-3.5" /> Save
+          </Button>
+          <Button 
+            size="sm" 
+            variant="destructive" 
+            onClick={() => onDelete(item.id)}
+            className="font-bold h-8.5 text-xs px-2 flex items-center justify-center"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -250,7 +423,6 @@ function IndividualsPanel() {
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [sortOrder, setSortOrder] = useState(100);
 
   const load = async () => {
     const { data } = await supabase
@@ -258,84 +430,217 @@ function IndividualsPanel() {
       .select("*")
       .order("side")
       .order("category")
-      .order("sort_order");
+      .order("created_at", { ascending: true });
     setItems((data || []) as IndividualRow[]);
   };
+
   useEffect(() => {
     load();
   }, []);
 
   const add = async () => {
-    if (!category || !name || !price) return;
-    await supabase
+    if (!category.trim()) {
+      toast.error("Please enter a category name (e.g. Threading, Hair Cut).");
+      return;
+    }
+    if (!name.trim()) {
+      toast.error("Please enter a service name.");
+      return;
+    }
+    if (!price.trim()) {
+      toast.error("Please enter a price.");
+      return;
+    }
+
+    const { error } = await supabase
       .from("individual_services")
-      .insert({ side, category, name, price, sort_order: sortOrder });
-    setName("");
-    setPrice("");
-    load();
+      .insert({ side, category: category.trim(), name: name.trim(), price: price.trim() });
+    
+    if (error) {
+      toast.error("Failed to add individual service.");
+      console.error(error);
+    } else {
+      toast.success("Service added successfully!");
+      setName("");
+      setPrice("");
+      load();
+    }
   };
 
   const update = async (it: IndividualRow, patch: Partial<IndividualRow>) => {
-    await supabase.from("individual_services").update(patch).eq("id", it.id);
-    load();
-  };
-  const remove = async (id: string) => {
-    if (!confirm("Delete this service?")) return;
-    await supabase.from("individual_services").delete().eq("id", id);
-    load();
+    const { error } = await supabase.from("individual_services").update(patch).eq("id", it.id);
+    if (error) {
+      toast.error("Failed to update service.");
+      console.error(error);
+    } else {
+      toast.success("Changes saved!");
+      load();
+    }
   };
 
-  const categories = Array.from(new Set(items.map((i) => i.category))).sort();
+  const remove = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this service?")) return;
+    const { error } = await supabase.from("individual_services").delete().eq("id", id);
+    if (error) {
+      toast.error("Failed to delete service.");
+      console.error(error);
+    } else {
+      toast.success("Service deleted");
+      load();
+    }
+  };
+
+  const leftItems = items.filter((i) => i.side === "left");
+  const rightItems = items.filter((i) => i.side === "right");
+
+  const leftCategories = Array.from(new Set(leftItems.map((i) => i.category))).sort();
+  const rightCategories = Array.from(new Set(rightItems.map((i) => i.category))).sort();
 
   return (
-    <section className="space-y-4">
-      <h2 className="font-display text-2xl text-[color:var(--rose)]">Individual Services</h2>
+    <div className="space-y-8">
+      <Card className="border-rose-100 shadow-md overflow-hidden bg-white/70 backdrop-blur-sm rounded-2xl">
+        <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6">
+          <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
+            <Plus className="w-5 h-5 text-rose-500" /> Create New Individual Service
+          </CardTitle>
+          <CardDescription>Add an individual item, treatment, or makeup package to the menu.</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="grid sm:grid-cols-4 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Side Column</label>
+              <select
+                className="w-full h-10 rounded-lg border border-rose-100 bg-white px-3 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm font-semibold"
+                value={side}
+                onChange={(e) => setSide(e.target.value)}
+              >
+                <option value="left">Left Column (Page 1)</option>
+                <option value="right">Right Column (Page 2)</option>
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Category Name</label>
+              <Input 
+                list="cat-list-admin" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+                placeholder="e.g. Threading or Hair Cut" 
+                className="h-10 border-rose-100 focus-visible:ring-rose-400 font-semibold"
+              />
+              <datalist id="cat-list-admin">
+                {Array.from(new Set(items.map((i) => i.category))).sort().map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Service Name</label>
+              <Input 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                placeholder="e.g. Straight cut" 
+                className="h-10 border-rose-100 focus-visible:ring-rose-400 font-semibold"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider">Price tag</label>
+              <Input 
+                value={price} 
+                onChange={(e) => setPrice(e.target.value)} 
+                placeholder="e.g. 50 or 1500 - 2500" 
+                className="h-10 border-rose-100 focus-visible:ring-rose-400 font-semibold"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button 
+              onClick={add} 
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold h-10 rounded-lg px-6 shadow-md transition-all gap-2"
+            >
+              <Plus className="w-4 h-4" /> Add Service
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="rounded-2xl border border-[color:var(--rose)]/20 bg-card p-5 grid sm:grid-cols-6 gap-3">
-        <div className="sm:col-span-6 font-semibold">Add new service</div>
-        <label className="text-sm space-y-1">
-          Side
-          <select
-            className="w-full h-9 rounded-md border border-input bg-transparent px-3"
-            value={side}
-            onChange={(e) => setSide(e.target.value)}
-          >
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
-        </label>
-        <label className="text-sm space-y-1 sm:col-span-2">
-          Category
-          <Input list="cat-list" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Threading" />
-          <datalist id="cat-list">
-            {categories.map((c) => (
-              <option key={c} value={c} />
-            ))}
-          </datalist>
-        </label>
-        <label className="text-sm space-y-1">
-          Name
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Eye brow" />
-        </label>
-        <label className="text-sm space-y-1">
-          Price
-          <Input value={price} onChange={(e) => setPrice(e.target.value)} placeholder="50" />
-        </label>
-        <label className="text-sm space-y-1">
-          Sort
-          <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} />
-        </label>
-        <div className="sm:col-span-6">
-          <Button onClick={add}>Add service</Button>
+      <div className="space-y-4">
+        <h2 className="font-display text-2xl font-bold text-rose-900 px-1 border-b border-rose-100 pb-2">Current Individual Services</h2>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Left Column (Page 1) Individual Services */}
+          <div className="space-y-5 bg-rose-50/10 p-4 sm:p-5 rounded-2xl border border-rose-100">
+            <div className="flex justify-between items-center px-1 border-b border-rose-100/50 pb-2">
+              <h3 className="font-display text-lg font-bold text-rose-800 flex items-center gap-2">
+                <span>Left Column</span>
+                <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">Page 1 Services</span>
+              </h3>
+              <span className="text-xs text-muted-foreground font-semibold">{leftItems.length} items</span>
+            </div>
+
+            {leftCategories.length === 0 ? (
+              <div className="text-center py-10 bg-white/40 rounded-xl border border-dashed border-rose-200 text-muted-foreground text-sm">
+                No individual services on the Left Column.
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {leftCategories.map((catName) => {
+                  const catItems = leftItems.filter((i) => i.category === catName);
+                  return (
+                    <div key={catName} className="bg-white/60 backdrop-blur-sm rounded-xl border border-rose-100 p-4 space-y-3 shadow-sm">
+                      <div className="flex items-center gap-2 border-b border-rose-100/30 pb-1.5">
+                        <FolderOpen className="w-4 h-4 text-rose-500" />
+                        <h4 className="font-display text-md font-extrabold text-rose-800 uppercase tracking-wider">{catName}</h4>
+                      </div>
+                      <div className="grid gap-2">
+                        {catItems.map((it) => (
+                          <IndividualRowEditor key={it.id} item={it} onUpdate={update} onDelete={remove} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column (Page 2) Individual Services */}
+          <div className="space-y-5 bg-rose-50/10 p-4 sm:p-5 rounded-2xl border border-rose-100">
+            <div className="flex justify-between items-center px-1 border-b border-rose-100/50 pb-2">
+              <h3 className="font-display text-lg font-bold text-rose-800 flex items-center gap-2">
+                <span>Right Column</span>
+                <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">Page 2 Services</span>
+              </h3>
+              <span className="text-xs text-muted-foreground font-semibold">{rightItems.length} items</span>
+            </div>
+
+            {rightCategories.length === 0 ? (
+              <div className="text-center py-10 bg-white/40 rounded-xl border border-dashed border-rose-200 text-muted-foreground text-sm">
+                No individual services on the Right Column.
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {rightCategories.map((catName) => {
+                  const catItems = rightItems.filter((i) => i.category === catName);
+                  return (
+                    <div key={catName} className="bg-white/60 backdrop-blur-sm rounded-xl border border-rose-100 p-4 space-y-3 shadow-sm">
+                      <div className="flex items-center gap-2 border-b border-rose-100/30 pb-1.5">
+                        <FolderOpen className="w-4 h-4 text-rose-500" />
+                        <h4 className="font-display text-md font-extrabold text-rose-800 uppercase tracking-wider">{catName}</h4>
+                      </div>
+                      <div className="grid gap-2">
+                        {catItems.map((it) => (
+                          <IndividualRowEditor key={it.id} item={it} onUpdate={update} onDelete={remove} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="space-y-2">
-        {items.map((it) => (
-          <IndividualRowEditor key={it.id} item={it} onUpdate={update} onDelete={remove} />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }
 
@@ -352,33 +657,69 @@ function IndividualRowEditor({
   const [category, setCategory] = useState(item.category);
   const [name, setName] = useState(item.name);
   const [price, setPrice] = useState(item.price);
-  const [sort, setSort] = useState(item.sort_order);
-  const dirty =
-    side !== item.side || category !== item.category || name !== item.name || price !== item.price || sort !== item.sort_order;
+  
+  const dirty = side !== item.side || category !== item.category || name !== item.name || price !== item.price;
 
   return (
-    <div className="rounded-xl border border-[color:var(--rose)]/10 bg-card p-3 grid sm:grid-cols-12 gap-2 items-end">
-      <select
-        className="sm:col-span-1 h-9 rounded-md border border-input bg-transparent px-2"
-        value={side}
-        onChange={(e) => setSide(e.target.value)}
-      >
-        <option value="left">L</option>
-        <option value="right">R</option>
-      </select>
-      <Input className="sm:col-span-3" value={category} onChange={(e) => setCategory(e.target.value)} />
-      <Input className="sm:col-span-3" value={name} onChange={(e) => setName(e.target.value)} />
-      <Input className="sm:col-span-2" value={price} onChange={(e) => setPrice(e.target.value)} />
-      <Input className="sm:col-span-1" type="number" value={sort} onChange={(e) => setSort(Number(e.target.value))} />
-      <div className="sm:col-span-2 flex gap-2">
-        <Button
-          size="sm"
-          disabled={!dirty}
-          onClick={() => onUpdate(item, { side, category, name, price, sort_order: sort })}
-        >
-          Save
-        </Button>
-        <Button size="sm" variant="destructive" onClick={() => onDelete(item.id)}>×</Button>
+    <div className="rounded-xl border border-rose-50 bg-white/95 p-3.5 shadow-sm hover:shadow transition-all duration-200 space-y-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
+        <div>
+          <label className="text-[9px] font-extrabold uppercase text-rose-400 block mb-0.5">Service Name</label>
+          <Input 
+            className="h-8.5 border-rose-100 focus-visible:ring-rose-400 text-xs font-semibold" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+          />
+        </div>
+        <div>
+          <label className="text-[9px] font-extrabold uppercase text-rose-400 block mb-0.5">Category</label>
+          <Input 
+            className="h-8.5 border-rose-100 focus-visible:ring-rose-400 text-xs font-semibold" 
+            value={category} 
+            onChange={(e) => setCategory(e.target.value)} 
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 pt-2 border-t border-rose-50/50">
+        <div className="w-24 shrink-0">
+          <select
+            className="w-full h-8.5 rounded-lg border border-rose-100 bg-white px-1.5 focus:outline-none focus:ring-1 focus:ring-rose-400 text-xs font-semibold"
+            value={side}
+            onChange={(e) => setSide(e.target.value)}
+          >
+            <option value="left">Left Column</option>
+            <option value="right">Right Column</option>
+          </select>
+        </div>
+
+        <div className="flex-1">
+          <Input 
+            className="h-8.5 border-rose-100 focus-visible:ring-rose-400 text-xs font-bold text-rose-700" 
+            value={price} 
+            onChange={(e) => setPrice(e.target.value)} 
+            placeholder="Price"
+          />
+        </div>
+
+        <div className="flex gap-1.5 shrink-0">
+          <Button
+            size="sm"
+            disabled={!dirty}
+            onClick={() => onUpdate(item, { side, category, name, price })}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 px-2.5 text-xs gap-1"
+          >
+            <Save className="w-3 h-3" /> Save
+          </Button>
+          <Button 
+            size="sm" 
+            variant="destructive" 
+            onClick={() => onDelete(item.id)}
+            className="font-bold h-8.5 px-2 text-xs flex justify-center items-center"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
