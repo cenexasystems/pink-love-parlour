@@ -788,7 +788,7 @@ function Petals() {
 
 function Nav() {
   return (
-    <header className="relative z-30">
+    <header className="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/60 to-transparent pt-2">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="#top" className="flex items-center gap-3">
           <img
@@ -796,16 +796,16 @@ function Nav() {
             alt="Pink Love Beauty Studio Logo"
             width={44}
             height={44}
-            className="h-11 w-11 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
+            className="h-11 w-11 rounded-full object-cover shadow-[var(--shadow-soft)] border border-white/20"
           />
           <span className="flex flex-col leading-tight">
-            <span className="font-script text-xl text-[color:var(--rose)]">Pink Love</span>
-            <span className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground">Beauty Studio</span>
+            <span className="font-script text-xl text-white">Pink Love</span>
+            <span className="text-[10px] tracking-[0.35em] uppercase text-white/70">Beauty Studio</span>
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
           {["About", "Services", "Menu", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
-            <a key={l} href={`#${l.toLowerCase()}`} className="text-foreground/70 hover:text-[color:var(--rose)] transition hover-underline-expand py-1">
+            <a key={l} href={`#${l.toLowerCase()}`} className="text-white/80 hover:text-white transition hover-underline-expand py-1 font-medium drop-shadow-md">
               {l}
             </a>
           ))}
@@ -814,7 +814,7 @@ function Nav() {
           href="https://wa.me/919840874966"
           target="_blank"
           rel="noreferrer"
-          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm text-background hover:bg-[color:var(--rose)] transition"
+          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 shadow-lg"
         >
           Book Now
         </a>
@@ -825,77 +825,68 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative z-10 px-6 pt-6 pb-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[2.5rem]" style={{ background: "var(--gradient-hero)" }}>
-          <div
-            className="absolute inset-0 opacity-60 mix-blend-soft-light"
-            style={{ background: "var(--gradient-glow)" }}
-          />
-          <div className="grid lg:grid-cols-12 gap-10 p-8 sm:p-12 lg:p-16 items-center relative">
-            <div className="lg:col-span-7 text-foreground">
-              <div className="inline-flex items-center gap-2 rounded-full bg-background/70 backdrop-blur px-4 py-1.5 text-xs tracking-[0.25em] uppercase text-[color:var(--rose)] animate-fade-up animate-pulse-gentle">
-                ✦ Est. Kattankulathur · 5.0 ★ Google
-              </div>
-              <h1 className="mt-6 font-display text-5xl sm:text-7xl lg:text-[5.5rem] leading-[0.95] animate-fade-up cursor-default" style={{ animationDelay: "0.1s" }}>
-                Where <span className="font-script text-gradient-rose text-6xl sm:text-8xl lg:text-[6.5rem] align-baseline transition-transform hover:scale-105 inline-block duration-500">elegance</span>
-                <br /> meets <em className="not-italic text-gradient-rose">care.</em>
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-foreground/75 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-                A women-led aesthetic studio specializing in HD bridal makeovers, Korean glass-skin
-                facials, advanced haircuts and bridal jewelry — all wrapped in a touch of pink perfection.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-                <a
-                  href="https://wa.me/919840874966"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-background hover:bg-[color:var(--rose)] transition shadow-[var(--shadow-petal)] hover:shadow-2xl hover:scale-105 active:scale-95 duration-300 transform"
-                >
-                  Book a Consultation →
-                </a>
-                <a
-                  href="#services"
-                  className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-7 py-3.5 hover:border-[color:var(--rose)] hover:text-[color:var(--rose)] transition"
-                >
-                  Explore services
-                </a>
-              </div>
-              <dl className="mt-12 grid grid-cols-3 gap-6 max-w-md">
-                {[
-                  { k: "5.0★", v: "Google rating" },
-                  { k: "HD", v: "Bridal makeup" },
-                  { k: "All-in-1", v: "Beauty studio" },
-                ].map((s) => (
-                  <div key={s.v}>
-                    <dt className="font-display text-3xl text-[color:var(--rose)]">{s.k}</dt>
-                    <dd className="text-xs uppercase tracking-wider text-foreground/60 mt-1">{s.v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <div className="lg:col-span-5 relative">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] shadow-[var(--shadow-petal)] animate-float-slow">
-                <img
-                  src={heroBride}
-                  alt="HD bridal makeover at Pink Love Beauty Studio"
-                  width={600}
-                  height={800}
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.4_0.15_5/0.4)] via-transparent to-transparent" />
-              </div>
-              <div className="absolute -bottom-6 -left-6 rounded-2xl bg-background/95 backdrop-blur px-5 py-4 shadow-[var(--shadow-soft)] max-w-[220px]">
-                <div className="flex gap-0.5 text-[color:var(--gold)] text-sm">★★★★★</div>
-                <p className="text-xs mt-1 text-foreground/80 italic">
-                  "Pampered with love, style, and a touch of pink perfection."
-                </p>
-              </div>
-              <div className="absolute -top-4 -right-4 rounded-full bg-background/90 backdrop-blur px-4 py-2 text-xs tracking-widest uppercase text-[color:var(--rose)] shadow-[var(--shadow-soft)]">
-                ✦ HD Bridal
-              </div>
-            </div>
+    <section id="top" className="relative z-10 w-full min-h-[100svh] flex items-center overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 z-0 w-full h-full">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src="/videos/landing_page.mp4" type="video/mp4" />
+        </video>
+        {/* Elegant dark/rose overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-[color:var(--rose)] opacity-10 mix-blend-color" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 pt-32 flex flex-col items-start justify-center text-left h-full">
+        <div className="max-w-2xl flex flex-col items-start">
+          <p className="text-white/80 uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold mb-8 animate-fade-up border-l-2 border-[color:var(--rose)] pl-4">
+            Kattankulathur's Premier Beauty Studio
+          </p>
+          
+          <h1 className="font-display text-5xl sm:text-7xl lg:text-[6.5rem] leading-[1.05] animate-fade-up text-white" style={{ animationDelay: "0.1s" }}>
+            Where <span className="font-script text-[color:var(--rose)] text-6xl sm:text-8xl lg:text-[7.5rem] font-normal inline-block pr-2">elegance</span>
+            <br />
+            meets <em className="not-italic text-white">care.</em>
+          </h1>
+          
+          <p className="mt-8 text-base sm:text-lg text-white/80 animate-fade-up font-light max-w-xl leading-relaxed" style={{ animationDelay: "0.2s" }}>
+            A women-led aesthetic studio specializing in HD bridal makeovers, Korean glass-skin facials, and advanced styling.
+          </p>
+          
+          <div className="mt-12 flex flex-col sm:flex-row gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
+            <a
+              href="https://wa.me/919840874966"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center bg-white text-black px-10 py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-[color:var(--rose)] hover:text-white transition-colors duration-300 shadow-xl"
+            >
+              Book a Consultation
+            </a>
+            <a
+              href="#services"
+              className="inline-flex items-center justify-center border border-white/40 bg-black/20 backdrop-blur-sm text-white px-10 py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-colors duration-300"
+            >
+              Explore Services
+            </a>
           </div>
+
+          <dl className="mt-20 flex flex-wrap gap-x-12 gap-y-8 animate-fade-up border-t border-white/10 pt-8 w-full max-w-xl" style={{ animationDelay: "0.4s" }}>
+            {[
+              { k: "5.0★", v: "Google rating" },
+              { k: "HD", v: "Bridal makeup" },
+              { k: "All-in-1", v: "Beauty studio" },
+            ].map((s) => (
+              <div key={s.v} className="text-left">
+                <dt className="font-display text-3xl sm:text-4xl text-[color:var(--rose)] font-bold">{s.k}</dt>
+                <dd className="text-[10px] sm:text-xs uppercase tracking-widest text-white/70 mt-2 font-bold">{s.v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>
