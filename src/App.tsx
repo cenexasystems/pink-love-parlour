@@ -6,6 +6,14 @@ import serviceJewelry from "@/assets/service-jewelry.jpg";
 import g4 from "@/assets/gallery-4.jpg";
 import logo from "@/assets/logo.png";
 import { MenuBook } from "@/components/MenuBook";
+import { 
+  ShoppingBag, 
+  X, 
+  Minus, 
+  Plus, 
+  Trash2, 
+  User 
+} from "lucide-react";
 
 // Types
 interface IgPost {
@@ -126,8 +134,8 @@ const VIBES: Record<string, QuizOption[]> = {
 const MATCHES: Record<string, Record<string, LookMatch>> = {
   bridal: {
     royal: {
-      title: "Kryolan & MAC Royal Bridal Package",
-      price: "₹7,000 - ₹12,000",
+      title: "Mac / Kryolan",
+      price: "₹7,000 / ₹12,000",
       desc: "Traditional royal bridal makeovers utilizing professional Kryolan and MAC products. Specially designed to enhance your features for gorgeous South Indian and North Indian wedding celebrations.",
       features: [
         "Full face makeup using Kryolan or MAC",
@@ -135,10 +143,10 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Saree prepleating & drape setting",
         "Jewelry setting & placement"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Kryolan & MAC Royal Bridal Package' (₹7,000 - ₹12,000). I'd love to check dates and package details!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the Bridal Package: 'Mac / Kryolan' (₹7,000 / ₹12,000). I'd love to check dates and package details!"
     },
     dewy: {
-      title: "Airbrush Luminous Bridal Package",
+      title: "Airbrush Makeup",
       price: "₹25,000",
       desc: "The ultimate modern, dewy finish using state-of-the-art airbrush technology. Perfect for a flawless, lit-from-within glow that looks natural and behaves beautifully under HD cameras.",
       features: [
@@ -147,10 +155,10 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Advanced bridal hair styling",
         "Luxury lash extensions & saree draping"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Airbrush Luminous Bridal Package' (₹25,000). I'd love to check availability!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Airbrush Makeup' (₹25,000). I'd love to check availability!"
     },
     bold: {
-      title: "HD Sweat & Water-Proof Bridal Package",
+      title: "Hd / Sweat Proof / Water Proof",
       price: "₹15,000 - ₹20,000",
       desc: "High-definition bold makeup designed to resist sweat and moisture for up to 16 hours. Perfect for wedding stages and high-temperature outdoor setups.",
       features: [
@@ -159,12 +167,12 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Defined eye drama & premium false lashes",
         "Traditional or contemporary hair design"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'HD Sweat & Water-Proof Bridal Package' (₹15,000 - ₹20,000). I'd love to check details!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the Bridal Package: 'Hd / Sweat Proof / Water Proof' (₹15,000 - ₹20,000). I'd love to check details!"
     }
   },
   party: {
     soft: {
-      title: "Lite Party Makeover",
+      title: "Lite Makeup",
       price: "₹1,500 - ₹2,500",
       desc: "A gorgeous, lightweight makeup and hair setup. Ideal for bridesmaids, birthday parties, or attending family gatherings.",
       features: [
@@ -173,11 +181,11 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Simple eye shimmer & mascara",
         "Simple hair styling (blow dry or curls)"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Lite Party Makeover' (₹1,500 - ₹2,500). I'd like to book a session!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Lite Makeup' (₹1,500 - ₹2,500). I'd like to book a session!"
     },
     dramatic: {
-      title: "Premium Dramatic Party Glam",
-      price: "₹3,000 - ₹4,000",
+      title: "Engagement",
+      price: "₹7k - ₹15k",
       desc: "Focuses on bold eyes, glitter lids, or smokey accents, matched with a flawless base and contemporary hair styling.",
       features: [
         "Flawless evening base makeup",
@@ -185,11 +193,11 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Trendy hairstyle or half-updo",
         "Saree/Outfit draping assistance"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Premium Dramatic Party Glam' (₹3,000 - ₹4,000). I'd like to book this look!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Engagement' (7k, 8k, 10, 12k, 15k). I'd like to book this look!"
     },
     classic: {
-      title: "Classic Elegant Party Makeover",
-      price: "₹2,000 - ₹3,000",
+      title: "Puberty Makeup / Baby Shower Makeup",
+      price: "₹6k - ₹15k",
       desc: "Timeless sophistication featuring sharp winged eyeliner, classical red or nude lips, and a neat blow dry finish.",
       features: [
         "Clean semi-matte base makeup",
@@ -197,12 +205,12 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Volumizing blowout or sleek straight hair",
         "Outfit prepleating/draping assistance"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Classic Elegant Party Makeover' (₹2,000 - ₹3,000). I'd love to book this style!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Puberty Makeup / Baby Shower Makeup' (6k, 8k, 10k, 12k, 15k). I'd love to book this style!"
     }
   },
   skin: {
     dewy_skin: {
-      title: "Whitening, Brightening & Glowing Facial",
+      title: "FACIAL + WHITENING + BRIGHTENING + GLOWING",
       price: "₹1,500 each",
       desc: "An intensive whitening and brightening facial to bring out a dewy, glowing complexion for upcoming celebrations.",
       features: [
@@ -211,10 +219,10 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Brightening massage therapy",
         "Instantly glowing facial pack"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Whitening, Brightening & Glowing Facial' (₹1,500 each). I'd like to schedule a session!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'FACIAL + WHITENING + BRIGHTENING + GLOWING' (₹1,500 each). I'd like to schedule a session!"
     },
     plump: {
-      title: "Advanced Hydrafacial + D-Tan Combo",
+      title: "HYDRAFACIAL + D-TAN + EYEBROW THREADING",
       price: "₹1,999",
       desc: "Our best-selling hydration facial combo. Deeply exfoliates pores while infusing moisture for a plump, smooth glass-skin finish.",
       features: [
@@ -223,10 +231,10 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Eyebrow threading alignment",
         "Hydrating glow serum massage"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Advanced Hydrafacial + D-Tan Combo' (₹1,999). I'd love to book it!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'HYDRAFACIAL + D-TAN + EYEBROW THREADING' (₹1,999). I'd love to book it!"
     },
     detox: {
-      title: "Gold Facial & D-Tan Detox Combo",
+      title: "GOLD FACIAL + D-TAN (FACE + NECK) + PEDICURE",
       price: "₹1,500",
       desc: "A full skin detox and brighten combo. Removes tanning from the face and neck, and rejuvenates feet with a deep pedicure.",
       features: [
@@ -235,12 +243,12 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Soothing foot pedicure session",
         "Anti-tan cell revitalization"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Gold Facial & D-Tan Detox Combo' (₹1,500). I'd love to book an appointment!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'GOLD FACIAL + D-TAN (FACE + NECK) + PEDICURE' (₹1,500). I'd love to book an appointment!"
     }
   },
   hair: {
     waves: {
-      title: "Butterfly Cut & Volumizing Hairwash Combo",
+      title: "HAIRWASH + BUTTERFLY HAIRCUT",
       price: "₹800",
       desc: "Transform your hair with bouncy, trendy layers. Includes a deep professional wash and iron-style finish.",
       features: [
@@ -249,10 +257,10 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Volumizing blowout curls",
         "Premium styling serum application"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Butterfly Cut & Volumizing Hairwash Combo' (₹800). I'd love to book this style!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'HAIRWASH + BUTTERFLY HAIRCUT' (₹800). I'd love to book this style!"
     },
     sleek: {
-      title: "Keratin & Smoothning Treatment",
+      title: "Smoothning / Keratin / Botex",
       price: "₹3,000 - ₹15,000",
       desc: "Eliminates frizz and creates long-lasting sleekness. Custom keratin or smoothing treatments tailored to your hair type.",
       features: [
@@ -261,11 +269,11 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Silk-shine protective serum application",
         "Post-treatment care counseling"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Keratin & Smoothning Treatment' (₹3,000 - ₹15,000). I'd like to consult for my hair!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the Hair Treatment: 'Smoothning / Keratin / Botex' (₹3,000 - ₹15,000). I'd like to consult for my hair!"
     },
     traditional: {
-      title: "Advance Saree Prepleating & Styling",
-      price: "₹600 - ₹800",
+      title: "Advance Saree Prepleating",
+      price: "₹700",
       desc: "Traditional prepleating services paired with elegant hair setups. Perfect for school, college, or family celebrations.",
       features: [
         "Advance saree prepleating & box folding",
@@ -273,7 +281,7 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Basic haircut & eyebrow threading",
         "Neat hair styling finish"
       ],
-      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Advance Saree Prepleating & Styling' (₹600 - ₹800). I'd love to book it!"
+      waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the 'Advance Saree Prepleating' (₹700). I'd love to book it!"
     }
   }
 };
@@ -371,7 +379,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What are your opening hours?",
-    a: "Monday to Saturday: 10:05 AM – 9:05 PM. Sunday: 10:07 AM – 9:07 PM.",
+    a: "Monday to Sunday: 10:00 AM – 9:00 PM.",
   },
 ];
 
@@ -426,15 +434,125 @@ const REVIEWS = [
   }
 ];
 
+const TIME_SLOTS = [
+  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM",
+  "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
+  "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM",
+  "06:00 PM", "06:30 PM", "07:00 PM", "07:30 PM",
+  "08:00 PM"
+];
+
 // Core App Layout Component
 import { Admin } from "@/components/Admin";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 export default function App() {
   if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
-    return <Admin />;
+    return (
+      <>
+        <Admin />
+        <Toaster closeButton position="top-right" />
+      </>
+    );
   }
+
+  const todayStr = (() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  })();
+
+  const [cart, setCart] = useState<any[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [customerName, setCustomerName] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("pl_customer_name") || "";
+    }
+    return "";
+  });
+  const [bookingDate, setBookingDate] = useState(todayStr);
+  const [bookingTime, setBookingTime] = useState("10:00 AM");
+
+  useEffect(() => {
+    const loadCart = () => {
+      const saved = localStorage.getItem("pl_booking_cart");
+      setCart(saved ? JSON.parse(saved) : []);
+    };
+    loadCart();
+    window.addEventListener("pl_cart_change", loadCart);
+    return () => window.removeEventListener("pl_cart_change", loadCart);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pl_customer_name", customerName);
+    }
+  }, [customerName]);
+
+  const removeFromCart = (id: string) => {
+    const updated = cart.filter((item) => item.id !== id);
+    setCart(updated);
+    localStorage.setItem("pl_booking_cart", JSON.stringify(updated));
+    window.dispatchEvent(new Event("pl_cart_change"));
+    toast.info("Removed service from booking list");
+  };
+
+  const updateQuantity = (id: string, qty: number) => {
+    if (qty <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    const updated = cart.map((item) => (item.id === id ? { ...item, quantity: qty } : item));
+    setCart(updated);
+    localStorage.setItem("pl_booking_cart", JSON.stringify(updated));
+    window.dispatchEvent(new Event("pl_cart_change"));
+  };
+
+  const calculateTotal = () => {
+    let sum = 0;
+    let hasSpecials = false;
+    cart.forEach((item) => {
+      const cleanPrice = item.price.replace(/[₹\s,]/g, "");
+      if (
+        cleanPrice.includes("-") ||
+        cleanPrice.toLowerCase().includes("each") ||
+        cleanPrice.toLowerCase().includes("to")
+      ) {
+        hasSpecials = true;
+      } else {
+        const value = parseInt(cleanPrice) || 0;
+        sum += value * item.quantity;
+      }
+    });
+
+    if (sum === 0 && hasSpecials) {
+      return "Based on items selected";
+    }
+    return `₹${sum}${hasSpecials ? " + specials" : ""}`;
+  };
+
+  const handleWhatsAppCheckout = () => {
+    if (!customerName.trim()) {
+      toast.error("Please enter your name to proceed.");
+      return;
+    }
+
+    const itemsText = cart
+      .map((item) => `• ${item.name} (Qty: ${item.quantity}) — ${item.price}`)
+      .join("\n");
+
+    const message = `Hi Pink Love Beauty Studio! 🌸\n\nI would like to book an appointment.\n\n👤 Customer Name: ${customerName.trim()}\n📅 Date: ${bookingDate}\n⏰ Preferred Slot: ${bookingTime}\n\n💅 Selected Services:\n${itemsText}\n\n💵 Estimated Total: ${calculateTotal()}\n\nPlease confirm availability for booking. Thank you!`;
+
+    const waUrl = `https://wa.me/919840874966?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank");
+  };
   return (
     <div className="relative overflow-x-hidden bg-background text-foreground pb-24 md:pb-0">
+      <Toaster closeButton position="top-right" />
       <Petals />
       <Nav />
       <Hero />
@@ -450,6 +568,183 @@ export default function App() {
       <Visit />
       <Footer />
       <MobileStickyNav />
+
+      {/* Floating Cart Button */}
+      {cart.length > 0 && (
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="fixed bottom-24 md:bottom-6 right-6 z-[9999] bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white rounded-full p-4.5 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/20 animate-pulse-gentle"
+        >
+          <div className="relative">
+            <ShoppingBag className="w-6 h-6" />
+            <span className="absolute -top-2.5 -right-2.5 bg-white text-[color:var(--rose)] font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border border-[color:var(--rose)]/20 shadow-md">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)}
+            </span>
+          </div>
+          <span className="font-display font-extrabold text-sm tracking-wide pr-1 hidden sm:inline">
+            View Bookings
+          </span>
+        </button>
+      )}
+
+      {/* Booking Cart Drawer Overlay */}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-[10000] overflow-hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity cursor-pointer" 
+            onClick={() => setIsCartOpen(false)}
+          />
+
+          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col h-full rounded-l-3xl border-l border-rose-100 overflow-hidden animate-slide-in-right">
+              
+              {/* Drawer Header */}
+              <div className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 p-6 border-b border-rose-100 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-[color:var(--rose)] shadow-sm">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl font-bold text-rose-900 leading-tight">Your Booking List</h3>
+                    <p className="text-xs text-muted-foreground font-semibold">
+                      {cart.reduce((sum, i) => sum + i.quantity, 0)} services selected
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsCartOpen(false)}
+                  className="w-8 h-8 rounded-full hover:bg-rose-50 flex items-center justify-center text-muted-foreground hover:text-[color:var(--rose)] transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Drawer Items List */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {cart.length === 0 ? (
+                  <div className="text-center py-20 text-muted-foreground space-y-3">
+                    <div className="text-4xl animate-bounce-subtle">🌸</div>
+                    <p className="font-bold text-rose-800">Your list is empty.</p>
+                    <p className="text-xs max-w-xs mx-auto text-muted-foreground/80 leading-relaxed">
+                      Browse the menu card and add the packages or individual services you want to book!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {cart.map((item) => (
+                      <div key={item.id} className="flex flex-col p-4 rounded-2xl border border-rose-100 bg-rose-50/5 hover:bg-rose-50/15 transition-colors gap-3 shadow-sm">
+                        <div className="flex justify-between items-start gap-3">
+                          <span className="font-display text-sm font-bold uppercase text-foreground leading-tight">{item.name}</span>
+                          <button 
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-muted-foreground hover:text-rose-600 transition-colors p-0.5 cursor-pointer"
+                          >
+                            <Trash2 className="w-4.5 h-4.5" />
+                          </button>
+                        </div>
+                        <div className="flex justify-between items-center pt-2.5 border-t border-rose-100/40">
+                          <span className="text-sm font-bold text-rose-700 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200/50 shadow-xs tracking-tight">
+                            {item.price}
+                          </span>
+                          
+                          {/* Quantity Controls */}
+                          <div className="flex items-center border border-rose-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                            <button 
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              className="px-2.5 py-1 hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
+                            >
+                              <Minus className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="px-3 text-sm font-bold text-foreground min-w-8 text-center">{item.quantity}</span>
+                            <button 
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="px-2.5 py-1 hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Drawer Checkout Form */}
+              {cart.length > 0 && (
+                <div className="p-6 border-t border-rose-100 bg-gradient-to-b from-rose-50/10 to-rose-50/30 space-y-4.5">
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-xs font-extrabold text-rose-900 uppercase tracking-widest">Estimated Total</span>
+                    <span className="font-sans text-2xl sm:text-3xl font-bold text-rose-800 bg-rose-50 px-4 py-1.5 rounded-xl border border-rose-200 shadow-sm tracking-tight">
+                      {calculateTotal()}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-rose-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-rose-500" /> Enter Your Name <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Priya Sharma"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="w-full h-11 px-3.5 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm shadow-sm transition-all text-zinc-900"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-rose-900 uppercase tracking-wider block">
+                        📅 Preferred Date
+                      </label>
+                      <input
+                        type="date"
+                        min={todayStr}
+                        value={bookingDate}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val && val < todayStr) {
+                            setBookingDate(todayStr);
+                            toast.warning("Past dates cannot be selected.");
+                          } else {
+                            setBookingDate(val);
+                          }
+                        }}
+                        className="w-full h-11 px-3 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-xs sm:text-sm shadow-sm transition-all text-zinc-900"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-rose-900 uppercase tracking-wider block">
+                        ⏰ Preferred Time
+                      </label>
+                      <select
+                        value={bookingTime}
+                        onChange={(e) => setBookingTime(e.target.value)}
+                        className="w-full h-11 px-3 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-xs sm:text-sm shadow-sm transition-all text-zinc-900"
+                      >
+                        {TIME_SLOTS.map((slot) => (
+                          <option key={slot} value={slot}>
+                            {slot}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleWhatsAppCheckout}
+                    className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/10"
+                  >
+                    Proceed to WhatsApp Booking
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1184,8 +1479,67 @@ function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
 }
 
 function Reviews() {
-  const row1 = [REVIEWS[0], REVIEWS[1], REVIEWS[2]];
-  const row2 = [REVIEWS[3], REVIEWS[4], REVIEWS[5]];
+  const [localReviews, setLocalReviews] = useState<any[]>([]);
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
+  const [formName, setFormName] = useState("");
+  const [formService, setFormService] = useState("");
+  const [formStars, setFormStars] = useState(5);
+  const [formText, setFormText] = useState("");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("pinklove_local_reviews");
+    if (stored) {
+      try {
+        setLocalReviews(JSON.parse(stored));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formName.trim() || !formService.trim() || !formText.trim()) return;
+
+    const newReview = {
+      name: formName.trim(),
+      service: formService.trim(),
+      text: formText.trim(),
+      stars: formStars,
+      date: "Just now",
+      tag: "Verified Guest"
+    };
+
+    const updated = [newReview, ...localReviews];
+    setLocalReviews(updated);
+    localStorage.setItem("pinklove_local_reviews", JSON.stringify(updated));
+
+    // Reset form
+    setFormName("");
+    setFormService("");
+    setFormStars(5);
+    setFormText("");
+    setIsWriteOpen(false);
+
+    toast.success("Thank you! Your review has been added to our board.");
+  };
+
+  const allReviews = [...localReviews, ...REVIEWS];
+
+  // Dynamically divide items into two balanced rows
+  const row1: any[] = [];
+  const row2: any[] = [];
+  allReviews.forEach((review, idx) => {
+    if (idx % 2 === 0) {
+      row1.push(review);
+    } else {
+      row2.push(review);
+    }
+  });
+
+  // Safe fallback to make sure there are always items in both rows
+  if (row1.length === 0) row1.push(...REVIEWS.slice(0, 3));
+  if (row2.length === 0) row2.push(...REVIEWS.slice(3, 6));
 
   return (
     <section id="reviews" className="relative z-10 py-24 bg-gradient-to-b from-background to-[color:var(--blush)]/35 overflow-hidden w-full">
@@ -1200,50 +1554,129 @@ function Reviews() {
         <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
           Real stories and kind words from guests who have experienced our signature care.
         </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <button
+            onClick={() => setIsWriteOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-[color:var(--rose)] hover:bg-[color:var(--rose)]/90 text-white px-7 py-3 text-sm font-bold shadow-[var(--shadow-petal)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+          >
+            ✍️ Share Your Review
+          </button>
+          <a
+            href="https://wa.me/919840874966"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-[color:var(--rose)]/30 px-7 py-3 text-sm font-semibold hover:bg-[color:var(--rose)] hover:text-white hover:border-transparent transition-all duration-300"
+          >
+            Review us on Google →
+          </a>
+        </div>
       </div>
 
       {/* Testimonials moving container - Edge-to-Edge */}
       <div className="space-y-10 relative w-full">
-        
         {/* Row 1: Left to Right */}
         <div className="relative flex w-full overflow-x-hidden py-4 hover-pause-row">
-          {/* Mask gradients for fading edge effect */}
           <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
           
           <div className="flex gap-8 whitespace-nowrap animate-marquee-ltr">
-            {[...row1, ...row1, ...row1, ...row1].map((review, i) => (
-              <ReviewCard key={`r1-${i}`} review={review} />
+            {/* Repeat items if they are too few to ensure smooth marquee scrolling */}
+            {(row1.length < 4 ? [...row1, ...row1, ...row1, ...row1] : [...row1, ...row1]).map((review, i) => (
+              <ReviewCard key={`r1-${i}-${review.name}`} review={review} />
             ))}
           </div>
         </div>
 
         {/* Row 2: Right to Left */}
         <div className="relative flex w-full overflow-x-hidden py-4 hover-pause-row">
-          {/* Mask gradients for fading edge effect */}
           <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
 
           <div className="flex gap-8 whitespace-nowrap animate-marquee-rtl">
-            {[...row2, ...row2, ...row2, ...row2].map((review, i) => (
-              <ReviewCard key={`r2-${i}`} review={review} />
+            {(row2.length < 4 ? [...row2, ...row2, ...row2, ...row2] : [...row2, ...row2]).map((review, i) => (
+              <ReviewCard key={`r2-${i}-${review.name}`} review={review} />
             ))}
           </div>
         </div>
-
       </div>
 
-      {/* Centered bounded CTA */}
-      <div className="text-center mt-16 px-6">
-        <a
-          href="https://wa.me/919840874966"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-[color:var(--rose)]/30 px-8 py-3 text-sm font-semibold hover:bg-[color:var(--rose)] hover:text-white hover:border-transparent transition-all duration-300"
-        >
-          Review us on Google →
-        </a>
-      </div>
+      {/* Write Review Dialog Popup */}
+      {isWriteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="absolute inset-0 cursor-pointer" onClick={() => setIsWriteOpen(false)} />
+          <div className="relative w-full max-w-md bg-white rounded-[32px] border border-rose-100 p-8 shadow-[0_25px_60px_-15px_rgba(219,112,147,0.2)] z-10 transform scale-100 transition-all duration-300">
+            <button
+              onClick={() => setIsWriteOpen(false)}
+              className="absolute right-5 top-5 w-8 h-8 rounded-full hover:bg-rose-50 flex items-center justify-center text-muted-foreground hover:text-[color:var(--rose)] transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+            <h3 className="font-display text-2xl font-bold text-rose-950 mb-1">Share Your Experience</h3>
+            <p className="text-xs text-muted-foreground mb-6">Your review will be shown instantly on our board!</p>
+            
+            <form onSubmit={handleReviewSubmit} className="space-y-4 text-left">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-rose-950 uppercase tracking-wider block">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  placeholder="e.g. Priya Sundar"
+                  className="w-full h-11 px-3.5 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm shadow-sm transition-all text-zinc-900"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-rose-950 uppercase tracking-wider block">Service Received</label>
+                <input
+                  type="text"
+                  required
+                  value={formService}
+                  onChange={(e) => setFormService(e.target.value)}
+                  placeholder="e.g. HD Bridal Makeover"
+                  className="w-full h-11 px-3.5 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm shadow-sm transition-all text-zinc-900"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-rose-950 uppercase tracking-wider block mb-1">Rating</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFormStars(star)}
+                      className="text-2xl transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+                    >
+                      <span className={star <= formStars ? "text-[color:var(--gold)]" : "text-zinc-300"}>★</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-rose-950 uppercase tracking-wider block">Your Review</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={formText}
+                  onChange={(e) => setFormText(e.target.value)}
+                  placeholder="Tell us what you loved about your visit..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm shadow-sm transition-all resize-none text-zinc-900"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300 cursor-pointer"
+              >
+                Submit Review
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1323,7 +1756,7 @@ function Visit() {
           <h2 className="font-display text-4xl sm:text-5xl mt-2">Come for a touch of pink perfection.</h2>
           <div className="mt-10 space-y-6 text-background/85">
             <Info label="Address" value="No 04 Udaiyaar Street, Ninnakarai Road, Kattankulathur, Tamil Nadu 603203" />
-            <Info label="Hours" value={<><div>Mon – Sat · 10:05 AM – 9:05 PM</div><div>Sun · 10:07 AM – 9:07 PM</div></>} />
+            <Info label="Hours" value={<><div>Mon – Sun · 10:00 AM – 9:00 PM</div></>} />
             <Info label="Phone / WhatsApp" value={<a href="tel:+919840874966" className="hover:text-[color:var(--petal)]">+91 98408 74966</a>} />
             <Info label="Instagram" value={<a href="https://www.instagram.com/pinklove_beautystudio/" target="_blank" rel="noreferrer" className="hover:text-[color:var(--petal)]">@pinklove_beautystudio</a>} />
           </div>
@@ -1332,20 +1765,41 @@ function Visit() {
             <a href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-background/30 px-6 py-3 hover:border-[color:var(--petal)] transition">Directions</a>
           </div>
         </div>
-        <div className="rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] min-h-[400px]">
-          <iframe
-            title="Pink Love Beauty Studio location"
-            src="https://www.google.com/maps?q=Kattankulathur,+Tamil+Nadu+603203&output=embed"
-            className="h-full w-full min-h-[400px]"
-            loading="lazy"
-          />
+        <div className="relative rounded-[40px] overflow-hidden p-6 bg-gradient-to-tr from-rose-100/50 via-white to-pink-100/50 border border-rose-200/60 shadow-[0_24px_50px_rgba(219,112,147,0.15)] flex flex-col min-h-[440px] group">
+          {/* Decorative pink elements resembling a luxury tablet */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-rose-200/70" />
+          <div className="flex items-center gap-2 mb-4 px-2">
+            <span className="w-3 h-3 rounded-full bg-rose-400" />
+            <span className="w-3 h-3 rounded-full bg-pink-300" />
+            <span className="w-3 h-3 rounded-full bg-rose-200" />
+            <span className="ml-auto text-[10px] font-bold text-rose-800 uppercase tracking-widest bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100/70">
+              📍 Find Us Instantly
+            </span>
+          </div>
+          <div className="flex-1 rounded-[24px] overflow-hidden shadow-inner border border-rose-100/40 min-h-[350px] relative group/map">
+            <iframe
+              title="Pink Love Beauty Studio location"
+              src="https://maps.google.com/maps?q=Pink%20Love%20Beauty%20Studio%20Kattankulathur&t=&z=17&ie=UTF8&iwloc=A&output=embed"
+              className="h-full w-full min-h-[350px] border-none"
+              loading="lazy"
+            />
+            {/* Interactive maps link overlay */}
+            <a 
+              href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" 
+              target="_blank" 
+              rel="noreferrer"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] sm:w-auto bg-[color:var(--rose)] text-white hover:bg-[color:var(--rose)]/90 font-extrabold px-6 py-3 rounded-full shadow-[0_10px_25px_rgba(219,112,147,0.4)] flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 text-xs sm:text-sm text-center border border-white/20"
+            >
+              <span>🗺️ Open in Google Maps (App / Web)</span>
+            </a>
+          </div>
         </div>
       </div>
       <div className="mx-auto max-w-7xl mt-10 grid sm:grid-cols-7 gap-2 text-center text-xs">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => (
           <div key={d} className={`rounded-2xl p-4 ${i === 1 || i === 3 || i === 5 ? "bg-[color:var(--rose)] text-background" : "bg-[color:var(--blush)]/60"}`}>
             <div className="font-display text-lg">{d}</div>
-            <div className="opacity-80 mt-1">{i === 6 ? "10:07 – 9:07" : "10:05 – 9:05"}</div>
+            <div className="opacity-80 mt-1">10:00 AM – 9:00 PM</div>
             {(i === 1 || i === 3 || i === 5) && <div className="mt-2 text-[10px] uppercase tracking-widest">Busy</div>}
           </div>
         ))}
