@@ -101,35 +101,16 @@ const DEFAULT_INDIVIDUALS: IndividualRow[] = [
   { id: "i32", side: "right", category: "Party Makeup", name: "Baby Shower Makeup", price: "6k, 8k, 10k, 12k, 15k", sort_order: 31 }
 ];
 
-export function MenuBook() {
+export interface MenuBookProps {
+  cart: CartItem[];
+  onAddToCart: (id: string, name: string, price: string, type: "combo" | "individual") => void;
+}
+
+export function MenuBook({ cart, onAddToCart }: MenuBookProps) {
   const [activeTab, setActiveTab] = useState<"combos" | "alacarte">("combos");
   const [combos, setCombos] = useState<ComboItem[]>([]);
   const [individuals, setIndividuals] = useState<IndividualRow[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Cart State (Initialized from LocalStorage)
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("pl_booking_cart");
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-  // Synchronize cart state with localStorage and dispatch event
-  useEffect(() => {
-    localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("pl_cart_change"));
-  }, [cart]);
-
-  // Synchronize cart state with other components
-  useEffect(() => {
-    const handleCartSync = () => {
-      const saved = localStorage.getItem("pl_booking_cart");
-      setCart(saved ? JSON.parse(saved) : []);
-    };
-    window.addEventListener("pl_cart_change", handleCartSync);
-    return () => window.removeEventListener("pl_cart_change", handleCartSync);
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -171,21 +152,6 @@ export function MenuBook() {
   const leftCats = groupBy(individuals, "left");
   const rightCats = groupBy(individuals, "right");
 
-  const addToCart = (id: string, name: string, price: string, type: "combo" | "individual") => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === id);
-      if (existing) {
-        toast.success(`Incremented quantity for ${name}`);
-        return prev.map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      toast.success(`Added ${name} to your Booking List!`);
-      return [...prev, { id, name, price, quantity: 1, type }];
-    });
-  };
-
-
   const renderComboList = (list: ComboItem[]) => (
     <div className="grid grid-cols-1 gap-5">
       {list.map((item) => {
@@ -212,7 +178,7 @@ export function MenuBook() {
                 </span>
                 
                 <button
-                  onClick={() => addToCart(item.id, name, item.price, "combo")}
+                  onClick={() => onAddToCart(item.id, name, item.price, "combo")}
                   className={`font-display text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-sm border cursor-pointer flex items-center gap-1.5 ${
                     inCart 
                       ? "bg-emerald-500 hover:bg-emerald-600 border-emerald-500 text-white" 
@@ -258,7 +224,7 @@ export function MenuBook() {
                       {displayPrice}
                     </span>
                     <button
-                      onClick={() => addToCart(item.id, item.name, displayPrice, "individual")}
+                      onClick={() => onAddToCart(item.id, item.name, displayPrice, "individual")}
                       className={`font-display text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm border cursor-pointer ${
                         inCart
                           ? "bg-emerald-500 hover:bg-emerald-600 border-emerald-500 text-white"
