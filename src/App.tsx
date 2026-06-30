@@ -6,6 +6,7 @@ import serviceJewelry from "@/assets/service-jewelry.jpg";
 import g4 from "@/assets/gallery-4.jpg";
 import logo from "@/assets/logo.png";
 import { MenuBook } from "@/components/MenuBook";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   ShoppingBag, 
   X, 
@@ -32,6 +33,7 @@ interface GalleryImage {
   src: string;
   cloudinaryId?: string;
   alt: string;
+  position?: number;
 }
 
 interface QuizOption {
@@ -73,7 +75,7 @@ const SERVICES = [
   },
 ];
 
-const GALLERY: GalleryImage[] = [
+const DEFAULT_GALLERY: GalleryImage[] = [
   {
     src: "",
     cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
@@ -346,14 +348,6 @@ const CLOUDINARY_VIDEOS: IgPost[] = [
     timestamp: new Date().toISOString(),
     cloudinaryPublicId: "v1782023397/WhatsApp_Video_2026-06-18_at_20.10.27_mgksgd",
   },
-  {
-    id: "c_vid_7",
-    media_type: "VIDEO",
-    permalink: "https://www.instagram.com/pinklove_beautystudio/",
-    caption: "Client feedback: Celebrating premium beauty rituals at Pink Love! 💕✨",
-    timestamp: new Date().toISOString(),
-    cloudinaryPublicId: "v1782023189/WhatsApp_Video_2026-06-18_at_20.10.28_qux8au",
-  },
 ];
 
 const FAQ_ITEMS = [
@@ -458,6 +452,15 @@ export default function App() {
     );
   }
 
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/gallery")) {
+    return (
+      <>
+        <GalleryPage />
+        <Toaster closeButton position="top-right" />
+      </>
+    );
+  }
+
   const todayStr = (() => {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -466,7 +469,13 @@ export default function App() {
     return `${yyyy}-${mm}-${dd}`;
   })();
 
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<any[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("pl_booking_cart");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [customerName, setCustomerName] = useState(() => {
     if (typeof window !== "undefined") {
@@ -478,14 +487,9 @@ export default function App() {
   const [bookingTime, setBookingTime] = useState("10:00 AM");
 
   useEffect(() => {
-    const loadCart = () => {
-      const saved = localStorage.getItem("pl_booking_cart");
-      setCart(saved ? JSON.parse(saved) : []);
-    };
-    loadCart();
-    window.addEventListener("pl_cart_change", loadCart);
-    return () => window.removeEventListener("pl_cart_change", loadCart);
-  }, []);
+    localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("pl_cart_change"));
+  }, [cart]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -493,11 +497,22 @@ export default function App() {
     }
   }, [customerName]);
 
+  const addToCart = (id: string, name: string, price: string, type: "combo" | "individual") => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === id);
+      if (existing) {
+        toast.success(`Incremented quantity for ${name}`);
+        return prev.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      toast.success(`Added ${name} to your Booking List!`);
+      return [...prev, { id, name, price, quantity: 1, type }];
+    });
+  };
+
   const removeFromCart = (id: string) => {
-    const updated = cart.filter((item) => item.id !== id);
-    setCart(updated);
-    localStorage.setItem("pl_booking_cart", JSON.stringify(updated));
-    window.dispatchEvent(new Event("pl_cart_change"));
+    setCart((prev) => prev.filter((item) => item.id !== id));
     toast.info("Removed service from booking list");
   };
 
@@ -506,10 +521,7 @@ export default function App() {
       removeFromCart(id);
       return;
     }
-    const updated = cart.map((item) => (item.id === id ? { ...item, quantity: qty } : item));
-    setCart(updated);
-    localStorage.setItem("pl_booking_cart", JSON.stringify(updated));
-    window.dispatchEvent(new Event("pl_cart_change"));
+    setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: qty } : item)));
   };
 
   const calculateTotal = () => {
@@ -559,7 +571,7 @@ export default function App() {
       <Marquee />
       <About />
       <Services />
-      <MenuBook />
+      <MenuBook cart={cart} onAddToCart={addToCart} />
       <LookFinder />
       <Gallery />
       <Reels />
@@ -573,7 +585,7 @@ export default function App() {
       {cart.length > 0 && (
         <button
           onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-24 md:bottom-6 right-6 z-[9999] bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white rounded-full p-4.5 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/20 animate-pulse-gentle"
+          className="fixed bottom-[7.5rem] md:bottom-6 right-4 sm:right-6 z-[9999] bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white rounded-full p-4.5 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/20 animate-pulse-gentle"
         >
           <div className="relative">
             <ShoppingBag className="w-6 h-6" />
@@ -789,21 +801,21 @@ function Petals() {
 function Nav() {
   return (
     <header className="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/60 to-transparent pt-2">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <a href="#top" className="flex items-center gap-3">
+      <div className="flex w-full items-center justify-between px-4 sm:px-10 lg:px-16 py-4 sm:py-6">
+        <a href="#top" className="flex items-center gap-2 sm:gap-4">
           <img
             src={logo}
             alt="Pink Love Beauty Studio Logo"
-            width={44}
-            height={44}
-            className="h-11 w-11 rounded-full object-cover shadow-[var(--shadow-soft)] border border-white/20"
+            width={80}
+            height={80}
+            className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-full object-cover shadow-[var(--shadow-soft)] border border-white/20 transition-all duration-300"
           />
           <span className="flex flex-col leading-tight">
-            <span className="font-script text-xl text-white">Pink Love</span>
-            <span className="text-[10px] tracking-[0.35em] uppercase text-white/70">Beauty Studio</span>
+            <span className="font-script text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white">Pink Love</span>
+            <span className="text-[8px] sm:text-[10px] md:text-xs tracking-[0.35em] uppercase text-white/70">Beauty Studio</span>
           </span>
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
+        <nav className="hidden lg:flex items-center gap-8 text-sm tracking-wide">
           {["About", "Services", "Menu", "Reviews", "Gallery", "Reels", "Visit"].map((l) => (
             <a key={l} href={`#${l.toLowerCase()}`} className="text-white/80 hover:text-white transition hover-underline-expand py-1 font-medium drop-shadow-md">
               {l}
@@ -814,7 +826,7 @@ function Nav() {
           href="https://wa.me/919840874966"
           target="_blank"
           rel="noreferrer"
-          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 shadow-lg"
+          className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-white px-3.5 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap"
         >
           Book Now
         </a>
@@ -842,14 +854,14 @@ function Hero() {
         <div className="absolute inset-0 bg-[color:var(--rose)] opacity-10 mix-blend-color" />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 pt-32 flex flex-col items-start justify-center text-left h-full">
+      <div className="relative z-10 w-full px-4 sm:px-10 lg:px-16 py-20 pt-36 sm:pt-40 md:pt-44 lg:pt-48 flex flex-col items-start justify-center text-left h-full">
         <div className="max-w-2xl flex flex-col items-start">
           <p className="text-white/80 uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold mb-8 animate-fade-up border-l-2 border-[color:var(--rose)] pl-4">
             Kattankulathur's Premier Beauty Studio
           </p>
           
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-[6.5rem] leading-[1.05] animate-fade-up text-white" style={{ animationDelay: "0.1s" }}>
-            Where <span className="font-script text-[color:var(--rose)] text-6xl sm:text-8xl lg:text-[7.5rem] font-normal inline-block pr-2">elegance</span>
+          <h1 className="font-display text-4xl sm:text-6xl lg:text-[6.5rem] leading-[1.05] animate-fade-up text-white" style={{ animationDelay: "0.1s" }}>
+            Where <span className="font-script text-[color:var(--rose)] text-5xl sm:text-7xl lg:text-[7.5rem] font-normal inline-block pr-2">elegance</span>
             <br />
             meets <em className="not-italic text-white">care.</em>
           </h1>
@@ -858,18 +870,16 @@ function Hero() {
             A women-led aesthetic studio specializing in HD bridal makeovers, Korean glass-skin facials, and advanced styling.
           </p>
           
-          <div className="mt-12 flex flex-col sm:flex-row gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
+          <div className="mt-12 flex flex-col sm:flex-row gap-4 animate-fade-up w-full sm:w-auto" style={{ animationDelay: "0.3s" }}>
             <a
-              href="https://wa.me/919840874966"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center bg-white text-black px-10 py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-[color:var(--rose)] hover:text-white transition-colors duration-300 shadow-xl"
+              href="#menu"
+              className="inline-flex items-center justify-center bg-white text-black px-6 sm:px-10 py-3.5 sm:py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-[color:var(--rose)] hover:text-white transition-colors duration-300 shadow-xl w-full sm:w-auto"
             >
               Book a Consultation
             </a>
             <a
               href="#services"
-              className="inline-flex items-center justify-center border border-white/40 bg-black/20 backdrop-blur-sm text-white px-10 py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-colors duration-300"
+              className="inline-flex items-center justify-center border border-white/40 bg-black/20 backdrop-blur-sm text-white px-6 sm:px-10 py-3.5 sm:py-4 text-xs sm:text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-colors duration-300 w-full sm:w-auto"
             >
               Explore Services
             </a>
@@ -1149,41 +1159,491 @@ function LookFinder() {
   );
 }
 
+const getBentoClasses = (index: number) => {
+  // A repeating layout pattern for a grid with 3 columns:
+  // - Item 0: spans 2 columns, 2 rows (2x2)
+  // - Item 1: spans 1 column, 1 row (1x1)
+  // - Item 2: spans 1 column, 1 row (1x1)
+  // - Subsequent items: standard 1x1 cells
+  if (index === 0) {
+    return "md:col-span-2 md:row-span-2 min-h-[300px] md:h-[496px]";
+  }
+  if (index === 1 || index === 2) {
+    return "md:col-span-1 md:row-span-1 min-h-[200px] md:h-[240px]";
+  }
+  return "md:col-span-1 md:row-span-1 min-h-[200px] md:h-[240px]";
+};
+
 function Gallery() {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("*")
+        .order("position", { ascending: true })
+        .limit(20);
+      
+      if (data && data.length > 0) {
+        const mapped = data.map((item) => ({
+          src: item.url,
+          cloudinaryId: item.cloudinary_id || undefined,
+          alt: item.alt,
+          position: item.position,
+        }));
+        setGalleryImages(mapped);
+      } else {
+        setGalleryImages([]);
+      }
+    };
+    fetchGallery();
+
+    const channel = supabase
+      .channel("gallery_live_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "gallery_images" },
+        () => {
+          fetchGallery();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Display exactly first 5 preview images (positions 0-4) in the main page bento grid
+  const previewImages = Array.from({ length: 5 }, (_, i) => {
+    const dbImage = galleryImages.find((img) => img.position === i);
+    return dbImage || DEFAULT_GALLERY[i];
+  });
+
+  // Helper to parse category and alt text
+  const parseImageCategoryAndAlt = (rawAlt: string): { category: string; alt: string } => {
+    const match = rawAlt.match(/^\[(.*?)\]\s*(.*)$/);
+    if (match) {
+      const cat = match[1].trim().toUpperCase();
+      const caption = match[2].trim();
+      return { category: cat, alt: caption };
+    }
+    
+    // Keyword auto-detection
+    const lower = rawAlt.toLowerCase();
+    if (lower.includes("bridal") || lower.includes("bride") || lower.includes("wedding") || lower.includes("groom")) {
+      return { category: "BRIDAL", alt: rawAlt };
+    }
+    if (lower.includes("makeup") || lower.includes("glam") || lower.includes("look") || lower.includes("couture") || lower.includes("skin") || lower.includes("facial") || lower.includes("beauty")) {
+      return { category: "MAKEUP", alt: rawAlt };
+    }
+    if (lower.includes("fashion") || lower.includes("dress") || lower.includes("gown") || lower.includes("saree") || lower.includes("sari") || lower.includes("model")) {
+      return { category: "FASHION", alt: rawAlt };
+    }
+    if (lower.includes("embroidery") || lower.includes("blouse") || lower.includes("stitch") || lower.includes("pleat") || lower.includes("drape")) {
+      return { category: "EMBROIDERY", alt: rawAlt };
+    }
+    if (lower.includes("craft") || lower.includes("jewelry") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
+      return { category: "CRAFTS", alt: rawAlt };
+    }
+    
+    // Default to BRIDAL
+    return { category: "BRIDAL", alt: rawAlt };
+  };
+
+  const processedImages = previewImages.map((img) => {
+    const { category, alt } = parseImageCategoryAndAlt(img.alt);
+    return {
+      ...img,
+      category,
+      displayAlt: alt,
+    };
+  });
+
+  // Lightbox navigation
+  const showPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeImageIndex !== null) {
+      setActiveImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : processedImages.length - 1));
+    }
+  };
+
+  const showNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeImageIndex !== null) {
+      setActiveImageIndex((prev) => (prev !== null && prev < processedImages.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeImageIndex === null) return;
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
+      if (e.key === "Escape") setActiveImageIndex(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeImageIndex, processedImages]);
 
   return (
-    <section id="gallery" className="relative z-10 px-6 py-24">
+    <section id="gallery" className="relative z-10 px-6 py-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-14">
           <p className="font-script text-3xl text-[color:var(--rose)]">our brides</p>
           <h2 className="font-display text-5xl sm:text-6xl">Pink love portfolio</h2>
         </div>
         
-        {/* Pinterest-style Masonry Grid */}
-        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 [column-fill:_balance]">
-          {GALLERY.map((item, i) => {
+        {/* Bento Grid Layout (Previewing 5 Images) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[320px_320px] gap-4">
+          {processedImages.map((item, i) => {
             const imageUrl = item.cloudinaryId
               ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${item.cloudinaryId}`
               : item.src;
+              
+            // Define preview bento grid spans:
+            // Item 0: Tall (left column, spans 2 rows)
+            // Item 1, 2, 3, 4: Regular square cells
+            let bentoClass = "md:col-span-1 md:row-span-1";
+            if (i === 0) {
+              bentoClass = "md:col-span-1 md:row-span-2";
+            }
+
             return (
               <div
                 key={i}
-                className="break-inside-avoid mb-6 relative overflow-hidden rounded-2xl group border border-[color:var(--rose)]/10 shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_15px_30px_rgba(219,112,147,0.15)] bg-card"
+                onClick={() => setActiveImageIndex(i)}
+                className={`relative w-full h-full overflow-hidden rounded-3xl group shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)] bg-card ${bentoClass} min-h-[300px] md:min-h-0 cursor-pointer`}
               >
                 <img
                   src={imageUrl}
-                  alt={item.alt || `Pink Love bridal portfolio ${i + 1}`}
+                  alt={item.displayAlt || `Pink Love bridal portfolio ${i + 1}`}
                   loading="lazy"
-                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.4_0.15_5/0.6)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.2_0.1_5/0.7)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <span className="text-amber-400 text-[10px] font-bold tracking-widest uppercase mb-1 block">
+                    {item.category}
+                  </span>
+                  <p className="text-white font-bold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    {item.displayAlt}
+                  </p>
+                </div>
               </div>
             );
           })}
         </div>
+
+        {/* View Full Portfolio Button */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={() => {
+              window.location.href = "/gallery";
+            }}
+            className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-4 font-bold text-sm tracking-wide shadow-lg shadow-rose-200/50 hover:shadow-rose-300/60 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer border border-white/10"
+          >
+            🌸 View Full Gallery
+          </button>
+        </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {activeImageIndex !== null && (() => {
+        const item = processedImages[activeImageIndex];
+        const imageUrl = item.cloudinaryId
+          ? `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${item.cloudinaryId}`
+          : item.src;
+
+        return (
+          <div 
+            className="fixed inset-0 z-[50000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none"
+            onClick={() => setActiveImageIndex(null)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveImageIndex(null)}
+              className="absolute top-6 right-6 z-[50001] w-12 h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Left Arrow */}
+            <button
+              onClick={showPrev}
+              className="absolute left-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">←</span>
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={showNext}
+              className="absolute right-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">→</span>
+            </button>
+
+            {/* Image Container */}
+            <div 
+              className="relative max-w-4xl max-h-[80vh] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={imageUrl}
+                alt={item.displayAlt || "Full portfolio image"}
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+              />
+            </div>
+
+            {/* Info / Alt Caption */}
+            <div className="mt-6 flex items-center justify-center gap-3 bg-black/40 px-6 py-2.5 rounded-full border border-white/5 backdrop-blur-sm">
+              <span className="text-amber-400 text-xs font-bold tracking-widest uppercase">
+                {item.category}
+              </span>
+              <span className="text-white/40 text-xs">|</span>
+              <span className="text-white/90 text-sm font-semibold tracking-wide">
+                {item.displayAlt}
+              </span>
+            </div>
+          </div>
+        );
+      })()}
     </section>
+  );
+}
+
+function GalleryPage() {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const { data } = await supabase
+        .from("gallery_images")
+        .select("*")
+        .order("position", { ascending: true })
+        .limit(20);
+      
+      if (data && data.length > 0) {
+        const mapped = data.map((item) => ({
+          src: item.url,
+          cloudinaryId: item.cloudinary_id || undefined,
+          alt: item.alt,
+          position: item.position,
+        }));
+        setGalleryImages(mapped);
+      }
+    };
+    fetchGallery();
+  }, []);
+
+  // Build the list of 20 slots
+  const allSlots = Array.from({ length: 20 }, (_, i) => {
+    const dbImage = galleryImages.find((img) => img.position === i);
+    if (dbImage) return dbImage;
+    if (i < 5) return DEFAULT_GALLERY[i];
+    return null;
+  });
+
+  // Filter out null slots to get active images
+  const activeImages = allSlots.filter((item): item is GalleryImage => item !== null);
+
+  // Helper to parse category and alt text
+  const parseImageCategoryAndAlt = (rawAlt: string): { category: string; alt: string } => {
+    const match = rawAlt.match(/^\[(.*?)\]\s*(.*)$/);
+    if (match) {
+      const cat = match[1].trim().toUpperCase();
+      const caption = match[2].trim();
+      return { category: cat, alt: caption };
+    }
+    
+    // Keyword auto-detection
+    const lower = rawAlt.toLowerCase();
+    if (lower.includes("bridal") || lower.includes("bride") || lower.includes("wedding") || lower.includes("groom")) {
+      return { category: "BRIDAL", alt: rawAlt };
+    }
+    if (lower.includes("makeup") || lower.includes("glam") || lower.includes("look") || lower.includes("couture") || lower.includes("skin") || lower.includes("facial") || lower.includes("beauty")) {
+      return { category: "MAKEUP", alt: rawAlt };
+    }
+    if (lower.includes("fashion") || lower.includes("dress") || lower.includes("gown") || lower.includes("saree") || lower.includes("sari") || lower.includes("model")) {
+      return { category: "FASHION", alt: rawAlt };
+    }
+    if (lower.includes("embroidery") || lower.includes("blouse") || lower.includes("stitch") || lower.includes("pleat") || lower.includes("drape")) {
+      return { category: "EMBROIDERY", alt: rawAlt };
+    }
+    if (lower.includes("craft") || lower.includes("jewelry") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
+      return { category: "CRAFTS", alt: rawAlt };
+    }
+    
+    // Default to BRIDAL
+    return { category: "BRIDAL", alt: rawAlt };
+  };
+
+  // Map and parse categories for all active images
+  const processedImages = activeImages.map((img) => {
+    const { category, alt } = parseImageCategoryAndAlt(img.alt);
+    return {
+      ...img,
+      category,
+      displayAlt: alt,
+    };
+  });
+
+  // Lightbox navigation
+  const showPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeImageIndex !== null) {
+      setActiveImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : processedImages.length - 1));
+    }
+  };
+
+  const showNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeImageIndex !== null) {
+      setActiveImageIndex((prev) => (prev !== null && prev < processedImages.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeImageIndex === null) return;
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
+      if (e.key === "Escape") setActiveImageIndex(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeImageIndex, processedImages]);
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col p-4 sm:p-8">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto w-full flex justify-between items-center py-6 border-b border-white/10 shrink-0">
+        <div>
+          <p className="font-script text-3xl text-pink-300">our gallery</p>
+          <h3 className="font-display text-4xl sm:text-5xl text-white mt-1">Full Portfolio Gallery</h3>
+        </div>
+        <button
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          className="inline-flex items-center gap-2 rounded-full bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+        >
+          ← Back to Home
+        </button>
+      </div>
+
+      {/* Grid Showcase */}
+      <div className="max-w-7xl mx-auto w-full py-12 flex-grow space-y-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          {processedImages.map((item, i) => {
+            const imageUrl = item.cloudinaryId
+              ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${item.cloudinaryId}`
+              : item.src;
+
+            return (
+              <div
+                key={item.position !== undefined ? item.position : i}
+                onClick={() => setActiveImageIndex(i)}
+                className="relative w-full aspect-[2/3] overflow-hidden rounded-3xl group shadow-2xl border border-white/5 transition-all duration-300 bg-zinc-900 cursor-pointer hover:scale-[1.02] hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)]"
+              >
+                <img
+                  src={imageUrl}
+                  alt={item.displayAlt || `Pink Love bridal portfolio ${(item.position !== undefined ? item.position : i) + 1}`}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <span className="text-amber-400 text-[10px] font-bold tracking-widest uppercase mb-1 block">
+                    {item.category}
+                  </span>
+                  <p className="text-white font-bold text-sm transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
+                    {item.displayAlt}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {processedImages.length === 0 && (
+          <div className="text-center py-20 text-zinc-500 space-y-2">
+            <span className="text-4xl block">🌸</span>
+            <p className="font-medium text-sm">No images in the gallery yet.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Lightbox Modal */}
+      {activeImageIndex !== null && (() => {
+        const item = processedImages[activeImageIndex];
+        const imageUrl = item.cloudinaryId
+          ? `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${item.cloudinaryId}`
+          : item.src;
+
+        return (
+          <div 
+            className="fixed inset-0 z-[50000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none"
+            onClick={() => setActiveImageIndex(null)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveImageIndex(null)}
+              className="absolute top-6 right-6 z-[50001] w-12 h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Left Arrow */}
+            <button
+              onClick={showPrev}
+              className="absolute left-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">←</span>
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={showNext}
+              className="absolute right-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">→</span>
+            </button>
+
+            {/* Image Container */}
+            <div 
+              className="relative max-w-4xl max-h-[80vh] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={imageUrl}
+                alt={item.displayAlt || "Full portfolio image"}
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+              />
+            </div>
+
+            {/* Info / Alt Caption */}
+            <div className="mt-6 flex items-center justify-center gap-3 bg-black/40 px-6 py-2.5 rounded-full border border-white/5 backdrop-blur-sm">
+              <span className="text-amber-400 text-xs font-bold tracking-widest uppercase">
+                {item.category}
+              </span>
+              <span className="text-white/40 text-xs">|</span>
+              <span className="text-white/90 text-sm font-semibold tracking-wide">
+                {item.displayAlt}
+              </span>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
   );
 }
 
@@ -1545,21 +2005,13 @@ function Reviews() {
         <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
           Real stories and kind words from guests who have experienced our signature care.
         </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-8 flex justify-center">
           <button
             onClick={() => setIsWriteOpen(true)}
             className="inline-flex items-center gap-2 rounded-full bg-[color:var(--rose)] hover:bg-[color:var(--rose)]/90 text-white px-7 py-3 text-sm font-bold shadow-[var(--shadow-petal)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
           >
             ✍️ Share Your Review
           </button>
-          <a
-            href="https://wa.me/919840874966"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-[color:var(--rose)]/30 px-7 py-3 text-sm font-semibold hover:bg-[color:var(--rose)] hover:text-white hover:border-transparent transition-all duration-300"
-          >
-            Review us on Google →
-          </a>
         </div>
       </div>
 

@@ -15,12 +15,43 @@ import {
   Eye, 
   Sparkles, 
   Scissors, 
-  FolderOpen
+  FolderOpen,
+  Image,
+  Upload,
+  Loader2,
+  Grid
 } from "lucide-react";
 
 const PASSCODE = "0265";
 const STORAGE_KEY = "pl_admin_ok";
 
+const DEFAULT_GALLERY = [
+  {
+    src: "",
+    cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
+    alt: "Pink Love bridal makeup close-up and jewelry styling"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023994/WhatsApp_Image_2026-06-20_at_12.54.43_1_sjgp4x",
+    alt: "Bridal floral hair styling and traditional look"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023986/WhatsApp_Image_2026-06-20_at_12.54.44_toqhbp",
+    alt: "Gorgeous wedding look and makeup highlights"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023979/WhatsApp_Image_2026-06-20_at_12.54.45_xqtej2",
+    alt: "Saree pre-pleating and elegant drape detail"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023975/WhatsApp_Image_2026-06-20_at_12.54.45_1_pzb8wx",
+    alt: "Client review: radiant bridal look session"
+  }
+];
 type ComboItem = {
   id: string;
   page: number;
@@ -129,18 +160,25 @@ export function Admin() {
         </header>
 
         <Tabs defaultValue="combos" className="space-y-6">
-          <TabsList className="flex items-center justify-between w-full max-w-md mx-auto bg-rose-50/60 p-1 rounded-full border border-rose-100 shadow-sm h-12">
+          <TabsList className="flex items-center justify-between w-full max-w-lg mx-auto bg-rose-50/60 p-1 rounded-full border border-rose-100 shadow-sm h-12">
             <TabsTrigger 
               value="combos" 
-              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer"
+              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer px-1.5 sm:px-3"
             >
-              <Sparkles className="w-4 h-4 mr-2" /> Value Combos
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2 shrink-0" />
+              <span className="hidden xs:inline">Value </span>Combos
             </TabsTrigger>
             <TabsTrigger 
               value="alacarte" 
-              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer"
+              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer px-1.5 sm:px-3"
             >
-              <Scissors className="w-4 h-4 mr-2" /> Individual Services
+              <Scissors className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2 shrink-0" /> Services
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gallery" 
+              className="flex-1 flex items-center justify-center rounded-full h-10 font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-md text-rose-800/70 hover:text-rose-900 cursor-pointer px-1.5 sm:px-3"
+            >
+              <Image className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2 shrink-0" /> Gallery
             </TabsTrigger>
           </TabsList>
 
@@ -150,6 +188,10 @@ export function Admin() {
 
           <TabsContent value="alacarte" className="space-y-6">
             <IndividualsPanel />
+          </TabsContent>
+
+          <TabsContent value="gallery" className="space-y-6">
+            <GalleryPanel />
           </TabsContent>
         </Tabs>
       </div>
@@ -367,8 +409,8 @@ function ComboRow({
         />
       </div>
 
-      <div className="flex items-center gap-3 pt-2.5 border-t border-rose-50">
-        <div className="w-24 shrink-0">
+      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 pt-2.5 border-t border-rose-50">
+        <div className="col-span-1 sm:w-24 sm:shrink-0">
           <select
             className="w-full h-8.5 rounded-lg border border-rose-100 bg-white px-1.5 focus:outline-none focus:ring-1 focus:ring-rose-400 text-xs font-semibold"
             value={page}
@@ -379,7 +421,7 @@ function ComboRow({
           </select>
         </div>
 
-        <div className="flex-1">
+        <div className="col-span-1 sm:flex-1">
           <Input 
             value={price} 
             onChange={(e) => setPrice(e.target.value)} 
@@ -388,7 +430,7 @@ function ComboRow({
           />
         </div>
 
-        <div className="flex gap-1.5 shrink-0">
+        <div className="col-span-2 sm:col-span-1 flex gap-1.5 sm:shrink-0 justify-end mt-1 sm:mt-0">
           <Button
             size="sm"
             disabled={!dirty}
@@ -399,7 +441,7 @@ function ComboRow({
                 page,
               })
             }
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 text-xs px-2.5 gap-1"
+            className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 text-xs px-2.5 gap-1 justify-center"
           >
             <Save className="w-3.5 h-3.5" /> Save
           </Button>
@@ -407,7 +449,7 @@ function ComboRow({
             size="sm" 
             variant="destructive" 
             onClick={() => onDelete(item.id)}
-            className="font-bold h-8.5 text-xs px-2 flex items-center justify-center"
+            className="h-8.5 w-8.5 p-0 shrink-0 flex items-center justify-center"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
@@ -681,8 +723,8 @@ function IndividualRowEditor({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 pt-2 border-t border-rose-50/50">
-        <div className="w-24 shrink-0">
+      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 pt-2 border-t border-rose-50/50">
+        <div className="col-span-1 sm:w-24 sm:shrink-0">
           <select
             className="w-full h-8.5 rounded-lg border border-rose-100 bg-white px-1.5 focus:outline-none focus:ring-1 focus:ring-rose-400 text-xs font-semibold"
             value={side}
@@ -693,7 +735,7 @@ function IndividualRowEditor({
           </select>
         </div>
 
-        <div className="flex-1">
+        <div className="col-span-1 sm:flex-1">
           <Input 
             className="h-8.5 border-rose-100 focus-visible:ring-rose-400 text-xs font-bold text-rose-700" 
             value={price} 
@@ -702,12 +744,12 @@ function IndividualRowEditor({
           />
         </div>
 
-        <div className="flex gap-1.5 shrink-0">
+        <div className="col-span-2 sm:col-span-1 flex gap-1.5 sm:shrink-0 justify-end mt-1 sm:mt-0">
           <Button
             size="sm"
             disabled={!dirty}
             onClick={() => onUpdate(item, { side, category, name, price })}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 px-2.5 text-xs gap-1"
+            className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8.5 px-2.5 text-xs gap-1 justify-center"
           >
             <Save className="w-3 h-3" /> Save
           </Button>
@@ -715,12 +757,405 @@ function IndividualRowEditor({
             size="sm" 
             variant="destructive" 
             onClick={() => onDelete(item.id)}
-            className="font-bold h-8.5 px-2 text-xs flex justify-center items-center"
+            className="h-8.5 w-8.5 p-0 shrink-0 flex items-center justify-center"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+type DbGalleryImage = {
+  id: string;
+  url: string;
+  cloudinary_id: string | null;
+  alt: string;
+  position: number;
+};
+
+function GalleryPanel() {
+  const [images, setImages] = useState<DbGalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("gallery_images")
+      .select("*")
+      .order("position", { ascending: true });
+    setImages((data || []) as DbGalleryImage[]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  // Build an array of 20 slots
+  const slots = Array.from({ length: 20 }, (_, index) => {
+    const existing = images.find((img) => img.position === index);
+    return { position: index, existing };
+  });
+
+  const previewSlots = slots.slice(0, 5);
+  const remainingSlots = slots.slice(5);
+
+  return (
+    <div className="space-y-8 animate-fade-up">
+      <Card className="border-rose-100 shadow-md bg-white/70 backdrop-blur-sm rounded-2xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6">
+          <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
+            <Image className="w-5 h-5 text-rose-500" /> Live Bento Gallery Editor
+          </CardTitle>
+          <CardDescription>
+            This layout matches the homepage bento grid exactly. Drag & drop any photo directly onto a slot to update it in real-time on the live site!
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 text-rose-600 space-y-3">
+              <Loader2 className="w-10 h-10 animate-spin" />
+              <span className="font-semibold text-sm">Loading visual editor...</span>
+            </div>
+          ) : (
+            <div className="space-y-10">
+              {/* Primary Bento Grid Replica (First 5 Slots) */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Homepage Bento Grid Slots (1 - 5)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[240px_240px] gap-4">
+                  {previewSlots.map((slot) => {
+                    let bentoClass = "md:col-span-1 md:row-span-1 h-[240px]";
+                    if (slot.position === 0) {
+                      bentoClass = "md:col-span-1 md:row-span-2 h-full min-h-[300px] md:min-h-0";
+                    }
+                    return (
+                      <div key={slot.position} className={bentoClass}>
+                        <GallerySlotEditor
+                          position={slot.position}
+                          existing={slot.existing}
+                          onChanged={load}
+                          isLarge={slot.position === 0}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <hr className="border-rose-100" />
+
+              {/* Remaining Grid Slots (6 - 20) */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Additional Gallery Slots (6 - 20)</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {remainingSlots.map((slot) => (
+                    <div key={slot.position} className="h-[260px]">
+                      <GallerySlotEditor
+                        position={slot.position}
+                        existing={slot.existing}
+                        onChanged={load}
+                        isLarge={false}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function GallerySlotEditor({
+  position,
+  existing,
+  onChanged,
+  isLarge,
+}: {
+  position: number;
+  existing: DbGalleryImage | undefined;
+  onChanged: () => void;
+  isLarge: boolean;
+}) {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dwo6zs4ft";
+  const [uploading, setUploading] = useState(false);
+  const [alt, setAlt] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Sync state if existing changes
+  useEffect(() => {
+    if (existing) {
+      setAlt(existing.alt);
+    } else if (position < 5) {
+      setAlt(DEFAULT_GALLERY[position].alt);
+    } else {
+      setAlt("");
+    }
+  }, [existing, position]);
+
+  // Determine fallback default image for first 5 slots
+  const isDefaultAvailable = position < 5;
+  const fallbackItem = isDefaultAvailable ? DEFAULT_GALLERY[position] : null;
+  const defaultUrl = fallbackItem
+    ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${fallbackItem.cloudinaryId}`
+    : "";
+
+  const handleFileUpload = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File is too large. Max limit is 5MB.");
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPEG, PNG, WebP).");
+      return;
+    }
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const fileName = `gallery_${position}_${Date.now()}.${ext}`;
+
+    try {
+      // Upload to Supabase Storage
+      const { data, error: uploadErr } = await supabase.storage
+        .from("gallery")
+        .upload(fileName, file, { cacheControl: "3600", upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("gallery")
+        .getPublicUrl(fileName);
+
+      // Save to database
+      if (existing) {
+        const { error: dbErr } = await supabase
+          .from("gallery_images")
+          .update({
+            url: publicUrl,
+            cloudinary_id: null,
+          })
+          .eq("id", existing.id);
+        if (dbErr) throw dbErr;
+      } else {
+        const { error: dbErr } = await supabase
+          .from("gallery_images")
+          .insert({
+            url: publicUrl,
+            cloudinary_id: null,
+            alt: alt || `Pink Love bridal portfolio slot ${position + 1}`,
+            position,
+          });
+        if (dbErr) throw dbErr;
+      }
+
+      toast.success(`Slot ${position + 1} updated!`);
+      onChanged();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to upload.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSaveAlt = async () => {
+    setUploading(true);
+    try {
+      if (existing) {
+        const { error } = await supabase
+          .from("gallery_images")
+          .update({
+            alt: alt.trim(),
+          })
+          .eq("id", existing.id);
+        if (error) throw error;
+        toast.success("Alt text saved!");
+      } else {
+        // Saving alt description on a default slot creates a row with the default image URL
+        const { error } = await supabase
+          .from("gallery_images")
+          .insert({
+            url: defaultUrl,
+            cloudinary_id: fallbackItem?.cloudinaryId || null,
+            alt: alt.trim() || `Pink Love bridal portfolio slot ${position + 1}`,
+            position,
+          });
+        if (error) throw error;
+        toast.success("Custom description saved for default image!");
+      }
+      setShowDetails(false);
+      onChanged();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to save alt text.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!existing) return;
+    if (!confirm(`Are you sure you want to clear Slot ${position + 1}?`)) return;
+
+    setUploading(true);
+    try {
+      const { error } = await supabase
+        .from("gallery_images")
+        .delete()
+        .eq("id", existing.id);
+      if (error) throw error;
+
+      toast.success(`Slot ${position + 1} cleared.`);
+      setShowDetails(false);
+      onChanged();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to clear slot.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const fileInputId = `file-input-${position}`;
+
+  // Image source to show in the slot (either custom or default fallback)
+  const displayUrl = existing ? existing.url : defaultUrl;
+  const displayAlt = existing ? existing.alt : (fallbackItem?.alt || "");
+
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={async (e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) await handleFileUpload(file);
+      }}
+      className={`group relative w-full h-full rounded-2xl overflow-hidden border transition-all duration-300 ${
+        isDragOver
+          ? "border-rose-500 ring-2 ring-rose-300"
+          : "border-rose-100 shadow-[var(--shadow-soft)] hover:shadow-md"
+      } bg-rose-50/10 flex flex-col justify-center items-center`}
+    >
+      {/* Uploading Overlay */}
+      {uploading && (
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center text-rose-500 z-30 animate-pulse">
+          <Loader2 className="w-8 h-8 animate-spin mb-1.5" />
+          <span className="text-[10px] font-bold tracking-wider uppercase">Uploading...</span>
+        </div>
+      )}
+
+      {displayUrl ? (
+        <>
+          {/* Active / Default Image Preview */}
+          <img
+            src={displayUrl}
+            alt={displayAlt}
+            className="w-full h-full object-cover"
+          />
+
+          {/* Slot Indicator */}
+          <div className="absolute top-3 left-3 bg-rose-600/90 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full z-10 shadow flex items-center gap-1.5">
+            <span>Slot {position + 1}</span>
+            {existing ? (
+              <span className="bg-emerald-500 text-white text-[8px] uppercase px-1 rounded-sm">Custom</span>
+            ) : (
+              <span className="bg-amber-500 text-white text-[8px] uppercase px-1 rounded-sm">Default</span>
+            )}
+          </div>
+
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 gap-2 z-20">
+            <p className="text-white text-[11px] font-bold tracking-wider uppercase">
+              Slot {position + 1} {existing ? "(Custom)" : "(Default)"}
+            </p>
+            <p className="text-white/60 text-[9px] mb-1">Drag & drop to replace</p>
+            
+            <div className="flex flex-wrap gap-1.5 justify-center items-center px-1">
+              <label
+                htmlFor={fileInputId}
+                className="bg-white/95 hover:bg-white text-rose-600 text-[10px] font-bold px-2 py-1 rounded transition shadow hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+              >
+                Change
+              </label>
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-bold px-2 py-1 rounded transition shadow hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+              >
+                Alt
+              </button>
+              {existing && (
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold p-1 rounded transition shadow hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Alt Text Edit Popover */}
+          {showDetails && (
+            <div className="absolute inset-x-2 bottom-2 bg-white rounded-xl p-2.5 z-30 shadow-2xl border border-rose-100 flex flex-col gap-2 animate-fade-up">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-extrabold text-rose-600 uppercase">Alt Description</span>
+                <button onClick={() => setShowDetails(false)} className="text-[10px] text-zinc-400 hover:text-rose-600 font-bold">✕</button>
+              </div>
+              <Input
+                value={alt}
+                onChange={(e) => setAlt(e.target.value)}
+                placeholder="e.g. Elegant bridal jewelry detail"
+                className="h-7 text-xs px-2 py-0 border-rose-100 focus-visible:ring-rose-400"
+              />
+              <Button
+                size="sm"
+                onClick={handleSaveAlt}
+                className="bg-rose-500 hover:bg-rose-600 text-white font-bold h-7 text-[10px] py-0"
+              >
+                Save Description
+              </Button>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Empty Slot State (Positions 6-20 with no image) */
+        <div className="p-4 text-center flex flex-col items-center justify-center h-full w-full border-2 border-dashed border-rose-200 rounded-2xl bg-rose-50/5">
+          <Upload className="w-6 h-6 text-rose-400 mb-1 animate-bounce" />
+          <span className="text-xs font-bold text-rose-900">
+            Slot {position + 1}
+          </span>
+          <p className="text-[9px] text-rose-500/80 mt-0.5">Drag photo here</p>
+          <label
+            htmlFor={fileInputId}
+            className="mt-1.5 text-[10px] bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold px-3 py-1 rounded-full cursor-pointer transition shadow-sm"
+          >
+            Browse
+          </label>
+        </div>
+      )}
+
+      {/* Hidden file input */}
+      <input
+        id={fileInputId}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (file) await handleFileUpload(file);
+        }}
+      />
     </div>
   );
 }
