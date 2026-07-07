@@ -510,6 +510,20 @@ export default function App() {
     };
   }, [activeReel]);
 
+  // Auto-scroll on mount if hash exists (e.g. returning from Cart Page)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const hash = window.location.hash;
+      const  targetId = hash.replace("#", "");
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
+    }
+  }, []);
+
   const addToCart = (id: string, name: string, price: string, type: "combo" | "individual") => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === id);
@@ -647,9 +661,7 @@ function Nav() {
           ))}
         </nav>
         <a
-          href="https://api.whatsapp.com/send/?phone=919840874966"
-          target="_blank"
-          rel="noreferrer"
+          href="#menu"
           className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-white px-3.5 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap"
         >
           Book Now
@@ -1739,7 +1751,7 @@ function Reels({ onOpenReel }: ReelsProps) {
 
 function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
   return (
-    <div className="group relative rounded-3xl bg-card p-6 border border-[color:var(--rose)]/10 shadow-[var(--shadow-soft)] hover:shadow-[0_20px_45px_rgba(219,112,147,0.12)] hover:border-[color:var(--rose)]/30 hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between w-[320px] sm:w-[380px] shrink-0 whitespace-normal">
+    <div className="group relative rounded-3xl bg-card p-5 sm:p-6 border border-[color:var(--rose)]/10 shadow-[var(--shadow-soft)] hover:shadow-[0_20px_45px_rgba(219,112,147,0.12)] hover:border-[color:var(--rose)]/30 hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between w-[85vw] sm:w-[380px] shrink-0 whitespace-normal">
       {/* Animated hover glow element */}
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[color:var(--rose)]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
@@ -2044,13 +2056,13 @@ function Certifications() {
           {[...CERTIFICATES, ...CERTIFICATES].map((cert, i) => {
             const isHorizontal = cert.orientation === "horizontal";
             const dimensions = isHorizontal 
-              ? "w-[440px] h-[310px]" 
-              : "w-[320px] h-[410px]";
+              ? "w-[85vw] max-w-[440px] h-[280px] sm:h-[310px] p-5 sm:p-8" 
+              : "w-[85vw] max-w-[320px] h-[380px] sm:h-[410px] p-5 sm:p-8";
             
             return (
               <div
                 key={`cert-${i}`}
-                className={`inline-block ${dimensions} bg-[#FCFBF7] rounded-2xl border-4 border-double border-[color:var(--gold)]/40 p-8 shadow-[0_15px_40px_rgba(218,165,32,0.08)] hover:shadow-[0_20px_50px_rgba(218,165,32,0.15)] hover:border-[color:var(--gold)]/70 hover:scale-[1.02] transition-all duration-300 relative overflow-hidden text-left shrink-0`}
+                className={`inline-block ${dimensions} bg-[#FCFBF7] rounded-2xl border-4 border-double border-[color:var(--gold)]/40 shadow-[0_15px_40px_rgba(218,165,32,0.08)] hover:shadow-[0_20px_50px_rgba(218,165,32,0.15)] hover:border-[color:var(--gold)]/70 hover:scale-[1.02] transition-all duration-300 relative overflow-hidden text-left shrink-0`}
               >
                 {/* Gold Seal watermark */}
                 <div className="absolute right-4 bottom-4 w-28 h-28 rounded-full border-2 border-dashed border-[color:var(--gold)]/20 flex items-center justify-center pointer-events-none">
@@ -2075,10 +2087,10 @@ function Certifications() {
 
                   {/* Body Content */}
                   <div className="my-auto whitespace-normal">
-                    <h3 className="font-serif italic text-2xl text-zinc-800 leading-tight">
+                    <h3 className="font-serif italic text-lg sm:text-xl md:text-2xl text-zinc-800 leading-tight">
                       {cert.title}
                     </h3>
-                    <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider mt-3 font-display">
+                    <p className="text-[10px] sm:text-[11px] text-zinc-500 font-bold uppercase tracking-wider mt-3 font-display">
                       Awarded to Pink Love Beauty Studio
                     </p>
                   </div>
@@ -2086,14 +2098,16 @@ function Certifications() {
                   {/* Footer / Signatures */}
                   <div className="mt-auto">
                     <div className="h-[1px] w-full bg-zinc-200 mb-4" />
-                    <div className="flex justify-between items-end text-xs text-zinc-500 font-medium">
-                      <div>
+                    <div className="flex justify-between items-end gap-2 text-xs text-zinc-500 font-medium">
+                      <div className="shrink-0">
                         <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Authorized Signatory</p>
-                        <p className="font-script text-base text-[color:var(--rose)] leading-none mt-1.5">Pink Love Studio</p>
+                        <p className="font-script text-sm sm:text-base text-[color:var(--rose)] leading-none mt-1.5">Pink Love Studio</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right min-w-0">
                         <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Issuer & Year</p>
-                        <p className="text-[10px] text-zinc-700 font-bold mt-1.5">{cert.issuer} ({cert.date})</p>
+                        <p className="text-[9px] sm:text-[10px] text-zinc-700 font-bold mt-1.5 truncate max-w-[120px] sm:max-w-none" title={`${cert.issuer} (${cert.date})`}>
+                          {cert.issuer} ({cert.date})
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -2289,7 +2303,7 @@ function MobileStickyNav() {
       {/* Call Us Button */}
       <a
         href="tel:+919840874966"
-        className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl bg-muted/65 hover:bg-muted text-foreground transition-all duration-300 active:scale-95 border border-[color:var(--rose)]/10"
+        className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-white border border-rose-200/60 text-zinc-800 hover:bg-rose-50/20 transition-all duration-300 active:scale-95 shadow-xs"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -2313,29 +2327,26 @@ function MobileStickyNav() {
         href="https://api.whatsapp.com/send/?phone=919840874966&text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability."
         target="_blank"
         rel="noreferrer"
-        className="flex-[1.5] flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white shadow-lg shadow-rose-200/30 transition-all duration-300 active:scale-95 text-center font-bold"
+        className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[#25D366] text-white hover:bg-[#20ba59] transition-all duration-300 active:scale-95 shadow-xs"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          fill="currentColor"
+          className="mb-1"
         >
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.504-5.714-1.466L0 24zm6.59-4.846c1.6.95 3.16 1.455 4.803 1.456 5.3 0 9.612-4.321 9.615-9.63.002-2.57-1.002-4.986-2.825-6.81C16.417 2.348 14.004 1.34 11.432 1.34c-5.304 0-9.618 4.322-9.62 9.633-.001 1.704.449 3.371 1.303 4.867L2.128 20.3l4.519-1.146zm11.238-6.115c-.3-.15-1.772-.875-2.046-.975-.276-.1-.477-.15-.677.15-.2.3-.777.975-.953 1.175-.177.2-.353.225-.653.075-1.02-.516-1.86-.906-2.57-1.516-.54-.465-.89-1.03-1.05-1.3-.16-.272-.017-.42.118-.555.122-.121.272-.32.408-.48.136-.16.182-.27.272-.45.09-.18.045-.337-.022-.487-.068-.15-.678-1.637-.93-2.247-.244-.59-.492-.51-.678-.52-.175-.007-.375-.01-.575-.01-.2 0-.525.075-.8.375-.276.3-1.05 1.03-1.05 2.515s1.075 2.915 1.225 3.11c.15.195 2.11 3.224 5.115 4.525.715.31 1.273.495 1.71.635.717.225 1.37.195 1.885.118.572-.085 1.772-.725 2.022-1.425.25-.7.25-1.3 0-1.425-.075-.125-.275-.2-.575-.35z"/>
         </svg>
-        <span className="text-xs tracking-wider uppercase whitespace-nowrap">WhatsApp Book</span>
+        <span className="text-[10px] font-bold tracking-wider uppercase text-white/95">Book Us</span>
       </a>
 
       {/* Menu Book Button */}
       <a
         href="#menu"
         onClick={handleMenuClick}
-        className="flex-1 flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl bg-muted/65 hover:bg-muted text-foreground transition-all duration-300 active:scale-95 border border-[color:var(--rose)]/10"
+        className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-white border border-rose-200/60 text-zinc-800 hover:bg-rose-50/20 transition-all duration-300 active:scale-95 shadow-xs"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -2352,7 +2363,7 @@ function MobileStickyNav() {
           <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
         </svg>
-        <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/80">Menu Book</span>
+        <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/80 font-sans">Menu Book</span>
       </a>
     </div>
   );

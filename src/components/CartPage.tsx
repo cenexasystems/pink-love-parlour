@@ -96,6 +96,7 @@ const calculateTotal = (items: CartItem[]) => {
     return `₹${minSum}`;
   }
   
+  return `₹${minSum} - ₹${maxSum}${hasUnparseable ? " +" : ""}`;
 };
 
 const getGrandTotalDisplay = (fixedItems: CartItem[], variableItems: CartItem[]) => {
@@ -207,7 +208,7 @@ export function CartPage() {
       .join("\n");
 
     const variableText = variableItems
-      .map((item) => `  ${bullet} *${item.name}* (Qty: ${item.quantity}) — *${item.price}*`)
+      .map((item) => `  ${bullet} *${item.name}* (Qty: ${item.quantity})\n    *${item.price}*`)
       .join("\n");
 
     const fixedSubtotal = calculateTotal(fixedItems);
@@ -236,12 +237,9 @@ export function CartPage() {
       message += `• *Fixed Services Subtotal:* ${fixedSubtotal}\n`;
     }
     if (variableItems.length > 0) {
-      message += `• *Variable Packages Est. Range:* ${variableSubtotal}\n`;
+      message += `• *Variable Packages:*\n${variableItems.map((item) => `  - *${item.name}*: *${item.price}*`).join("\n")}\n`;
     }
     message += `• *Grand Total:* *${grandTotalDisplay}*\n`;
-    if (fixedItems.length > 0 && variableItems.length > 0) {
-      message += `  _(Estimated Overall Range: ${overallEstimatedRange})_\n`;
-    }
     message += `\n`;
     message += `Please confirm slot availability. Thank you!`;
 
@@ -250,7 +248,7 @@ export function CartPage() {
   };
 
   const renderCartItem = (item: CartItem) => (
-    <div key={item.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl border border-rose-100 bg-white shadow-sm hover:shadow-md transition-all gap-4 group relative">
+    <div key={item.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3.5 sm:p-5 rounded-2xl border border-rose-100 bg-white shadow-sm hover:shadow-md transition-all gap-4 group relative">
       <div className="flex-1">
         <h4 className="font-display font-bold uppercase text-zinc-900 tracking-wide">{item.name}</h4>
         <div className="text-rose-600 font-bold mt-1 text-sm bg-rose-50 inline-block px-2 py-0.5 rounded-md border border-rose-100">
@@ -288,11 +286,11 @@ export function CartPage() {
     <div className="min-h-screen bg-[#FDFBFB] pb-24 font-sans text-zinc-900">
       {/* Header */}
       <div className="bg-white border-b border-rose-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => {
-                window.location.href = "/";
+                window.location.href = "/#menu";
               }}
               className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-rose-50 text-zinc-600 transition-colors cursor-pointer"
             >
@@ -312,9 +310,9 @@ export function CartPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-20">
+      <div className="max-w-5xl mx-auto px-2 sm:px-6 pt-10 pb-20">
         {cart.length === 0 ? (
-          <div className="text-center py-32 bg-white rounded-3xl border border-rose-100 shadow-sm max-w-2xl mx-auto">
+          <div className="text-center py-24 sm:py-32 bg-white rounded-3xl border border-rose-100 shadow-sm max-w-2xl mx-auto px-4">
             <div className="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShoppingBag className="w-10 h-10 text-rose-300" />
             </div>
@@ -335,7 +333,7 @@ export function CartPage() {
               
               {/* Fixed Price Items */}
               {fixedItems.length > 0 && (
-                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-100 shadow-sm">
+                <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-rose-100 shadow-sm">
                   <div className="flex justify-between items-end mb-6 pb-4 border-b border-rose-100/60">
                     <div>
                       <h3 className="font-display text-2xl font-bold text-zinc-800 uppercase tracking-wide">Fixed Price Services</h3>
@@ -345,10 +343,10 @@ export function CartPage() {
                   <div className="space-y-4">
                     {fixedItems.map(renderCartItem)}
                   </div>
-                  <div className="mt-6 flex justify-end">
-                    <div className="bg-rose-50/50 px-6 py-3 rounded-2xl border border-rose-100 flex items-center gap-4">
-                      <span className="text-sm font-bold text-zinc-500 uppercase tracking-wider">Subtotal:</span>
-                      <span className="font-display text-2xl font-bold text-rose-700">{calculateTotal(fixedItems)}</span>
+                  <div className="mt-6 flex justify-end w-full">
+                    <div className="bg-rose-50/50 px-4 sm:px-6 py-3 rounded-2xl border border-rose-100 flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+                      <span className="text-xs sm:text-sm font-bold text-zinc-500 uppercase tracking-wider">Subtotal:</span>
+                      <span className="font-display text-xl sm:text-2xl font-bold text-rose-700">{calculateTotal(fixedItems)}</span>
                     </div>
                   </div>
                 </div>
@@ -356,7 +354,7 @@ export function CartPage() {
 
               {/* Variable Price Items */}
               {variableItems.length > 0 && (
-                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-100 shadow-sm relative overflow-hidden">
+                <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-rose-100 shadow-sm relative overflow-hidden">
                   <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl border-l border-b border-amber-200">
                     Consultation Required
                   </div>
@@ -369,10 +367,10 @@ export function CartPage() {
                   <div className="space-y-4">
                     {variableItems.map(renderCartItem)}
                   </div>
-                  <div className="mt-6 flex justify-end">
-                    <div className="bg-amber-50/50 px-6 py-3 rounded-2xl border border-amber-100 flex items-center gap-4">
-                      <span className="text-sm font-bold text-zinc-500 uppercase tracking-wider">Est Range:</span>
-                      <span className="font-display text-2xl font-bold text-amber-600">{calculateTotal(variableItems)}</span>
+                  <div className="mt-6 flex justify-end w-full">
+                    <div className="bg-amber-50/50 px-4 sm:px-6 py-3 rounded-2xl border border-amber-100 flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+                      <span className="text-xs sm:text-sm font-bold text-zinc-500 uppercase tracking-wider">Est Range:</span>
+                      <span className="font-display text-xl sm:text-2xl font-bold text-amber-600">{calculateTotal(variableItems)}</span>
                     </div>
                   </div>
                 </div>
@@ -380,7 +378,7 @@ export function CartPage() {
             </div>
 
             {/* Checkout Sidebar */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-200 shadow-xl shadow-rose-100/50 sticky top-28">
+            <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-rose-200 shadow-xl shadow-rose-100/50 sticky top-28">
               <h3 className="font-display text-2xl font-bold text-zinc-900 mb-6 pb-4 border-b border-zinc-100 uppercase tracking-wide">
                 Booking Summary
               </h3>
@@ -395,17 +393,13 @@ export function CartPage() {
                   <span className="font-bold text-amber-600">{calculateTotal(variableItems)}</span>
                 </div>
                 <div className="pt-4 border-t border-zinc-100 flex flex-col gap-1">
-                  <div className="flex justify-between items-center">
-                    <span className="text-zinc-900 font-bold uppercase tracking-wide">Grand Total</span>
-                    <span className="font-display text-2xl font-bold text-rose-600">
+                  <div className="flex flex-row justify-between items-center gap-2 flex-wrap">
+                    <span className="text-zinc-900 font-bold uppercase tracking-wide text-xs sm:text-sm">Grand Total</span>
+                    <span className="font-display text-lg sm:text-2xl font-bold text-rose-600 text-right">
                       {getGrandTotalDisplay(fixedItems, variableItems)}
                     </span>
                   </div>
-                  {fixedItems.length > 0 && variableItems.length > 0 && (
-                    <div className="text-[11px] text-zinc-400 font-semibold text-right">
-                      (Estimated Range: {calculateTotal(cart)})
-                    </div>
-                  )}
+
                 </div>
               </div>
 
@@ -432,9 +426,8 @@ export function CartPage() {
                     placeholder="e.g. 9840874966"
                     value={customerPhone}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      // Only allow digits, spaces, dashes, or plus sign
-                      if (/^[0-9+\s-]*$/.test(val)) {
+                      const val = e.target.value.replace(/\D/g, "");
+                      if (val.length <= 10) {
                         setCustomerPhone(val);
                       }
                     }}
@@ -442,7 +435,7 @@ export function CartPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">
                       📅 Date
@@ -495,6 +488,21 @@ export function CartPage() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-rose-100 bg-white py-8 px-4 mt-auto">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-zinc-500">
+          <div className="text-center md:text-left">
+            © {new Date().getFullYear()} Pink Love Beauty Studio. All Rights Reserved
+          </div>
+          <div className="text-center">
+            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-semibold text-zinc-700 hover:text-rose-600 transition-colors">Cenexa Systems</a> © {new Date().getFullYear()}
+          </div>
+          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-zinc-400">
+            LOVE • GLOW • PERFECTION
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

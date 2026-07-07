@@ -50,6 +50,11 @@ const DEFAULT_GALLERY = [
     src: "",
     cloudinaryId: "v1782023975/WhatsApp_Image_2026-06-20_at_12.54.45_1_pzb8wx",
     alt: "Client review: radiant bridal look session"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
+    alt: "Pink Love makeup session portrait"
   }
 ];
 type ComboItem = {
@@ -799,18 +804,18 @@ function GalleryPanel() {
     return { position: index, existing };
   });
 
-  const previewSlots = slots.slice(0, 5);
-  const remainingSlots = slots.slice(5);
+  const previewSlots = slots.slice(0, 6);
+  const remainingSlots = slots.slice(6);
 
   return (
     <div className="space-y-8 animate-fade-up">
       <Card className="border-rose-100 shadow-md bg-white/70 backdrop-blur-sm rounded-2xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6">
           <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
-            <Image className="w-5 h-5 text-rose-500" /> Live Bento Gallery Editor
+            <Image className="w-5 h-5 text-rose-500" /> Live Gallery Editor
           </CardTitle>
           <CardDescription>
-            This layout matches the homepage bento grid exactly. Drag & drop any photo directly onto a slot to update it in real-time on the live site!
+            This layout matches the homepage portfolio grid exactly. Drag & drop any photo directly onto a slot to update it in real-time on the live site!
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
@@ -821,34 +826,28 @@ function GalleryPanel() {
             </div>
           ) : (
             <div className="space-y-10">
-              {/* Primary Bento Grid Replica (First 5 Slots) */}
+              {/* Primary Portfolio Grid Replica (First 6 Slots) */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Homepage Bento Grid Slots (1 - 5)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[240px_240px] gap-4">
-                  {previewSlots.map((slot) => {
-                    let bentoClass = "md:col-span-1 md:row-span-1 h-[240px]";
-                    if (slot.position === 0) {
-                      bentoClass = "md:col-span-1 md:row-span-2 h-full min-h-[300px] md:min-h-0";
-                    }
-                    return (
-                      <div key={slot.position} className={bentoClass}>
-                        <GallerySlotEditor
-                          position={slot.position}
-                          existing={slot.existing}
-                          onChanged={load}
-                          isLarge={slot.position === 0}
-                        />
-                      </div>
-                    );
-                  })}
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Homepage Portfolio Grid Slots (1 - 6)</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-5xl">
+                  {previewSlots.map((slot) => (
+                    <div key={slot.position} className="w-full aspect-[2/3]">
+                      <GallerySlotEditor
+                        position={slot.position}
+                        existing={slot.existing}
+                        onChanged={load}
+                        isLarge={false}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
               <hr className="border-rose-100" />
 
-              {/* Remaining Grid Slots (6 - 20) */}
+              {/* Remaining Grid Slots (7 - 20) */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Additional Gallery Slots (6 - 20)</h3>
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Additional Gallery Slots (7 - 20)</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {remainingSlots.map((slot) => (
                     <div key={slot.position} className="h-[260px]">
@@ -891,15 +890,15 @@ function GallerySlotEditor({
   useEffect(() => {
     if (existing) {
       setAlt(existing.alt);
-    } else if (position < 5) {
+    } else if (position < 6) {
       setAlt(DEFAULT_GALLERY[position].alt);
     } else {
       setAlt("");
     }
   }, [existing, position]);
 
-  // Determine fallback default image for first 5 slots
-  const isDefaultAvailable = position < 5;
+  // Determine fallback default image for first 6 slots
+  const isDefaultAvailable = position < 6;
   const fallbackItem = isDefaultAvailable ? DEFAULT_GALLERY[position] : null;
   const defaultUrl = fallbackItem
     ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${fallbackItem.cloudinaryId}`
