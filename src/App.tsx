@@ -439,6 +439,7 @@ const TIME_SLOTS = [
 
 // Core App Layout Component
 import { Admin } from "@/components/Admin";
+import { CartPage } from "@/components/CartPage";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
@@ -447,6 +448,15 @@ export default function App() {
     return (
       <>
         <Admin />
+        <Toaster closeButton position="top-right" />
+      </>
+    );
+  }
+
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/cart")) {
+    return (
+      <>
+        <CartPage />
         <Toaster closeButton position="top-right" />
       </>
     );
@@ -476,26 +486,11 @@ export default function App() {
     }
     return [];
   });
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [customerName, setCustomerName] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("pl_customer_name") || "";
-    }
-    return "";
-  });
-  const [bookingDate, setBookingDate] = useState(todayStr);
-  const [bookingTime, setBookingTime] = useState("10:00 AM");
 
   useEffect(() => {
     localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("pl_cart_change"));
   }, [cart]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("pl_customer_name", customerName);
-    }
-  }, [customerName]);
 
   const addToCart = (id: string, name: string, price: string, type: "combo" | "individual") => {
     setCart((prev) => {
@@ -524,44 +519,6 @@ export default function App() {
     setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: qty } : item)));
   };
 
-  const calculateTotal = () => {
-    let sum = 0;
-    let hasSpecials = false;
-    cart.forEach((item) => {
-      const cleanPrice = item.price.replace(/[₹\s,]/g, "");
-      if (
-        cleanPrice.includes("-") ||
-        cleanPrice.toLowerCase().includes("each") ||
-        cleanPrice.toLowerCase().includes("to")
-      ) {
-        hasSpecials = true;
-      } else {
-        const value = parseInt(cleanPrice) || 0;
-        sum += value * item.quantity;
-      }
-    });
-
-    if (sum === 0 && hasSpecials) {
-      return "Based on items selected";
-    }
-    return `₹${sum}${hasSpecials ? " + specials" : ""}`;
-  };
-
-  const handleWhatsAppCheckout = () => {
-    if (!customerName.trim()) {
-      toast.error("Please enter your name to proceed.");
-      return;
-    }
-
-    const itemsText = cart
-      .map((item) => `• ${item.name} (Qty: ${item.quantity}) — ${item.price}`)
-      .join("\n");
-
-    const message = `Hi Pink Love Beauty Studio! 🌸\n\nI would like to book an appointment.\n\n👤 Customer Name: ${customerName.trim()}\n📅 Date: ${bookingDate}\n⏰ Preferred Slot: ${bookingTime}\n\n💅 Selected Services:\n${itemsText}\n\n💵 Estimated Total: ${calculateTotal()}\n\nPlease confirm availability for booking. Thank you!`;
-
-    const waUrl = `https://wa.me/919840874966?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, "_blank");
-  };
   return (
     <div className="relative overflow-x-hidden bg-background text-foreground pb-24 md:pb-0">
       <Toaster closeButton position="top-right" />
@@ -583,8 +540,8 @@ export default function App() {
 
       {/* Floating Cart Button */}
       {cart.length > 0 && (
-        <button
-          onClick={() => setIsCartOpen(true)}
+        <a
+          href="/cart"
           className="fixed bottom-[7.5rem] md:bottom-6 right-4 sm:right-6 z-[9999] bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white rounded-full p-4.5 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/20 animate-pulse-gentle"
         >
           <div className="relative">
@@ -596,166 +553,7 @@ export default function App() {
           <span className="font-display font-extrabold text-sm tracking-wide pr-1 hidden sm:inline">
             View Bookings
           </span>
-        </button>
-      )}
-
-      {/* Booking Cart Drawer Overlay */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[10000] overflow-hidden">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity cursor-pointer" 
-            onClick={() => setIsCartOpen(false)}
-          />
-
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col h-full rounded-l-3xl border-l border-rose-100 overflow-hidden animate-slide-in-right">
-              
-              {/* Drawer Header */}
-              <div className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 p-6 border-b border-rose-100 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-[color:var(--rose)] shadow-sm">
-                    <ShoppingBag className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold text-rose-900 leading-tight">Your Booking List</h3>
-                    <p className="text-xs text-muted-foreground font-semibold">
-                      {cart.reduce((sum, i) => sum + i.quantity, 0)} services selected
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setIsCartOpen(false)}
-                  className="w-8 h-8 rounded-full hover:bg-rose-50 flex items-center justify-center text-muted-foreground hover:text-[color:var(--rose)] transition-colors cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Drawer Items List */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {cart.length === 0 ? (
-                  <div className="text-center py-20 text-muted-foreground space-y-3">
-                    <div className="text-4xl animate-bounce-subtle">🌸</div>
-                    <p className="font-bold text-rose-800">Your list is empty.</p>
-                    <p className="text-xs max-w-xs mx-auto text-muted-foreground/80 leading-relaxed">
-                      Browse the menu card and add the packages or individual services you want to book!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {cart.map((item) => (
-                      <div key={item.id} className="flex flex-col p-4 rounded-2xl border border-rose-100 bg-rose-50/5 hover:bg-rose-50/15 transition-colors gap-3 shadow-sm">
-                        <div className="flex justify-between items-start gap-3">
-                          <span className="font-display text-sm font-bold uppercase text-foreground leading-tight">{item.name}</span>
-                          <button 
-                            onClick={() => removeFromCart(item.id)}
-                            className="text-muted-foreground hover:text-rose-600 transition-colors p-0.5 cursor-pointer"
-                          >
-                            <Trash2 className="w-4.5 h-4.5" />
-                          </button>
-                        </div>
-                        <div className="flex justify-between items-center pt-2.5 border-t border-rose-100/40">
-                          <span className="text-sm font-bold text-rose-700 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200/50 shadow-xs tracking-tight">
-                            {item.price}
-                          </span>
-                          
-                          {/* Quantity Controls */}
-                          <div className="flex items-center border border-rose-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="px-2.5 py-1 hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
-                            >
-                              <Minus className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="px-3 text-sm font-bold text-foreground min-w-8 text-center">{item.quantity}</span>
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="px-2.5 py-1 hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Drawer Checkout Form */}
-              {cart.length > 0 && (
-                <div className="p-6 border-t border-rose-100 bg-gradient-to-b from-rose-50/10 to-rose-50/30 space-y-4.5">
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-extrabold text-rose-900 uppercase tracking-widest">Estimated Total</span>
-                    <span className="font-sans text-2xl sm:text-3xl font-bold text-rose-800 bg-rose-50 px-4 py-1.5 rounded-xl border border-rose-200 shadow-sm tracking-tight">
-                      {calculateTotal()}
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-rose-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-rose-500" /> Enter Your Name <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Priya Sharma"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full h-11 px-3.5 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm shadow-sm transition-all text-zinc-900"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-rose-900 uppercase tracking-wider block">
-                        📅 Preferred Date
-                      </label>
-                      <input
-                        type="date"
-                        min={todayStr}
-                        value={bookingDate}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (val && val < todayStr) {
-                            setBookingDate(todayStr);
-                            toast.warning("Past dates cannot be selected.");
-                          } else {
-                            setBookingDate(val);
-                          }
-                        }}
-                        className="w-full h-11 px-3 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-xs sm:text-sm shadow-sm transition-all text-zinc-900"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-rose-900 uppercase tracking-wider block">
-                        ⏰ Preferred Time
-                      </label>
-                      <select
-                        value={bookingTime}
-                        onChange={(e) => setBookingTime(e.target.value)}
-                        className="w-full h-11 px-3 rounded-xl border border-rose-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-xs sm:text-sm shadow-sm transition-all text-zinc-900"
-                      >
-                        {TIME_SLOTS.map((slot) => (
-                          <option key={slot} value={slot}>
-                            {slot}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleWhatsAppCheckout}
-                    className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-white/10"
-                  >
-                    Proceed to WhatsApp Booking
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        </a>
       )}
     </div>
   );
@@ -823,7 +621,7 @@ function Nav() {
           ))}
         </nav>
         <a
-          href="https://wa.me/919840874966"
+          href="https://api.whatsapp.com/send/?phone=919840874966"
           target="_blank"
           rel="noreferrer"
           className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-white px-3.5 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap"
@@ -1115,7 +913,7 @@ function LookFinder() {
 
                 <div className="mt-8">
                   <a
-                    href={`https://wa.me/919840874966?text=${encodeURIComponent(match.waText)}`}
+                    href={`https://api.whatsapp.com/send/?phone=919840874966&text=${encodeURIComponent(match.waText)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center w-full gap-2 rounded-2xl bg-foreground hover:bg-[color:var(--rose)] text-background hover:text-white px-6 py-4 font-bold transition-all duration-300 shadow-[var(--shadow-soft)]"
@@ -2180,7 +1978,7 @@ function FAQ() {
         </div>
         <p className="text-center mt-10 text-foreground/60 text-sm">
           More questions?{" "}
-          <a href="https://wa.me/919840874966" className="text-[color:var(--rose)] underline underline-offset-4 font-semibold hover:text-[color:var(--petal)] transition-colors">
+          <a href="https://api.whatsapp.com/send/?phone=919840874966" className="text-[color:var(--rose)] underline underline-offset-4 font-semibold hover:text-[color:var(--petal)] transition-colors">
             Chat with us on WhatsApp
           </a>
         </p>
@@ -2204,7 +2002,7 @@ function Visit() {
             <Info label="Instagram" value={<a href="https://www.instagram.com/pinklove_beautystudio/" target="_blank" rel="noreferrer" className="hover:text-[color:var(--petal)]">@pinklove_beautystudio</a>} />
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <a href="https://wa.me/919840874966" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--rose)] px-6 py-3 text-background hover:opacity-90 transition">WhatsApp Booking</a>
+            <a href="https://api.whatsapp.com/send/?phone=919840874966" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--rose)] px-6 py-3 text-background hover:opacity-90 transition">WhatsApp Booking</a>
             <a href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-background/30 px-6 py-3 hover:border-[color:var(--petal)] transition">Directions</a>
           </div>
         </div>
@@ -2314,7 +2112,7 @@ function MobileStickyNav() {
 
       {/* WhatsApp Book Button (Hero Action) */}
       <a
-        href="https://wa.me/919840874966?text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability."
+        href="https://api.whatsapp.com/send/?phone=919840874966&text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability."
         target="_blank"
         rel="noreferrer"
         className="flex-[1.5] flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--petal)] text-white shadow-lg shadow-rose-200/30 transition-all duration-300 active:scale-95 text-center font-bold"
