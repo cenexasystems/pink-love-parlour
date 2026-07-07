@@ -100,6 +100,11 @@ const DEFAULT_GALLERY: GalleryImage[] = [
     src: "",
     cloudinaryId: "v1782023975/WhatsApp_Image_2026-06-20_at_12.54.45_1_pzb8wx",
     alt: "Client review: radiant bridal look session"
+  },
+  {
+    src: "",
+    cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
+    alt: "Pink Love makeup session portrait"
   }
 ];
 
@@ -540,6 +545,7 @@ export default function App() {
       <Hero />
       <Marquee />
       <About />
+      <Certifications />
       <Services />
       <MenuBook cart={cart} onAddToCart={addToCart} />
       <LookFinder />
@@ -744,9 +750,9 @@ function About() {
           <img
             src={logo}
             alt="Pink Love Beauty Studio Logo"
-            width={96}
-            height={96}
-            className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover shadow-[var(--shadow-petal)] border border-rose-200/50"
+            width={144}
+            height={144}
+            className="h-28 w-28 sm:h-36 sm:w-36 rounded-full object-cover shadow-[var(--shadow-petal)] border-2 border-[color:var(--rose)]/30 transition-transform duration-500 hover:scale-105"
           />
           <div>
             <p className="font-script text-3xl text-[color:var(--rose)]">our story</p>
@@ -1035,10 +1041,10 @@ function Gallery() {
     };
   }, []);
 
-  // Display exactly first 5 preview images (positions 0-4) in the main page bento grid
-  const previewImages = Array.from({ length: 5 }, (_, i) => {
+  // Display exactly first 6 preview images (positions 0-5) in the main page grid
+  const previewImages = Array.from({ length: 6 }, (_, i) => {
     const dbImage = galleryImages.find((img) => img.position === i);
-    return dbImage || DEFAULT_GALLERY[i];
+    return dbImage || DEFAULT_GALLERY[i] || DEFAULT_GALLERY[0];
   });
 
   // Helper to parse category and alt text
@@ -1109,6 +1115,24 @@ function Gallery() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeImageIndex, processedImages]);
 
+  // Image preloading effect to prevent switching lag
+  useEffect(() => {
+    if (activeImageIndex === null || processedImages.length === 0) return;
+    const nextIdx = (activeImageIndex + 1) % processedImages.length;
+    const prevIdx = (activeImageIndex - 1 + processedImages.length) % processedImages.length;
+    
+    [nextIdx, prevIdx].forEach((idx) => {
+      const item = processedImages[idx];
+      const url = item.cloudinaryId
+        ? `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${item.cloudinaryId}`
+        : item.src;
+      if (url) {
+        const img = new Image();
+        img.src = url;
+      }
+    });
+  }, [activeImageIndex, processedImages, cloudName]);
+
   // Lock body scroll when lightbox is active
   useEffect(() => {
     if (activeImageIndex !== null) {
@@ -1129,26 +1153,18 @@ function Gallery() {
           <h2 className="font-display text-5xl sm:text-6xl">Pink love portfolio</h2>
         </div>
         
-        {/* Bento Grid Layout (Previewing 5 Images) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[320px_320px] gap-4">
+        {/* Responsive Grid Layout (6 Vertical Images: 3 up, 3 down on desktop) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {processedImages.map((item, i) => {
             const imageUrl = item.cloudinaryId
               ? `https://res.cloudinary.com/${cloudName}/image/upload/w_800,f_auto,q_auto/${item.cloudinaryId}`
               : item.src;
-              
-            // Define preview bento grid spans:
-            // Item 0: Tall (left column, spans 2 rows)
-            // Item 1, 2, 3, 4: Regular square cells
-            let bentoClass = "md:col-span-1 md:row-span-1";
-            if (i === 0) {
-              bentoClass = "md:col-span-1 md:row-span-2";
-            }
 
             return (
               <div
                 key={i}
                 onClick={() => setActiveImageIndex(i)}
-                className={`relative w-full h-full overflow-hidden rounded-3xl group shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)] bg-card ${bentoClass} min-h-[300px] md:min-h-0 cursor-pointer`}
+                className="relative w-full aspect-[2/3] overflow-hidden rounded-3xl group shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)] bg-card cursor-pointer"
               >
                 <img
                   src={imageUrl}
@@ -1196,25 +1212,25 @@ function Gallery() {
             {/* Close Button */}
             <button
               onClick={() => setActiveImageIndex(null)}
-              className="absolute top-6 right-6 z-[50001] w-12 h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
+              className="absolute top-4 right-4 md:top-6 md:right-6 z-[50001] w-10 h-10 md:w-12 md:h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 md:w-6 md:h-6" />
             </button>
 
             {/* Left Arrow */}
             <button
               onClick={showPrev}
-              className="absolute left-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+              className="absolute left-4 md:left-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95 z-20"
             >
-              <span className="text-xl">←</span>
+              <span className="text-lg md:text-xl">←</span>
             </button>
 
             {/* Right Arrow */}
             <button
               onClick={showNext}
-              className="absolute right-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+              className="absolute right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95 z-20"
             >
-              <span className="text-xl">→</span>
+              <span className="text-lg md:text-xl">→</span>
             </button>
 
             {/* Image Container */}
@@ -1223,19 +1239,20 @@ function Gallery() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
+                key={activeImageIndex}
                 src={imageUrl}
                 alt={item.displayAlt || "Full portfolio image"}
-                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 transition-opacity duration-300 animate-fade-in"
               />
             </div>
 
             {/* Info / Alt Caption */}
-            <div className="mt-6 flex items-center justify-center gap-3 bg-black/40 px-6 py-2.5 rounded-full border border-white/5 backdrop-blur-sm">
-              <span className="text-amber-400 text-xs font-bold tracking-widest uppercase">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3 bg-black/40 px-4 md:px-6 py-2 rounded-full border border-white/5 backdrop-blur-sm max-w-[90vw] text-center">
+              <span className="text-amber-400 text-[10px] md:text-xs font-bold tracking-widest uppercase">
                 {item.category}
               </span>
-              <span className="text-white/40 text-xs">|</span>
-              <span className="text-white/90 text-sm font-semibold tracking-wide">
+              <span className="text-white/40 text-xs hidden xs:inline">|</span>
+              <span className="text-white/95 text-xs md:text-sm font-semibold tracking-wide truncate max-w-[220px] sm:max-w-none">
                 {item.displayAlt}
               </span>
             </div>
@@ -1352,6 +1369,24 @@ function GalleryPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeImageIndex, processedImages]);
 
+  // Image preloading effect to prevent switching lag
+  useEffect(() => {
+    if (activeImageIndex === null || processedImages.length === 0) return;
+    const nextIdx = (activeImageIndex + 1) % processedImages.length;
+    const prevIdx = (activeImageIndex - 1 + processedImages.length) % processedImages.length;
+    
+    [nextIdx, prevIdx].forEach((idx) => {
+      const item = processedImages[idx];
+      const url = item.cloudinaryId
+        ? `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${item.cloudinaryId}`
+        : item.src;
+      if (url) {
+        const img = new Image();
+        img.src = url;
+      }
+    });
+  }, [activeImageIndex, processedImages, cloudName]);
+
   // Lock body scroll when lightbox is active
   useEffect(() => {
     if (activeImageIndex !== null) {
@@ -1437,25 +1472,25 @@ function GalleryPage() {
             {/* Close Button */}
             <button
               onClick={() => setActiveImageIndex(null)}
-              className="absolute top-6 right-6 z-[50001] w-12 h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
+              className="absolute top-4 right-4 md:top-6 md:right-6 z-[50001] w-10 h-10 md:w-12 md:h-12 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 md:w-6 md:h-6" />
             </button>
 
             {/* Left Arrow */}
             <button
               onClick={showPrev}
-              className="absolute left-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+              className="absolute left-4 md:left-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95 z-20"
             >
-              <span className="text-xl">←</span>
+              <span className="text-lg md:text-xl">←</span>
             </button>
 
             {/* Right Arrow */}
             <button
               onClick={showNext}
-              className="absolute right-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95"
+              className="absolute right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/10 shadow-lg hover:scale-105 active:scale-95 z-20"
             >
-              <span className="text-xl">→</span>
+              <span className="text-lg md:text-xl">→</span>
             </button>
 
             {/* Image Container */}
@@ -1464,19 +1499,20 @@ function GalleryPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
+                key={activeImageIndex}
                 src={imageUrl}
                 alt={item.displayAlt || "Full portfolio image"}
-                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 transition-opacity duration-300 animate-fade-in"
               />
             </div>
 
             {/* Info / Alt Caption */}
-            <div className="mt-6 flex items-center justify-center gap-3 bg-black/40 px-6 py-2.5 rounded-full border border-white/5 backdrop-blur-sm">
-              <span className="text-amber-400 text-xs font-bold tracking-widest uppercase">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3 bg-black/40 px-4 md:px-6 py-2 rounded-full border border-white/5 backdrop-blur-sm max-w-[90vw] text-center">
+              <span className="text-amber-400 text-[10px] md:text-xs font-bold tracking-widest uppercase">
                 {item.category}
               </span>
-              <span className="text-white/40 text-xs">|</span>
-              <span className="text-white/90 text-sm font-semibold tracking-wide">
+              <span className="text-white/40 text-xs hidden xs:inline">|</span>
+              <span className="text-white/95 text-xs md:text-sm font-semibold tracking-wide truncate max-w-[220px] sm:max-w-none">
                 {item.displayAlt}
               </span>
             </div>
@@ -1641,12 +1677,7 @@ function ReelCard({ post, onOpen }: { post: IgPost; onOpen: (post: IgPost) => vo
         </div>
       )}
 
-      {/* Glassmorphic Play Overlay Button */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="h-16 w-16 rounded-full bg-black/60 text-[color:var(--gold)] flex items-center justify-center backdrop-blur-md border border-[color:var(--gold)]/30 opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
-          <span className="ml-1 text-2xl">▶</span>
-        </div>
-      </div>
+
 
       {/* Bottom caption overlay */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/50 to-transparent p-6 pt-16 pointer-events-none">
@@ -1830,8 +1861,8 @@ function Reviews() {
   return (
     <section id="reviews" className="relative z-10 py-24 bg-gradient-to-b from-background to-[color:var(--blush)]/35 overflow-hidden w-full">
       {/* Decorative blurry pink glow */}
-      <div className="absolute right-10 top-1/4 h-80 w-80 rounded-full bg-[color:var(--rose)] opacity-5 blur-3xl" />
-      <div className="absolute left-10 bottom-1/4 h-80 w-80 rounded-full bg-[color:var(--gold)] opacity-5 blur-3xl" />
+      <div className="absolute right-10 top-1/4 h-80 w-80 rounded-full bg-[color:var(--rose)] opacity-5 blur-3xl pointer-events-none" />
+      <div className="absolute left-10 bottom-1/4 h-80 w-80 rounded-full bg-[color:var(--gold)] opacity-5 blur-3xl pointer-events-none" />
 
       {/* Centered bounded header */}
       <div className="mx-auto max-w-6xl text-center mb-16 px-6">
@@ -1955,6 +1986,123 @@ function Reviews() {
           </div>
         </div>
       )}
+    </section>
+  );
+}
+
+function Certifications() {
+  const CERTIFICATES = [
+    {
+      title: "Master Bridal Makeup Artist",
+      issuer: "International Academy of Bridal Makeup",
+      date: "2024",
+      id: "CERT-IBM-9928",
+      orientation: "horizontal"
+    },
+    {
+      title: "Pro Airbrush Makeup Certification",
+      issuer: "MAC Cosmetics Pro Academy",
+      date: "2025",
+      id: "CERT-MAC-4820",
+      orientation: "vertical"
+    },
+    {
+      title: "Advanced Skin Booster & Hydrafacial Specialist",
+      issuer: "Korean Skin Therapy & Aesthetics Institute",
+      date: "2024",
+      id: "CERT-KST-0192",
+      orientation: "horizontal"
+    },
+    {
+      title: "Advanced Styling & Keratin Treatment Master",
+      issuer: "L'Oréal Professional Academy",
+      date: "2023",
+      id: "CERT-LPA-8831",
+      orientation: "vertical"
+    },
+    {
+      title: "Professional Cosmetics Certification",
+      issuer: "Kryolan Professional Artistry",
+      date: "2024",
+      id: "CERT-KPA-5502",
+      orientation: "horizontal"
+    }
+  ];
+
+  return (
+    <section id="certifications" className="relative z-10 py-24 bg-gradient-to-b from-[color:var(--blush)]/10 to-transparent overflow-hidden w-full">
+      <div className="mx-auto max-w-6xl text-center mb-14 px-6">
+        <p className="font-script text-3xl text-[color:var(--rose)]">accredited professional care</p>
+        <h2 className="font-display text-5xl sm:text-6xl mt-1 tracking-tight">Our Credentials</h2>
+      </div>
+
+      <div className="relative flex w-full overflow-x-hidden py-8 hover-pause-row">
+        <div className="absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
+        
+        <div className="flex gap-10 items-center whitespace-nowrap animate-marquee-ltr py-4">
+          {[...CERTIFICATES, ...CERTIFICATES].map((cert, i) => {
+            const isHorizontal = cert.orientation === "horizontal";
+            const dimensions = isHorizontal 
+              ? "w-[440px] h-[310px]" 
+              : "w-[320px] h-[410px]";
+            
+            return (
+              <div
+                key={`cert-${i}`}
+                className={`inline-block ${dimensions} bg-[#FCFBF7] rounded-2xl border-4 border-double border-[color:var(--gold)]/40 p-8 shadow-[0_15px_40px_rgba(218,165,32,0.08)] hover:shadow-[0_20px_50px_rgba(218,165,32,0.15)] hover:border-[color:var(--gold)]/70 hover:scale-[1.02] transition-all duration-300 relative overflow-hidden text-left shrink-0`}
+              >
+                {/* Gold Seal watermark */}
+                <div className="absolute right-4 bottom-4 w-28 h-28 rounded-full border-2 border-dashed border-[color:var(--gold)]/20 flex items-center justify-center pointer-events-none">
+                  <div className="w-22 h-22 rounded-full border border-double border-[color:var(--gold)]/10 flex items-center justify-center">
+                    <span className="text-[color:var(--gold)]/15 text-5xl">★</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col h-full justify-between">
+                  {/* Top Header */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-[10px] tracking-[0.2em] text-[color:var(--rose)] font-bold uppercase font-display">
+                        Accredited Certificate
+                      </span>
+                      <span className="text-[10px] font-bold text-[color:var(--gold)] tracking-widest uppercase">
+                        ★ Pink Love ★
+                      </span>
+                    </div>
+                    <div className="h-[2px] w-full bg-gradient-to-r from-[color:var(--gold)]/30 via-[color:var(--gold)]/10 to-transparent mb-4" />
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="my-auto whitespace-normal">
+                    <h3 className="font-serif italic text-2xl text-zinc-800 leading-tight">
+                      {cert.title}
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider mt-3 font-display">
+                      Awarded to Pink Love Beauty Studio
+                    </p>
+                  </div>
+
+                  {/* Footer / Signatures */}
+                  <div className="mt-auto">
+                    <div className="h-[1px] w-full bg-zinc-200 mb-4" />
+                    <div className="flex justify-between items-end text-xs text-zinc-500 font-medium">
+                      <div>
+                        <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Authorized Signatory</p>
+                        <p className="font-script text-base text-[color:var(--rose)] leading-none mt-1.5">Pink Love Studio</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Issuer & Year</p>
+                        <p className="text-[10px] text-zinc-700 font-bold mt-1.5">{cert.issuer} ({cert.date})</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }
@@ -2103,9 +2251,9 @@ function Footer() {
           <img
             src={logo}
             alt="Pink Love Beauty Studio Logo"
-            width={64}
-            height={64}
-            className="h-16 w-16 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
+            width={112}
+            height={112}
+            className="h-24 w-24 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50 transition-transform duration-500 hover:scale-105"
           />
         </div>
         <p className="font-script text-5xl text-gradient-rose text-center">Pink Love</p>

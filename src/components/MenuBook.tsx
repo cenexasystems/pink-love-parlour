@@ -215,11 +215,15 @@ export function MenuBook({ cart, onAddToCart }: MenuBookProps) {
               return (
                 <div
                   key={item.id}
-                  className="group flex items-center justify-between py-2.5 border-b border-rose-100/30 px-1 hover:bg-rose-50/15 rounded-lg transition-all"
+                  className="group flex flex-col min-[480px]:flex-row min-[480px]:items-center justify-between py-3 border-b border-rose-100/30 px-1 hover:bg-rose-50/15 rounded-lg transition-all gap-2 min-[480px]:gap-0"
                 >
-                  <span className="font-display font-semibold text-sm sm:text-base tracking-wide uppercase max-w-[50%] leading-snug">{item.name}</span>
-                  <span className="flex-grow border-b border-dotted border-rose-300/40 mx-3" />
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex-1 min-w-0">
+                    <span className="font-display font-semibold text-sm sm:text-base tracking-wide uppercase leading-snug block">
+                      {item.name}
+                    </span>
+                  </div>
+                  <span className="hidden min-[480px]:block flex-grow border-b border-dotted border-rose-300/40 mx-3" />
+                  <div className="flex items-center justify-between min-[480px]:justify-end gap-2.5 w-full min-[480px]:w-auto">
                     <span className="font-sans font-bold text-sm sm:text-base md:text-lg text-rose-700 bg-rose-50/80 px-3 py-1 rounded-lg border border-rose-200/50 shadow-xs whitespace-nowrap tracking-tight">
                       {displayPrice}
                     </span>
@@ -245,8 +249,8 @@ export function MenuBook({ cart, onAddToCart }: MenuBookProps) {
 
   return (
     <section id="menu" className="relative z-10 px-6 py-20 bg-gradient-to-b from-[color:var(--blush)]/20 to-background overflow-hidden">
-      <div className="absolute -left-20 top-20 h-96 w-96 rounded-full bg-[color:var(--rose)] opacity-10 blur-3xl" />
-      <div className="absolute -right-20 bottom-20 h-96 w-96 rounded-full bg-[color:var(--gold)] opacity-10 blur-3xl" />
+      <div className="absolute -left-20 top-20 h-96 w-96 rounded-full bg-[color:var(--rose)] opacity-10 blur-3xl pointer-events-none" />
+      <div className="absolute -right-20 bottom-20 h-96 w-96 rounded-full bg-[color:var(--gold)] opacity-10 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-10">
