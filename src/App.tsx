@@ -487,10 +487,23 @@ export default function App() {
     return [];
   });
 
+  const [activeReel, setActiveReel] = useState<IgPost | null>(null);
+
   useEffect(() => {
     localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("pl_cart_change"));
   }, [cart]);
+
+  useEffect(() => {
+    if (activeReel !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeReel]);
 
   const addToCart = (id: string, name: string, price: string, type: "combo" | "individual") => {
     setCart((prev) => {
@@ -531,12 +544,19 @@ export default function App() {
       <MenuBook cart={cart} onAddToCart={addToCart} />
       <LookFinder />
       <Gallery />
-      <Reels />
+      <Reels onOpenReel={setActiveReel} />
       <Reviews />
       <FAQ />
       <Visit />
       <Footer />
       <MobileStickyNav />
+
+      {/* Lightbox Video Modal at root level */}
+      <VideoModal
+        post={activeReel}
+        isOpen={!!activeReel}
+        onClose={() => setActiveReel(null)}
+      />
 
       {/* Floating Cart Button */}
       {cart.length > 0 && (
@@ -1089,6 +1109,18 @@ function Gallery() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeImageIndex, processedImages]);
 
+  // Lock body scroll when lightbox is active
+  useEffect(() => {
+    if (activeImageIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeImageIndex]);
+
   return (
     <section id="gallery" className="relative z-10 px-6 py-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
       <div className="mx-auto max-w-7xl">
@@ -1160,7 +1192,6 @@ function Gallery() {
         return (
           <div 
             className="fixed inset-0 z-[50000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none"
-            onClick={() => setActiveImageIndex(null)}
           >
             {/* Close Button */}
             <button
@@ -1321,6 +1352,18 @@ function GalleryPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeImageIndex, processedImages]);
 
+  // Lock body scroll when lightbox is active
+  useEffect(() => {
+    if (activeImageIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeImageIndex]);
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col p-4 sm:p-8">
       {/* Header */}
@@ -1390,7 +1433,6 @@ function GalleryPage() {
         return (
           <div 
             className="fixed inset-0 z-[50000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none"
-            onClick={() => setActiveImageIndex(null)}
           >
             {/* Close Button */}
             <button
@@ -1465,16 +1507,16 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
     : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-opacity duration-300">
-      {/* Click outside to close */}
-      <div className="absolute inset-0" onClick={onClose} />
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-opacity duration-300">
+      {/* Click outside to close (disabled per user request) */}
+      <div className="absolute inset-0" />
       
-      <div className="relative w-full max-w-md bg-zinc-950 rounded-[32px] border border-white/10 overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] z-10 transform scale-100 transition-all duration-300 flex flex-col">
+      <div className="relative w-full max-w-sm bg-zinc-950 rounded-[32px] border border-white/10 overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] z-10 transform scale-100 transition-all duration-300 flex flex-col">
         {/* Header / Close button */}
         <div className="absolute right-4 top-4 z-20">
           <button
             onClick={onClose}
-            className="h-10 w-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur transition-all duration-200 border border-white/10"
+            className="h-10 w-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur transition-all duration-200 border border-white/10 cursor-pointer"
             aria-label="Close modal"
           >
             ✕
@@ -1482,7 +1524,7 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
         </div>
 
         {/* Video / Iframe container */}
-        <div className="relative w-full bg-black flex items-center justify-center p-1" style={{ minHeight: "540px" }}>
+        <div className="relative w-full bg-black flex items-center justify-center p-1 aspect-[9/16]">
           {cloudinaryUrl ? (
             <video
               src={cloudinaryUrl}
@@ -1491,7 +1533,7 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
               playsInline
               loop
               preload="metadata"
-              className="w-full h-[580px] sm:h-[620px] rounded-2xl object-cover"
+              className="w-full h-full rounded-2xl object-contain"
             />
           ) : localVideoUrl ? (
             <video
@@ -1501,12 +1543,12 @@ function VideoModal({ post, isOpen, onClose }: VideoModalProps) {
               playsInline
               loop
               preload="metadata"
-              className="w-full h-[580px] sm:h-[620px] rounded-2xl object-cover"
+              className="w-full h-full rounded-2xl object-contain"
             />
           ) : (
             <iframe
               src={embedUrl}
-              className="w-full h-[580px] sm:h-[620px] border-0 rounded-2xl"
+              className="w-full h-full border-0 rounded-2xl"
               scrolling="no"
               allowFullScreen
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
@@ -1620,9 +1662,11 @@ function ReelCard({ post, onOpen }: { post: IgPost; onOpen: (post: IgPost) => vo
   );
 }
 
-function Reels() {
-  const [activePost, setActivePost] = useState<IgPost | null>(null);
+interface ReelsProps {
+  onOpenReel: (post: IgPost) => void;
+}
 
+function Reels({ onOpenReel }: ReelsProps) {
   return (
     <section id="reels" className="relative z-10 px-6 py-24 bg-neutral-950 text-white">
       {/* Decorative glows */}
@@ -1642,7 +1686,7 @@ function Reels() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {CLOUDINARY_VIDEOS.map((post, i) => (
             <div key={post?.id ?? i} className="w-full">
-              <ReelCard post={post} onOpen={(p) => setActivePost(p)} />
+              <ReelCard post={post} onOpen={onOpenReel} />
             </div>
           ))}
         </div>
@@ -1658,13 +1702,6 @@ function Reels() {
           </a>
         </div>
       </div>
-
-      {/* Lightbox Video Modal */}
-      <VideoModal
-        post={activePost}
-        isOpen={!!activePost}
-        onClose={() => setActivePost(null)}
-      />
     </section>
   );
 }
@@ -2060,19 +2097,32 @@ function Info({ label, value }: { label: string; value: React.ReactNode }) {
 
 function Footer() {
   return (
-    <footer className="relative z-10 px-6 pt-16 pb-10 text-center border-t border-foreground/10">
-      <div className="flex flex-col items-center justify-center mb-6">
-        <img
-          src={logo}
-          alt="Pink Love Beauty Studio Logo"
-          width={64}
-          height={64}
-          className="h-16 w-16 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
-        />
+    <footer className="relative z-10 px-6 pt-16 pb-10 border-t border-foreground/10">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col items-center justify-center mb-6">
+          <img
+            src={logo}
+            alt="Pink Love Beauty Studio Logo"
+            width={64}
+            height={64}
+            className="h-16 w-16 rounded-full object-cover shadow-[var(--shadow-soft)] border border-rose-200/50"
+          />
+        </div>
+        <p className="font-script text-5xl text-gradient-rose text-center">Pink Love</p>
+        <p className="mt-2 text-xs uppercase tracking-[0.4em] text-foreground/60 text-center">Beauty Studio · Kattankulathur</p>
+        
+        <div className="mt-16 pt-8 border-t border-foreground/5 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-foreground/50">
+          <div className="text-center md:text-left">
+            © {new Date().getFullYear()} Pink Love Beauty Studio. All Rights Reserved
+          </div>
+          <div className="text-center">
+            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-semibold text-foreground/70 hover:text-[color:var(--rose)] transition-colors">Cenexa Systems</a> © {new Date().getFullYear()}
+          </div>
+          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-foreground/60">
+            LOVE • GLOW • PERFECTION
+          </div>
+        </div>
       </div>
-      <p className="font-script text-5xl text-gradient-rose">Pink Love</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.4em] text-foreground/60">Beauty Studio · Kattankulathur</p>
-      <p className="mt-8 text-xs text-foreground/50">© {new Date().getFullYear()} Pink Love Beauty Studio. Made with love & a touch of pink.</p>
     </footer>
   );
 }

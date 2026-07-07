@@ -96,7 +96,21 @@ const calculateTotal = (items: CartItem[]) => {
     return `₹${minSum}`;
   }
   
-  return `₹${minSum} - ₹${maxSum}${hasUnparseable ? " +" : ""}`;
+};
+
+const getGrandTotalDisplay = (fixedItems: CartItem[], variableItems: CartItem[]) => {
+  const fixedTotalStr = calculateTotal(fixedItems);
+
+  if (fixedItems.length > 0 && variableItems.length > 0) {
+    return `${fixedTotalStr} + Consultation`;
+  }
+  if (fixedItems.length > 0) {
+    return fixedTotalStr;
+  }
+  if (variableItems.length > 0) {
+    return "Consultation Required";
+  }
+  return "₹0";
 };
 
 export function CartPage() {
@@ -122,6 +136,12 @@ export function CartPage() {
     }
     return "";
   });
+  const [customerPhone, setCustomerPhone] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("pl_customer_phone") || "";
+    }
+    return "";
+  });
   const [bookingDate, setBookingDate] = useState(todayStr);
   const [bookingTime, setBookingTime] = useState("10:00 AM");
 
@@ -135,6 +155,12 @@ export function CartPage() {
       localStorage.setItem("pl_customer_name", customerName);
     }
   }, [customerName]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pl_customer_phone", customerPhone);
+    }
+  }, [customerPhone]);
 
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
@@ -157,28 +183,67 @@ export function CartPage() {
       toast.error("Please enter your name to proceed.");
       return;
     }
+    if (!customerPhone.trim()) {
+      toast.error("Please enter your mobile number to proceed.");
+      return;
+    }
+    const cleanPhone = customerPhone.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      toast.error("Please enter a valid 10-digit mobile number.");
+      return;
+    }
 
     const blossom = String.fromCodePoint(0x1F338);
     const person = String.fromCodePoint(0x1F464);
+    const phoneEmoji = String.fromCodePoint(0x1F4DE);
     const calendar = String.fromCodePoint(0x1F4C5);
     const clock = String.fromCodePoint(0x23F0);
     const nail = String.fromCodePoint(0x1F485);
     const dollar = String.fromCodePoint(0x1F4B5);
     const bullet = String.fromCodePoint(0x2022);
 
-    const itemsText = cart
-      .map((item) => `${bullet} ${item.name} (Qty: ${item.quantity}) — ${item.price}`)
+    const fixedText = fixedItems
+      .map((item) => `  ${bullet} *${item.name}* (Qty: ${item.quantity}) — *${item.price}*`)
       .join("\n");
 
-    const overallTotal = calculateTotal(cart);
+    const variableText = variableItems
+      .map((item) => `  ${bullet} *${item.name}* (Qty: ${item.quantity}) — *${item.price}*`)
+      .join("\n");
 
-    let message = `Hi Pink Love Beauty Studio! ${blossom}\n\nI would like to book an appointment.\n\n`;
-    message += `${person} Customer Name: ${customerName.trim()}\n`;
-    message += `${calendar} Date: ${bookingDate}\n`;
-    message += `${clock} Preferred Slot: ${bookingTime}\n\n`;
-    message += `${nail} Selected Services:\n${itemsText}\n\n`;
-    message += `${dollar} Estimated Total: ${overallTotal}\n\n`;
-    message += `Please confirm availability for booking. Thank you!`;
+    const fixedSubtotal = calculateTotal(fixedItems);
+    const variableSubtotal = calculateTotal(variableItems);
+    const grandTotalDisplay = getGrandTotalDisplay(fixedItems, variableItems);
+    const overallEstimatedRange = calculateTotal(cart);
+
+    let message = `*${blossom} PINK LOVE BEAUTY STUDIO ${blossom}*\n`;
+    message += `*NEW APPOINTMENT BOOKING REQUEST*\n\n`;
+    message += `*${person} Customer Name:* ${customerName.trim()}\n`;
+    message += `*${phoneEmoji} Contact Number:* ${customerPhone.trim()}\n`;
+    message += `*${calendar} Preferred Date:* ${bookingDate}\n`;
+    message += `*${clock} Preferred Slot:* ${bookingTime}\n\n`;
+
+    message += `*${nail} Selected Services:*\n`;
+    if (fixedItems.length > 0) {
+      message += `*Fixed Price Services:*\n${fixedText}\n`;
+    }
+    if (variableItems.length > 0) {
+      message += `*Variable Packages:*\n${variableText}\n`;
+    }
+    message += `\n`;
+
+    message += `*${dollar} Billing Breakdown:*\n`;
+    if (fixedItems.length > 0) {
+      message += `• *Fixed Services Subtotal:* ${fixedSubtotal}\n`;
+    }
+    if (variableItems.length > 0) {
+      message += `• *Variable Packages Est. Range:* ${variableSubtotal}\n`;
+    }
+    message += `• *Grand Total:* *${grandTotalDisplay}*\n`;
+    if (fixedItems.length > 0 && variableItems.length > 0) {
+      message += `  _(Estimated Overall Range: ${overallEstimatedRange})_\n`;
+    }
+    message += `\n`;
+    message += `Please confirm slot availability. Thank you!`;
 
     const waUrl = `https://api.whatsapp.com/send/?phone=919840874966&text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank");
@@ -329,9 +394,18 @@ export function CartPage() {
                   <span className="text-zinc-500 font-semibold">Variable Range</span>
                   <span className="font-bold text-amber-600">{calculateTotal(variableItems)}</span>
                 </div>
-                <div className="pt-4 border-t border-zinc-100 flex justify-between items-center">
-                  <span className="text-zinc-900 font-bold uppercase tracking-wide">Grand Total</span>
-                  <span className="font-display text-2xl font-bold text-rose-600">{calculateTotal(cart)}</span>
+                <div className="pt-4 border-t border-zinc-100 flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-900 font-bold uppercase tracking-wide">Grand Total</span>
+                    <span className="font-display text-2xl font-bold text-rose-600">
+                      {getGrandTotalDisplay(fixedItems, variableItems)}
+                    </span>
+                  </div>
+                  {fixedItems.length > 0 && variableItems.length > 0 && (
+                    <div className="text-[11px] text-zinc-400 font-semibold text-right">
+                      (Estimated Range: {calculateTotal(cart)})
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -345,6 +419,25 @@ export function CartPage() {
                     placeholder="Enter your name"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+                    📞 Mobile Number <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. 9840874966"
+                    value={customerPhone}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // Only allow digits, spaces, dashes, or plus sign
+                      if (/^[0-9+\s-]*$/.test(val)) {
+                        setCustomerPhone(val);
+                      }
+                    }}
                     className="w-full h-12 px-4 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-semibold text-sm transition-all"
                   />
                 </div>
