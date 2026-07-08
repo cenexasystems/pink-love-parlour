@@ -2187,62 +2187,157 @@ function FAQ() {
 }
 
 function Visit() {
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const todayIndex = (new Date().getDay() + 6) % 7; // Convert 0-6 (Sun-Sat) to 0-6 (Mon-Sun)
+
   return (
-    <section id="visit" className="relative z-10 px-6 py-24">
-      <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-10">
-        <div className="rounded-3xl bg-foreground text-background p-10 sm:p-14 relative overflow-hidden">
-          <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-[color:var(--rose)] opacity-30 blur-3xl" />
-          <p className="font-script text-3xl text-[color:var(--petal)]">visit us</p>
-          <h2 className="font-display text-4xl sm:text-5xl mt-2">Come for a touch of pink perfection.</h2>
-          <div className="mt-10 space-y-6 text-background/85">
-            <Info label="Address" value="No 04 Udaiyaar Street, Ninnakarai Road, Kattankulathur, Tamil Nadu 603203" />
-            <Info label="Hours" value={<><div>Mon – Sun · 10:00 AM – 9:00 PM</div></>} />
-            <Info label="Phone / WhatsApp" value={<a href="tel:+919840874966" className="hover:text-[color:var(--petal)]">+91 98408 74966</a>} />
-            <Info label="Instagram" value={<a href="https://www.instagram.com/pinklove_beautystudio/" target="_blank" rel="noreferrer" className="hover:text-[color:var(--petal)]">@pinklove_beautystudio</a>} />
+    <section id="visit" className="relative z-10 px-6 py-24 bg-gradient-to-b from-transparent to-[color:var(--blush)]/10">
+      <div className="mx-auto max-w-7xl grid lg:grid-cols-12 gap-10 items-stretch">
+        
+        {/* Left column - Info Details Card */}
+        <div className="lg:col-span-5 rounded-[32px] bg-neutral-950 text-white p-8 sm:p-12 border border-rose-950/40 relative overflow-hidden flex flex-col justify-between shadow-[0_25px_60px_rgba(0,0,0,0.15)]">
+          {/* Decorative glowing gradient */}
+          <div className="absolute -top-32 -right-32 h-80 w-80 rounded-full bg-[color:var(--rose)] opacity-20 blur-[100px] pointer-events-none" />
+          <div className="absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-[color:var(--gold)] opacity-10 blur-[100px] pointer-events-none" />
+          
+          <div className="relative z-10">
+            <span className="font-script text-3xl text-[color:var(--petal)] block mb-1">visit us</span>
+            <h2 className="font-serif italic text-4xl sm:text-5xl text-white leading-tight font-light">
+              Experience Pink <br />
+              <span className="text-[color:var(--petal)]">Perfection.</span>
+            </h2>
+            
+            <div className="mt-12 space-y-8">
+              <Info 
+                label="Address" 
+                value={
+                  <span className="text-zinc-300 font-medium text-base sm:text-lg">
+                    No 04 Udaiyaar Street, Ninnakarai Road, <br />
+                    Kattankulathur, Tamil Nadu 603203
+                  </span>
+                } 
+              />
+              <Info 
+                label="Hours" 
+                value={
+                  <span className="text-zinc-300 font-medium text-base sm:text-lg">
+                    Mon – Sun · 10:00 AM – 9:00 PM
+                  </span>
+                } 
+              />
+              <Info 
+                label="Phone / WhatsApp" 
+                value={
+                  <a href="tel:+919840874966" className="text-[color:var(--petal)] hover:text-white transition-colors duration-300 font-semibold text-lg">
+                    +91 98408 74966
+                  </a>
+                } 
+              />
+              <Info 
+                label="Instagram" 
+                value={
+                  <a href="https://www.instagram.com/pinklove_beautystudio/" target="_blank" rel="noreferrer" className="text-[color:var(--petal)] hover:text-white transition-colors duration-300 font-semibold text-lg">
+                    @pinklove_beautystudio
+                  </a>
+                } 
+              />
+            </div>
           </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <a href="https://api.whatsapp.com/send/?phone=919840874966" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--rose)] px-6 py-3 text-background hover:opacity-90 transition">WhatsApp Booking</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-background/30 px-6 py-3 hover:border-[color:var(--petal)] transition">Directions</a>
+          
+          <div className="mt-12 relative z-10 flex flex-col sm:flex-row gap-3 pt-6 border-t border-white/5">
+            <a 
+              href="https://api.whatsapp.com/send/?phone=919840874966" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="flex-1 text-center py-3.5 px-6 rounded-full bg-white text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 hover:scale-102 active:scale-98 shadow-md"
+            >
+              WhatsApp Booking
+            </a>
+            <a 
+              href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="flex-1 text-center py-3.5 px-6 rounded-full border border-white/20 text-white font-bold hover:border-[color:var(--petal)] hover:text-[color:var(--petal)] transition-all duration-300 hover:scale-102 active:scale-98"
+            >
+              Directions
+            </a>
           </div>
         </div>
-        <div className="relative rounded-[40px] overflow-hidden p-6 bg-gradient-to-tr from-rose-100/50 via-white to-pink-100/50 border border-rose-200/60 shadow-[0_24px_50px_rgba(219,112,147,0.15)] flex flex-col min-h-[440px] group">
-          {/* Decorative pink elements resembling a luxury tablet */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-rose-200/70" />
+
+        {/* Right column - Interactive Map Card */}
+        <div className="lg:col-span-7 relative rounded-[32px] overflow-hidden p-4 sm:p-6 bg-white border border-rose-100 shadow-[0_20px_50px_rgba(219,112,147,0.08)] flex flex-col justify-between group">
           <div className="flex items-center gap-2 mb-4 px-2">
-            <span className="w-3 h-3 rounded-full bg-rose-400" />
-            <span className="w-3 h-3 rounded-full bg-pink-300" />
-            <span className="w-3 h-3 rounded-full bg-rose-200" />
-            <span className="ml-auto text-[10px] font-bold text-rose-800 uppercase tracking-widest bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100/70">
-              📍 Find Us Instantly
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+              <span className="w-2.5 h-2.5 rounded-full bg-pink-300" />
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-200" />
+            </div>
+            <span className="ml-auto text-[9px] font-bold text-[color:var(--rose)] uppercase tracking-widest bg-[color:var(--blush)]/40 px-3 py-1 rounded-full border border-[color:var(--rose)]/10 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+              Live Interactive Location
             </span>
           </div>
-          <div className="flex-1 rounded-[24px] overflow-hidden shadow-inner border border-rose-100/40 min-h-[350px] relative group/map">
+
+          <div className="flex-1 rounded-[24px] overflow-hidden border border-rose-100/50 min-h-[380px] lg:min-h-[440px] relative group/map">
             <iframe
               title="Pink Love Beauty Studio location"
               src="https://maps.google.com/maps?q=Pink%20Love%20Beauty%20Studio%20Kattankulathur&t=&z=17&ie=UTF8&iwloc=A&output=embed"
-              className="h-full w-full min-h-[350px] border-none"
+              className="absolute inset-0 h-full w-full border-none rounded-[24px]"
               loading="lazy"
             />
+            
             {/* Interactive maps link overlay */}
             <a 
               href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" 
               target="_blank" 
               rel="noreferrer"
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] sm:w-auto bg-[color:var(--rose)] text-white hover:bg-[color:var(--rose)]/90 font-extrabold px-6 py-3 rounded-full shadow-[0_10px_25px_rgba(219,112,147,0.4)] flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 text-xs sm:text-sm text-center border border-white/20"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] sm:w-auto bg-[color:var(--rose)] text-white hover:bg-[color:var(--rose)]/90 font-bold px-6 py-3.5 rounded-full shadow-[0_12px_30px_rgba(219,112,147,0.35)] flex items-center justify-center gap-2.5 transition-all duration-300 hover:scale-105 active:scale-95 text-xs sm:text-sm text-center border border-white/20"
             >
-              <span>🗺️ Open in Google Maps (App / Web)</span>
+              <span>🗺️ Open in Google Maps App</span>
             </a>
           </div>
         </div>
+
       </div>
-      <div className="mx-auto max-w-7xl mt-10 grid sm:grid-cols-7 gap-2 text-center text-xs">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => (
-          <div key={d} className={`rounded-2xl p-4 ${i === 1 || i === 3 || i === 5 ? "bg-[color:var(--rose)] text-background" : "bg-[color:var(--blush)]/60"}`}>
-            <div className="font-display text-lg">{d}</div>
-            <div className="opacity-80 mt-1">10:00 AM – 9:00 PM</div>
-            {(i === 1 || i === 3 || i === 5) && <div className="mt-2 text-[10px] uppercase tracking-widest">Busy</div>}
-          </div>
-        ))}
+
+      {/* Weekly Schedule Row */}
+      <div className="mx-auto max-w-7xl mt-12">
+        <h3 className="text-center font-display text-sm font-bold uppercase tracking-wider text-zinc-500 mb-6">
+          Weekly Schedule & Booking Traffic
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          {daysOfWeek.map((d, i) => {
+            const isToday = i === todayIndex;
+            const isBusyDay = i === 1 || i === 3 || i === 5; // Tue, Thu, Sat are busy days
+            return (
+              <div 
+                key={d} 
+                className={`rounded-2xl p-4 transition-all duration-300 relative ${
+                  isToday 
+                    ? "bg-white border-2 border-[color:var(--rose)] shadow-[0_8px_30px_rgba(219,112,147,0.15)] scale-[1.03] z-10" 
+                    : isBusyDay 
+                      ? "bg-[color:var(--rose)]/5 border border-[color:var(--rose)]/10 text-zinc-800" 
+                      : "bg-white/40 border border-zinc-100 text-zinc-600"
+                }`}
+              >
+                {isToday && (
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold uppercase tracking-widest bg-[color:var(--rose)] text-white px-2 py-0.5 rounded-full shadow-sm">
+                    Today
+                  </span>
+                )}
+                <div className={`font-display text-lg font-bold ${isToday ? "text-[color:var(--rose)]" : "text-zinc-800"}`}>
+                  {d}
+                </div>
+                <div className="text-[10px] opacity-75 mt-1 font-semibold">10:00 AM – 9:00 PM</div>
+                {isBusyDay && (
+                  <span className="inline-block mt-3 text-[8px] font-extrabold uppercase tracking-widest text-[color:var(--rose)] bg-[color:var(--blush)]/70 px-2 py-0.5 rounded-md border border-[color:var(--rose)]/10">
+                    High Traffic
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -2251,7 +2346,7 @@ function Visit() {
 function Info({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] tracking-[0.3em] uppercase text-background/50 mb-1">{label}</div>
+      <div className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-1">{label}</div>
       <div className="text-lg">{value}</div>
     </div>
   );
