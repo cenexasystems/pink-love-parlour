@@ -283,7 +283,7 @@ export function CartPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FDFBFB] pb-24 font-sans text-zinc-900">
+    <div className="flex flex-col min-h-screen bg-[#FDFBFB] font-sans text-zinc-900">
       {/* Header */}
       <div className="bg-white border-b border-rose-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-5xl mx-auto px-3 sm:px-6 h-20 flex items-center justify-between">
@@ -310,7 +310,7 @@ export function CartPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-2 sm:px-6 pt-10 pb-20">
+      <div className="flex-grow max-w-5xl mx-auto px-2 sm:px-6 pt-10 pb-20 w-full">
         {cart.length === 0 ? (
           <div className="text-center py-24 sm:py-32 bg-white rounded-3xl border border-rose-100 shadow-sm max-w-2xl mx-auto px-4">
             <div className="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -490,15 +490,15 @@ export function CartPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-rose-100 bg-white py-8 px-4 mt-auto">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-zinc-500">
-          <div className="text-center md:text-left">
+      <footer className="border-t border-rose-100 bg-white py-8 px-4 w-full">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-zinc-600">
+          <div className="text-center md:text-left font-medium">
             © {new Date().getFullYear()} Pink Love Beauty Studio. All Rights Reserved
           </div>
-          <div className="text-center">
-            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-semibold text-zinc-700 hover:text-rose-600 transition-colors">Cenexa Systems</a> © {new Date().getFullYear()}
+          <div className="text-center text-zinc-800 font-semibold">
+            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-black text-zinc-950 hover:text-rose-600 transition-colors underline decoration-rose-300 decoration-2 underline-offset-4">Cenexa Systems</a> © {new Date().getFullYear()}
           </div>
-          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-zinc-400">
+          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-zinc-500">
             LOVE • GLOW • PERFECTION
           </div>
         </div>
