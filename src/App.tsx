@@ -56,22 +56,22 @@ const SERVICES = [
   {
     name: "HD Bridal Makeovers",
     desc: "Flawless HD & waterproof bridal makeup designed to last from mandap to reception.",
-    img: g4,
+    img: "/services/bridal-makeup.png",
   },
   {
     name: "Korean Glass Skin Facials",
     desc: "Hydrafacials and glass-skin rituals for that dewy, lit-from-within glow.",
-    img: serviceFacial,
+    img: "/services/facial-spa.png",
   },
   {
     name: "Hair Styling & Spa",
     desc: "Volumizing layers, advanced haircuts and nourishing hair spa treatments.",
-    img: serviceHair,
+    img: "/services/hair-styling.png",
   },
   {
     name: "Bridal Jewelry & Accessories",
     desc: "On-site selection of bridal jewelry, earrings and bangles to complete your look.",
-    img: serviceJewelry,
+    img: "/services/bridal-jewelry.png",
   },
 ];
 
@@ -2003,113 +2003,59 @@ function Reviews() {
 }
 
 function Certifications() {
-  const CERTIFICATES = [
-    {
-      title: "Master Bridal Makeup Artist",
-      issuer: "International Academy of Bridal Makeup",
-      date: "2024",
-      id: "CERT-IBM-9928",
-      orientation: "horizontal"
-    },
-    {
-      title: "Pro Airbrush Makeup Certification",
-      issuer: "MAC Cosmetics Pro Academy",
-      date: "2025",
-      id: "CERT-MAC-4820",
-      orientation: "vertical"
-    },
-    {
-      title: "Advanced Skin Booster & Hydrafacial Specialist",
-      issuer: "Korean Skin Therapy & Aesthetics Institute",
-      date: "2024",
-      id: "CERT-KST-0192",
-      orientation: "horizontal"
-    },
-    {
-      title: "Advanced Styling & Keratin Treatment Master",
-      issuer: "L'Oréal Professional Academy",
-      date: "2023",
-      id: "CERT-LPA-8831",
-      orientation: "vertical"
-    },
-    {
-      title: "Professional Cosmetics Certification",
-      issuer: "Kryolan Professional Artistry",
-      date: "2024",
-      id: "CERT-KPA-5502",
-      orientation: "horizontal"
-    }
+  const [selectedCert, setSelectedCert] = useState<string | null>(null);
+
+  const CERTIFICATE_IMAGES = [
+    "/certificate/enhanced_cert_1_1785078081666.png",
+    "/certificate/enhanced_cert_2_1785078108021.png",
+    "/certificate/enhanced_cert_3_1785078119352.png",
+    "/certificate/enhanced_cert_4_1785078132232.png",
+    "/certificate/enhanced_cert_5_1785078143441.png",
+    "/certificate/enhanced_cert_7_1785078176207.png",
+    "/certificate/enhanced_cert_9_1785078192371.png",
+    "/certificate/enhanced_cert_10_1785078228728.png",
+    "/certificate/enhanced_cert_11_1785078240604.png",
+    "/certificate/enhanced_cert_12_1785078251811.png",
+    "/certificate/enhanced_cert_new_3.png",
+    "/certificate/enhanced_cert_new_4.png",
+    "/certificate/enhanced_cert_new_5.png"
   ];
 
   return (
     <section id="certifications" className="relative z-10 py-24 bg-gradient-to-b from-[color:var(--blush)]/10 to-transparent overflow-hidden w-full">
       <div className="mx-auto max-w-6xl text-center mb-14 px-6">
         <p className="font-script text-3xl text-[color:var(--rose)]">accredited professional care</p>
-        <h2 className="font-display text-5xl sm:text-6xl mt-1 tracking-tight">Our Credentials</h2>
+        <h2 className="font-display text-5xl sm:text-6xl mt-1 tracking-tight">Our Certificates</h2>
       </div>
 
       <div className="relative flex w-full overflow-x-hidden py-8 hover-pause-row">
-        <div className="absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-background via-background/70 to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-background via-background/70 to-transparent z-20 pointer-events-none" />
         
         <div className="flex gap-10 items-center whitespace-nowrap animate-marquee-ltr py-4">
-          {[...CERTIFICATES, ...CERTIFICATES].map((cert, i) => {
-            const isHorizontal = cert.orientation === "horizontal";
-            const dimensions = isHorizontal 
-              ? "w-[85vw] max-w-[440px] h-[280px] sm:h-[310px] p-5 sm:p-8" 
-              : "w-[85vw] max-w-[320px] h-[380px] sm:h-[410px] p-5 sm:p-8";
-            
+          {[...CERTIFICATE_IMAGES, ...CERTIFICATE_IMAGES].map((certUrl, i) => {
             return (
               <div
                 key={`cert-${i}`}
-                className={`inline-block ${dimensions} bg-[#FCFBF7] rounded-2xl border-4 border-double border-[color:var(--gold)]/40 shadow-[0_15px_40px_rgba(218,165,32,0.08)] hover:shadow-[0_20px_50px_rgba(218,165,32,0.15)] hover:border-[color:var(--gold)]/70 hover:scale-[1.02] transition-all duration-300 relative overflow-hidden text-left shrink-0`}
+                onClick={() => setSelectedCert(certUrl)}
+                className="inline-block w-[85vw] max-w-[500px] md:max-w-[600px] aspect-[4/3] bg-white p-6 md:p-8 rounded-md border-[14px] border-[#3E2723] shadow-2xl hover:shadow-[0_25px_50px_-12px_rgba(62,39,35,0.5)] hover:scale-[1.02] transition-all duration-500 relative overflow-hidden text-left shrink-0 group cursor-pointer"
               >
-                {/* Gold Seal watermark */}
-                <div className="absolute right-4 bottom-4 w-28 h-28 rounded-full border-2 border-dashed border-[color:var(--gold)]/20 flex items-center justify-center pointer-events-none">
-                  <div className="w-22 h-22 rounded-full border border-double border-[color:var(--gold)]/10 flex items-center justify-center">
-                    <span className="text-[color:var(--gold)]/15 text-5xl">★</span>
-                  </div>
-                </div>
+                {/* Image rendering with 4K-like enhancement using CSS */}
+                <img
+                  src={certUrl}
+                  alt={`Certificate ${i}`}
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                  style={{
+                    imageRendering: "crisp-edges",
+                    filter: "contrast(1.02) brightness(1.02)"
+                  }}
+                  loading="lazy"
+                />
                 
-                <div className="flex flex-col h-full justify-between">
-                  {/* Top Header */}
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-[10px] tracking-[0.2em] text-[color:var(--rose)] font-bold uppercase font-display">
-                        Accredited Certificate
-                      </span>
-                      <span className="text-[10px] font-bold text-[color:var(--gold)] tracking-widest uppercase">
-                        ★ Pink Love ★
-                      </span>
-                    </div>
-                    <div className="h-[2px] w-full bg-gradient-to-r from-[color:var(--gold)]/30 via-[color:var(--gold)]/10 to-transparent mb-4" />
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="my-auto whitespace-normal">
-                    <h3 className="font-serif italic text-lg sm:text-xl md:text-2xl text-zinc-800 leading-tight">
-                      {cert.title}
-                    </h3>
-                    <p className="text-[10px] sm:text-[11px] text-zinc-500 font-bold uppercase tracking-wider mt-3 font-display">
-                      Awarded to Pink Love Beauty Studio
-                    </p>
-                  </div>
-
-                  {/* Footer / Signatures */}
-                  <div className="mt-auto">
-                    <div className="h-[1px] w-full bg-zinc-200 mb-4" />
-                    <div className="flex justify-between items-end gap-2 text-xs text-zinc-500 font-medium">
-                      <div className="shrink-0">
-                        <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Authorized Signatory</p>
-                        <p className="font-script text-sm sm:text-base text-[color:var(--rose)] leading-none mt-1.5">Pink Love Studio</p>
-                      </div>
-                      <div className="text-right min-w-0">
-                        <p className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Issuer & Year</p>
-                        <p className="text-[9px] sm:text-[10px] text-zinc-700 font-bold mt-1.5 truncate max-w-[120px] sm:max-w-none" title={`${cert.issuer} (${cert.date})`}>
-                          {cert.issuer} ({cert.date})
-                        </p>
-                      </div>
-                    </div>
+                {/* Gold Seal watermark overlay for premium look */}
+                <div className="absolute right-8 bottom-8 w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-dashed border-[color:var(--gold)]/40 flex items-center justify-center pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-500 bg-white/20 backdrop-blur-sm shadow-sm">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-double border-[color:var(--gold)]/50 flex items-center justify-center bg-white/50">
+                    <span className="text-[color:var(--gold)]/60 text-2xl md:text-3xl">★</span>
                   </div>
                 </div>
               </div>
@@ -2117,6 +2063,27 @@ function Certifications() {
           })}
         </div>
       </div>
+
+      {/* Fullscreen Viewer */}
+      {selectedCert && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-sm animate-in fade-in duration-300"
+          onClick={() => setSelectedCert(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all hover:rotate-90 z-50"
+            onClick={() => setSelectedCert(null)}
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <img 
+            src={selectedCert} 
+            alt="Certificate Fullscreen"
+            className="max-w-full max-h-[90vh] object-contain rounded-sm shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-300 pointer-events-auto" 
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
     </section>
   );
 }
@@ -2265,36 +2232,65 @@ function Visit() {
         </div>
 
         {/* Right column - Interactive Map Card */}
-        <div className="lg:col-span-7 relative rounded-[32px] overflow-hidden p-4 sm:p-6 bg-white border border-rose-100 shadow-[0_20px_50px_rgba(219,112,147,0.08)] flex flex-col justify-between group">
-          <div className="flex items-center gap-2 mb-4 px-2">
-            <div className="flex gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-400" />
-              <span className="w-2.5 h-2.5 rounded-full bg-pink-300" />
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-200" />
+        <div className="lg:col-span-7 relative rounded-[32px] overflow-hidden bg-neutral-900 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.3)] group h-full min-h-[450px] lg:min-h-full">
+          {/* Top Floating Badge */}
+          <div className="absolute top-6 left-6 right-6 z-20 flex justify-between items-start pointer-events-none">
+            <div className="bg-black/40 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--petal)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[color:var(--rose)]"></span>
+              </span>
+              Live Location
             </div>
-            <span className="ml-auto text-[9px] font-bold text-[color:var(--rose)] uppercase tracking-widest bg-[color:var(--blush)]/40 px-3 py-1 rounded-full border border-[color:var(--rose)]/10 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
-              Live Interactive Location
-            </span>
+            
+            <div className="flex gap-2">
+              <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 shadow-lg pointer-events-auto cursor-pointer hover:bg-black/60 hover:text-white transition-all hover:scale-105 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h5v5"/><path d="m3.5 20.5 16-16"/><path d="M9.5 20h-5v-5"/></svg>
+              </div>
+            </div>
           </div>
 
-          <div className="flex-1 rounded-[24px] overflow-hidden border border-rose-100/50 min-h-[380px] lg:min-h-[440px] relative group/map">
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            {/* The iframe container restores normal map interaction so the real pin is centered and visible */}
             <iframe
               title="Pink Love Beauty Studio location"
-              src="https://maps.google.com/maps?q=Pink%20Love%20Beauty%20Studio%20Kattankulathur&t=&z=17&ie=UTF8&iwloc=A&output=embed"
-              className="absolute inset-0 h-full w-full border-none rounded-[24px]"
+              src="https://maps.google.com/maps?q=Pink%20Love%20Beauty%20Saloon%20%26%20Bridal%20Studio%20Kattankulathur&t=&z=16&ie=UTF8&output=embed"
+              className="absolute inset-0 h-full w-full border-none transition-all duration-700 ease-in-out group-hover:grayscale-0 contrast-125 saturate-[1.2]"
+              style={{ filter: "grayscale(10%)" }}
               loading="lazy"
             />
-            
-            {/* Interactive maps link overlay */}
+          </div>
+          
+          {/* Custom Funky Marker Bubble (Positioned right above the map's native center pin) */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(100%+24px)] z-30 pointer-events-auto">
             <a 
               href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" 
               target="_blank" 
               rel="noreferrer"
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] sm:w-auto bg-[color:var(--rose)] text-white hover:bg-[color:var(--rose)]/90 font-bold px-6 py-3.5 rounded-full shadow-[0_12px_30px_rgba(219,112,147,0.35)] flex items-center justify-center gap-2.5 transition-all duration-300 hover:scale-105 active:scale-95 text-xs sm:text-sm text-center border border-white/20"
+              className="flex flex-col items-center group/marker cursor-pointer"
             >
-              <span>🗺️ Open in Google Maps App</span>
+              <div className="bg-black/90 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform group-hover/marker:-translate-y-1 transition-all whitespace-nowrap border border-[color:var(--gold)]/40 backdrop-blur-md animate-bounce relative">
+                📍 Our shop is right here!
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-solid border-t-black/90 border-t-8 border-x-transparent border-x-8 border-b-0"></div>
+              </div>
             </a>
+          </div>
+          
+          {/* Glassmorphism Bottom Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-24 pointer-events-none">
+            <div className="transform translate-y-4 group-hover:translate-y-0 opacity-90 group-hover:opacity-100 transition-all duration-500 flex justify-center pointer-events-auto">
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Pink+Love+Beauty+Studio+Kattankulathur" 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-full sm:w-[85%] bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white hover:text-black font-bold px-6 py-4 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.4)] flex items-center justify-center gap-3 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] group/btn"
+              >
+                <div className="bg-white/20 group-hover/btn:bg-black/5 p-2 rounded-full transition-colors duration-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+                </div>
+                <span className="text-sm tracking-wide">Open in Google Maps App</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -2303,21 +2299,18 @@ function Visit() {
       {/* Weekly Schedule Row */}
       <div className="mx-auto max-w-7xl mt-12">
         <h3 className="text-center font-display text-sm font-bold uppercase tracking-wider text-zinc-500 mb-6">
-          Weekly Schedule & Booking Traffic
+          Weekly Schedule
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
           {daysOfWeek.map((d, i) => {
             const isToday = i === todayIndex;
-            const isBusyDay = i === 1 || i === 3 || i === 5; // Tue, Thu, Sat are busy days
             return (
               <div 
                 key={d} 
                 className={`rounded-2xl p-4 transition-all duration-300 relative ${
                   isToday 
                     ? "bg-white border-2 border-[color:var(--rose)] shadow-[0_8px_30px_rgba(219,112,147,0.15)] scale-[1.03] z-10" 
-                    : isBusyDay 
-                      ? "bg-[color:var(--rose)]/5 border border-[color:var(--rose)]/10 text-zinc-800" 
-                      : "bg-white/40 border border-zinc-100 text-zinc-600"
+                    : "bg-white/40 border border-zinc-100 text-zinc-600"
                 }`}
               >
                 {isToday && (
@@ -2329,11 +2322,6 @@ function Visit() {
                   {d}
                 </div>
                 <div className="text-[10px] opacity-75 mt-1 font-semibold">10:00 AM – 9:00 PM</div>
-                {isBusyDay && (
-                  <span className="inline-block mt-3 text-[8px] font-extrabold uppercase tracking-widest text-[color:var(--rose)] bg-[color:var(--blush)]/70 px-2 py-0.5 rounded-md border border-[color:var(--rose)]/10">
-                    High Traffic
-                  </span>
-                )}
               </div>
             );
           })}

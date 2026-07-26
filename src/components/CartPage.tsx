@@ -11,6 +11,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { supabase } from "@/integrations/supabase/client";
 
 type CartItem = {
   id: string;
@@ -146,6 +147,30 @@ export function CartPage() {
   const [bookingDate, setBookingDate] = useState(todayStr);
   const [bookingTime, setBookingTime] = useState("10:00 AM");
 
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    const { data, error } = await supabase.from("coupons").select("*").eq("code", couponCode.trim().toUpperCase()).eq("is_active", true).maybeSingle();
+    setCouponLoading(false);
+
+    if (error || !data) {
+      toast.error("Invalid or inactive coupon code.");
+      return;
+    }
+
+    setAppliedCoupon(data.code);
+    toast.success("Coupon has been applied!");
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+  };
+
   useEffect(() => {
     localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("pl_cart_change"));
@@ -240,6 +265,9 @@ export function CartPage() {
       message += `• *Variable Packages:*\n${variableItems.map((item) => `  - *${item.name}*: *${item.price}*`).join("\n")}\n`;
     }
     message += `• *Grand Total:* *${grandTotalDisplay}*\n`;
+    if (appliedCoupon) {
+      message += `• *Applied Coupon:* *${appliedCoupon}*\n`;
+    }
     message += `\n`;
     message += `Please confirm slot availability. Thank you!`;
 
@@ -393,13 +421,47 @@ export function CartPage() {
                   <span className="font-bold text-amber-600">{calculateTotal(variableItems)}</span>
                 </div>
                 <div className="pt-4 border-t border-zinc-100 flex flex-col gap-1">
-                  <div className="flex flex-row justify-between items-center gap-2 flex-wrap">
+                  <div className="flex flex-row justify-between items-center gap-2 flex-wrap mb-4">
                     <span className="text-zinc-900 font-bold uppercase tracking-wide text-xs sm:text-sm">Grand Total</span>
                     <span className="font-display text-lg sm:text-2xl font-bold text-rose-600 text-right">
                       {getGrandTotalDisplay(fixedItems, variableItems)}
                     </span>
                   </div>
 
+                  {/* Coupon Section */}
+                  <div className="space-y-2 pt-4 border-t border-zinc-100">
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+                      🎟️ Coupon Code
+                    </label>
+                    {!appliedCoupon ? (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Got a discount code?"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          className="w-full h-12 px-4 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 font-bold text-sm transition-all uppercase"
+                        />
+                        <button
+                          onClick={applyCoupon}
+                          disabled={couponLoading || !couponCode.trim()}
+                          className="h-12 px-5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50"
+                        >
+                          {couponLoading ? "..." : "APPLY"}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between h-12 px-4 rounded-xl border border-emerald-200 bg-emerald-50">
+                        <div className="flex items-center gap-2 text-emerald-700">
+                          <span className="font-bold text-sm tracking-wide">{appliedCoupon}</span>
+                          <span className="text-[10px] uppercase font-bold tracking-widest bg-emerald-200/50 px-2 py-0.5 rounded-full text-emerald-800">Applied</span>
+                        </div>
+                        <button onClick={removeCoupon} className="text-emerald-600 hover:text-emerald-800 p-1 bg-emerald-100/50 rounded-full">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
