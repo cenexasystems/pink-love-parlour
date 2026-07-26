@@ -21,6 +21,8 @@ type CartItem = {
   type: "combo" | "individual";
 };
 
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9840874966";
+
 const TIME_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM",
@@ -271,7 +273,7 @@ export function CartPage() {
     message += `\n`;
     message += `Please confirm slot availability. Thank you!`;
 
-    const waUrl = `https://api.whatsapp.com/send/?phone=919840874966&text=${encodeURIComponent(message)}`;
+    const waUrl = `https://api.whatsapp.com/send/?phone=91${WA_NUMBER}&text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank");
   };
 
@@ -485,7 +487,7 @@ export function CartPage() {
                   </label>
                   <input
                     type="tel"
-                    placeholder="e.g. 9840874966"
+                    placeholder={`e.g. ${WA_NUMBER}`}
                     value={customerPhone}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, "");

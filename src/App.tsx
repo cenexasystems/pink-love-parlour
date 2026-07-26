@@ -51,6 +51,9 @@ interface LookMatch {
   waText: string;
 }
 
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9840874966";
+const WA_NUMBER_FORMATTED = `${WA_NUMBER.slice(0, 5)} ${WA_NUMBER.slice(5)}`;
+
 // Data constants
 const SERVICES = [
   {
@@ -358,7 +361,7 @@ const CLOUDINARY_VIDEOS: IgPost[] = [
 const FAQ_ITEMS = [
   {
     q: "How do I book an appointment?",
-    a: "Message us on WhatsApp at +91 98408 74966. We recommend booking 1–2 weeks ahead for bridal packages.",
+    a: `Message us on WhatsApp at +91 ${WA_NUMBER_FORMATTED}. We recommend booking 1–2 weeks ahead for bridal packages.`,
   },
   {
     q: "Do you offer bridal makeup trials?",
@@ -951,7 +954,7 @@ function LookFinder() {
 
                 <div className="mt-8">
                   <a
-                    href={`https://api.whatsapp.com/send/?phone=919840874966&text=${encodeURIComponent(match.waText)}`}
+                    href={`https://api.whatsapp.com/send/?phone=91${WA_NUMBER}&text=${encodeURIComponent(match.waText)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center w-full gap-2 rounded-2xl bg-foreground hover:bg-[color:var(--rose)] text-background hover:text-white px-6 py-4 font-bold transition-all duration-300 shadow-[var(--shadow-soft)]"
@@ -2144,7 +2147,7 @@ function FAQ() {
         </div>
         <p className="text-center mt-10 text-foreground/60 text-sm">
           More questions?{" "}
-          <a href="https://api.whatsapp.com/send/?phone=919840874966" className="text-[color:var(--rose)] underline underline-offset-4 font-semibold hover:text-[color:var(--petal)] transition-colors">
+          <a href={`https://api.whatsapp.com/send/?phone=91${WA_NUMBER}`} className="text-[color:var(--rose)] underline underline-offset-4 font-semibold hover:text-[color:var(--petal)] transition-colors">
             Chat with us on WhatsApp
           </a>
         </p>
@@ -2195,8 +2198,8 @@ function Visit() {
               <Info 
                 label="Phone / WhatsApp" 
                 value={
-                  <a href="tel:+919840874966" className="text-[color:var(--petal)] hover:text-white transition-colors duration-300 font-semibold text-lg">
-                    +91 98408 74966
+                  <a href={`tel:+91${WA_NUMBER}`} className="text-[color:var(--petal)] hover:text-white transition-colors duration-300 font-semibold text-lg">
+                    +91 {WA_NUMBER_FORMATTED}
                   </a>
                 } 
               />
@@ -2213,7 +2216,7 @@ function Visit() {
           
           <div className="mt-12 relative z-10 flex flex-col sm:flex-row gap-3 pt-6 border-t border-white/5">
             <a 
-              href="https://api.whatsapp.com/send/?phone=919840874966" 
+              href={`https://api.whatsapp.com/send/?phone=91${WA_NUMBER}`} 
               target="_blank" 
               rel="noreferrer" 
               className="flex-1 text-center py-3.5 px-6 rounded-full bg-white text-black font-bold hover:bg-[color:var(--rose)] hover:text-white transition-all duration-300 hover:scale-102 active:scale-98 shadow-md"
@@ -2385,7 +2388,7 @@ function MobileStickyNav() {
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-5 pt-3 md:hidden bg-background/80 backdrop-blur-lg border-t border-rose-200/30 shadow-[0_-10px_30px_rgba(219,112,147,0.15)] flex items-center justify-between gap-3">
       {/* Call Us Button */}
       <a
-        href="tel:+919840874966"
+        href={`tel:+91${WA_NUMBER}`}
         className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-white border border-rose-200/60 text-zinc-800 hover:bg-rose-50/20 transition-all duration-300 active:scale-95 shadow-xs"
       >
         <svg
@@ -2407,7 +2410,7 @@ function MobileStickyNav() {
 
       {/* WhatsApp Book Button (Hero Action) */}
       <a
-        href="https://api.whatsapp.com/send/?phone=919840874966&text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability."
+        href={`https://api.whatsapp.com/send/?phone=91${WA_NUMBER}&text=Hi%20Pink%20Love%20Beauty%20Studio!%20%F0%9F%8C%B8%20I%20would%20like%20to%20book%20an%20appointment.%20Please%20check%20availability.`}
         target="_blank"
         rel="noreferrer"
         className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[#25D366] text-white hover:bg-[#20ba59] transition-all duration-300 active:scale-95 shadow-xs"
