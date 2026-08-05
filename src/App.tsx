@@ -497,6 +497,12 @@ export default function App() {
   });
 
   const [activeReel, setActiveReel] = useState<IgPost | null>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(true);
+
+  const handleVideoReady = useCallback(() => {
+    setIsVideoReady(true);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("pl_booking_cart", JSON.stringify(cart));
@@ -557,10 +563,16 @@ export default function App() {
 
   return (
     <div className="relative overflow-x-hidden bg-background text-foreground pb-24 md:pb-0">
+      {showPreloader && (
+        <Preloader
+          isVideoReady={isVideoReady}
+          onFinish={() => setShowPreloader(false)}
+        />
+      )}
       <Toaster closeButton position="top-right" />
       <Petals />
       <Nav />
-      <Hero />
+      <Hero onVideoReady={handleVideoReady} />
       <Marquee />
       <About />
       <Certifications />
@@ -605,6 +617,191 @@ export default function App() {
 
 
 // Subcomponents
+function Preloader({ isVideoReady, onFinish }: { isVideoReady: boolean; onFinish: () => void }) {
+  const [activeStage, setActiveStage] = useState(0);
+  const [isOpening, setIsOpening] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    const minTime = 2200; // 2.2s minimum beauty ritual presentation time
+    const maxTime = 4500; // 4.5s max timeout safety
+
+    const stageTimer1 = setTimeout(() => setActiveStage(1), 800);
+    const stageTimer2 = setTimeout(() => setActiveStage(2), 1600);
+
+    const checkInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      if ((isVideoReady && elapsed >= minTime) || elapsed >= maxTime) {
+        clearInterval(checkInterval);
+        setActiveStage(2);
+
+        // Trigger velvet curtain opening reveal
+        setTimeout(() => {
+          setIsOpening(true);
+          setTimeout(() => {
+            document.body.style.overflow = "";
+            onFinish();
+          }, 950); // 950ms smooth curtain parting duration
+        }, 400);
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(stageTimer1);
+      clearTimeout(stageTimer2);
+      clearInterval(checkInterval);
+    };
+  }, [isVideoReady, onFinish]);
+
+  const stages = [
+    { icon: "🌸", title: "Skin Prep & Hydration", detail: "Nourishing Korean Glass-Skin Rituals" },
+    { icon: "💄", title: "HD Bridal Artistry", detail: "Flawless Makeover & Saree Pleating" },
+    { icon: "✨", title: "Pink Love Studio Glow", detail: "Welcome to Elegance" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[10000] overflow-hidden pointer-events-auto">
+      {/* Left Velvet Curtain Panel */}
+      <div
+        className={`absolute top-0 left-0 bottom-0 w-1/2 bg-gradient-to-r from-[#0d040a] via-[#1a0815] to-[#12050e] border-r border-[color:var(--rose)]/30 shadow-[10px_0_40px_rgba(0,0,0,0.8)] transition-transform duration-1000 ease-in-out z-10 flex items-center justify-end pr-4 ${
+          isOpening ? "-translate-x-full" : "translate-x-0"
+        }`}
+      >
+        <div className="w-1 h-32 bg-gradient-to-b from-transparent via-[color:var(--rose)]/40 to-transparent rounded-full" />
+      </div>
+
+      {/* Right Velvet Curtain Panel */}
+      <div
+        className={`absolute top-0 right-0 bottom-0 w-1/2 bg-gradient-to-l from-[#0d040a] via-[#1a0815] to-[#12050e] border-l border-[color:var(--rose)]/30 shadow-[-10px_0_40px_rgba(0,0,0,0.8)] transition-transform duration-1000 ease-in-out z-10 flex items-center justify-start pl-4 ${
+          isOpening ? "translate-x-full" : "translate-x-0"
+        }`}
+      >
+        <div className="w-1 h-32 bg-gradient-to-b from-transparent via-[color:var(--rose)]/40 to-transparent rounded-full" />
+      </div>
+
+      {/* Center Content & Vanity Mirror Frame */}
+      <div
+        className={`absolute inset-0 z-20 flex flex-col items-center justify-center text-white px-4 transition-all duration-700 ${
+          isOpening ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"
+        }`}
+      >
+        {/* Ambient Vanity Mirror Backlight */}
+        <div className="absolute w-96 h-96 bg-[color:var(--rose)]/25 rounded-full blur-[130px] pointer-events-none animate-pulse-gentle" />
+        <div className="absolute w-64 h-64 bg-[color:var(--gold)]/15 rounded-full blur-[90px] pointer-events-none" />
+
+        {/* Floating Rose Petal Particles */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <span
+              key={i}
+              className="absolute block rounded-full bg-gradient-to-tr from-[color:var(--rose)] to-[color:var(--petal)] opacity-50 blur-[0.4px]"
+              style={{
+                left: `${(i * 21) % 100}%`,
+                top: `${(i * 29) % 100}%`,
+                width: `${(i % 3) * 4 + 6}px`,
+                height: `${(i % 3) * 4 + 6}px`,
+                borderRadius: "60% 40% 50% 50% / 50% 60% 40% 50%",
+                animation: `float-slow ${5 + (i % 3) * 2}s ease-in-out ${i * 0.4}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Vanity Mirror Frame with Studio Vanity Bulbs */}
+        <div className="relative mb-6 flex items-center justify-center">
+          {/* Rotating Ornate Golden Glow */}
+          <div className="absolute -inset-5 rounded-full bg-gradient-to-tr from-[color:var(--gold)] via-[color:var(--rose)] to-[color:var(--petal)] opacity-50 blur-lg animate-spin-slow" />
+          
+          {/* Vanity Light Bulbs Array */}
+          <div className="absolute -inset-3 rounded-full border border-[color:var(--gold)]/40 p-2 flex items-center justify-center">
+            {Array.from({ length: 8 }).map((_, idx) => {
+              const angle = (idx * 45 * Math.PI) / 180;
+              const radius = 64; // px offset
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+              const isLit = idx <= (activeStage + 1) * 3;
+
+              return (
+                <span
+                  key={idx}
+                  className={`absolute w-3.5 h-3.5 rounded-full transition-all duration-500 ${
+                    isLit
+                      ? "bg-amber-100 shadow-[0_0_15px_#ffd700,0_0_5px_#ffffff] scale-110"
+                      : "bg-white/20 shadow-none scale-90"
+                  }`}
+                  style={{
+                    transform: `translate(${x}px, ${y}px)`,
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Logo inside Vanity Mirror */}
+          <img
+            src={logo}
+            alt="Pink Love Beauty Studio Logo"
+            className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover border-2 border-white/40 shadow-[0_0_40px_rgba(219,112,147,0.6)]"
+          />
+        </div>
+
+        {/* Studio Branding */}
+        <h1 className="font-script text-4xl sm:text-5xl md:text-6xl text-white tracking-wide drop-shadow-lg">
+          Pink Love
+        </h1>
+        <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-[color:var(--gold)] font-semibold mt-1 mb-8">
+          Aesthetic Beauty Studio
+        </p>
+
+        {/* Beauty Ritual Stages (Replaces Generic Progress Bar) */}
+        <div className="w-full max-w-sm sm:max-w-md bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl">
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {stages.map((stage, idx) => {
+              const isActive = idx === activeStage;
+              const isPassed = idx < activeStage;
+
+              return (
+                <div
+                  key={stage.title}
+                  className={`flex flex-col items-center p-2 rounded-xl transition-all duration-500 border ${
+                    isActive
+                      ? "bg-[color:var(--rose)]/20 border-[color:var(--gold)]/60 text-white shadow-[0_0_20px_rgba(219,112,147,0.3)] scale-105"
+                      : isPassed
+                      ? "bg-white/5 border-white/20 text-white/90"
+                      : "bg-transparent border-white/5 text-white/30"
+                  }`}
+                >
+                  <span className="text-xl sm:text-2xl mb-1">{stage.icon}</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-center leading-tight">
+                    Step 0{idx + 1}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Active Ritual Description */}
+          <div className="text-center pt-2 border-t border-white/10 min-h-[44px] flex flex-col justify-center">
+            <p className="text-xs sm:text-sm font-display font-bold text-white tracking-wide transition-all duration-300">
+              {stages[activeStage]?.title}
+            </p>
+            <p className="text-[10px] sm:text-xs text-white/70 font-light mt-0.5">
+              {stages[activeStage]?.detail}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Petals() {
   const [petals, setPetals] = useState<Array<{ left: number; delay: number; duration: number; size: number }>>([]);
   useEffect(() => {
@@ -675,16 +872,29 @@ function Nav() {
   );
 }
 
-function Hero() {
+function Hero({ onVideoReady }: { onVideoReady?: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (videoEl && videoEl.readyState >= 3) {
+      onVideoReady?.();
+    }
+  }, [onVideoReady]);
+
   return (
     <section id="top" className="relative z-10 w-full min-h-[100svh] flex items-center overflow-hidden">
       {/* Video Background */}
       <div className="absolute inset-0 z-0 w-full h-full">
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          onLoadedData={() => onVideoReady?.()}
+          onCanPlayThrough={() => onVideoReady?.()}
           className="w-full h-full object-cover"
         >
           <source src="/videos/landing_page.mp4" type="video/mp4" />
