@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import heroBride from "@/assets/hero-bride.jpg";
 import serviceFacial from "@/assets/service-facial.jpg";
 import serviceHair from "@/assets/service-hair.jpg";
@@ -1220,9 +1221,10 @@ function Gallery() {
           ? `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${item.cloudinaryId}`
           : item.src;
 
-        return (
+        return createPortal(
           <div 
             className="fixed inset-0 z-[50000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none"
+            onClick={() => setActiveImageIndex(null)}
           >
             {/* Close Button */}
             <button
@@ -1271,7 +1273,8 @@ function Gallery() {
                 {item.displayAlt}
               </span>
             </div>
-          </div>
+          </div>,
+          document.body
         );
       })()}
     </section>
@@ -2006,7 +2009,7 @@ function Reviews() {
 }
 
 function Certifications() {
-  const [selectedCert, setSelectedCert] = useState<string | null>(null);
+  const [selectedCertIndex, setSelectedCertIndex] = useState<number | null>(null);
 
   const CERTIFICATE_IMAGES = [
     "/certificate/enhanced_cert_1_1785078081666.png",
@@ -2024,6 +2027,46 @@ function Certifications() {
     "/certificate/enhanced_cert_new_5.png"
   ];
 
+  // Lock body scroll when certificate modal is open
+  useEffect(() => {
+    if (selectedCertIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedCertIndex]);
+
+  // Navigation functions
+  const showPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedCertIndex !== null) {
+      setSelectedCertIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : CERTIFICATE_IMAGES.length - 1));
+    }
+  };
+
+  const showNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedCertIndex !== null) {
+      setSelectedCertIndex((prev) => (prev !== null && prev < CERTIFICATE_IMAGES.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  // Keyboard navigation (Arrow keys & Escape)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedCertIndex === null) return;
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
+      if (e.key === "Escape") setSelectedCertIndex(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedCertIndex]);
+
   return (
     <section id="certifications" className="relative z-10 py-24 bg-gradient-to-b from-[color:var(--blush)]/10 to-transparent overflow-hidden w-full">
       <div className="mx-auto max-w-6xl text-center mb-14 px-6">
@@ -2037,16 +2080,17 @@ function Certifications() {
         
         <div className="flex gap-10 items-center whitespace-nowrap animate-marquee-ltr py-4">
           {[...CERTIFICATE_IMAGES, ...CERTIFICATE_IMAGES].map((certUrl, i) => {
+            const originalIndex = i % CERTIFICATE_IMAGES.length;
             return (
               <div
                 key={`cert-${i}`}
-                onClick={() => setSelectedCert(certUrl)}
+                onClick={() => setSelectedCertIndex(originalIndex)}
                 className="inline-block w-[85vw] max-w-[500px] md:max-w-[600px] aspect-[4/3] bg-white p-6 md:p-8 rounded-md border-[14px] border-[#3E2723] shadow-2xl hover:shadow-[0_25px_50px_-12px_rgba(62,39,35,0.5)] hover:scale-[1.02] transition-all duration-500 relative overflow-hidden text-left shrink-0 group cursor-pointer"
               >
                 {/* Image rendering with 4K-like enhancement using CSS */}
                 <img
                   src={certUrl}
-                  alt={`Certificate ${i}`}
+                  alt={`Certificate ${originalIndex + 1}`}
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 pointer-events-none"
                   style={{
                     imageRendering: "crisp-edges",
@@ -2067,25 +2111,62 @@ function Certifications() {
         </div>
       </div>
 
-      {/* Fullscreen Viewer */}
-      {selectedCert && (
+      {/* Fullscreen Viewer Portaled to Document Body */}
+      {selectedCertIndex !== null && createPortal(
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-sm animate-in fade-in duration-300"
-          onClick={() => setSelectedCert(null)}
+          className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-8 select-none animate-in fade-in duration-200"
+          onClick={() => setSelectedCertIndex(null)}
         >
+          {/* Close Button */}
           <button 
-            className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all hover:rotate-90 z-50"
-            onClick={() => setSelectedCert(null)}
+            className="absolute top-4 right-4 md:top-6 md:right-6 text-amber-400 hover:text-white bg-zinc-900/90 hover:bg-zinc-800 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-xl hover:scale-105 active:scale-95 z-[100000]"
+            onClick={() => setSelectedCertIndex(null)}
+            aria-label="Close modal"
           >
-            <X className="w-8 h-8" />
+            <X className="w-6 h-6" />
           </button>
-          <img 
-            src={selectedCert} 
-            alt="Certificate Fullscreen"
-            className="max-w-full max-h-[90vh] object-contain rounded-sm shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-300 pointer-events-auto" 
-            onClick={(e) => e.stopPropagation()} 
-          />
-        </div>
+
+          {/* Left Arrow Button */}
+          <button
+            onClick={showPrev}
+            className="absolute left-4 md:left-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-lg hover:scale-105 active:scale-95 z-[100000]"
+            aria-label="Previous Certificate"
+          >
+            <span className="text-xl font-bold">←</span>
+          </button>
+
+          {/* Right Arrow Button */}
+          <button
+            onClick={showNext}
+            className="absolute right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/15 shadow-lg hover:scale-105 active:scale-95 z-[100000]"
+            aria-label="Next Certificate"
+          >
+            <span className="text-xl font-bold">→</span>
+          </button>
+
+          {/* Image Container */}
+          <div 
+            className="relative max-w-5xl max-h-[85vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              key={selectedCertIndex}
+              src={CERTIFICATE_IMAGES[selectedCertIndex]} 
+              alt={`Certificate ${selectedCertIndex + 1}`}
+              className="max-w-full max-h-[80vh] sm:max-h-[83vh] object-contain rounded-md shadow-[0_0_60px_rgba(0,0,0,0.9)] border border-white/10 animate-in zoom-in-95 duration-200" 
+              style={{
+                imageRendering: "crisp-edges",
+                filter: "contrast(1.02) brightness(1.02)"
+              }}
+            />
+
+            {/* Certificate Counter / Tag */}
+            <div className="mt-4 px-4 py-1.5 rounded-full bg-black/60 border border-white/10 text-white/80 text-xs font-semibold tracking-wider backdrop-blur-sm">
+              Certificate {selectedCertIndex + 1} of {CERTIFICATE_IMAGES.length}
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </section>
   );
