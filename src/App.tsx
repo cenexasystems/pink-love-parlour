@@ -1372,7 +1372,7 @@ function Gallery() {
   }, [activeImageIndex]);
 
   return (
-    <section id="gallery" className="relative z-10 px-6 py-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
+    <section id="gallery" className="relative z-10 px-6 pt-16 pb-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-14">
           <p className="font-script text-3xl text-[color:var(--rose)]">our brides</p>

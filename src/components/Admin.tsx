@@ -101,49 +101,64 @@ export function Admin() {
 
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-100/50 via-background to-amber-50/30 p-6">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (code === PASSCODE) {
-              sessionStorage.setItem(STORAGE_KEY, "1");
-              setAuthed(true);
-              toast.success("Welcome back, Admin!");
-            } else {
-              setErr("Incorrect passcode");
-              toast.error("Access denied");
-            }
-          }}
-          className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl border border-rose-100 shadow-2xl p-8 sm:p-10 space-y-6"
-        >
-          <div className="text-center space-y-2">
-            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 mb-2">
-              <Lock className="w-5 h-5" />
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-100/50 via-background to-amber-50/30 p-6">
+        <div className="flex-1 flex items-center justify-center">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (code === PASSCODE) {
+                sessionStorage.setItem(STORAGE_KEY, "1");
+                setAuthed(true);
+                toast.success("Welcome back, Admin!");
+              } else {
+                setErr("Incorrect passcode");
+                toast.error("Access denied");
+              }
+            }}
+            className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl border border-rose-100 shadow-2xl p-8 sm:p-10 space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 mb-2">
+                <Lock className="w-5 h-5" />
+              </div>
+              <h1 className="font-display text-3xl font-extrabold tracking-tight text-rose-600">Admin Access</h1>
+              <p className="text-sm text-muted-foreground">Enter the passcode to manage your menu items.</p>
             </div>
-            <h1 className="font-display text-3xl font-extrabold tracking-tight text-rose-600">Admin Access</h1>
-            <p className="text-sm text-muted-foreground">Enter the passcode to manage your menu items.</p>
-          </div>
 
-          <div className="space-y-3">
-            <Input
-              type="password"
-              inputMode="numeric"
-              placeholder="Passcode"
-              value={code}
-              onChange={(e) => {
-                setCode(e.target.value);
-                setErr("");
-              }}
-              className="text-center text-lg tracking-widest h-12 focus-visible:ring-rose-400"
-              autoFocus
-            />
-            {err && <p className="text-sm text-center text-destructive font-medium">{err}</p>}
-          </div>
+            <div className="space-y-3">
+              <Input
+                type="password"
+                inputMode="numeric"
+                placeholder="Passcode"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                  setErr("");
+                }}
+                className="text-center text-lg tracking-widest h-12 focus-visible:ring-rose-400"
+                autoFocus
+              />
+              {err && <p className="text-sm text-center text-destructive font-medium">{err}</p>}
+            </div>
 
-          <Button type="submit" className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300">
-            Unlock Dashboard
-          </Button>
-        </form>
+            <Button type="submit" className="w-full h-12 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200/50 transition-all duration-300">
+              Unlock Dashboard
+            </Button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 pt-8 border-t border-rose-100/50 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-muted-foreground/70">
+          <div className="text-center md:text-left">
+            © {new Date().getFullYear()} Pink Love Beauty Studio. All Rights Reserved
+          </div>
+          <div className="text-center">
+            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-semibold text-rose-600 hover:text-rose-700 transition-colors">Cenexa Systems</a> © {new Date().getFullYear()}
+          </div>
+          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-muted-foreground/60">
+            LOVE • GLOW • PERFECTION
+          </div>
+        </div>
       </div>
     );
   }
