@@ -47,7 +47,7 @@ const DEFAULT_GALLERY = [
   {
     src: "",
     cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
-    alt: "Pink Love bridal makeup close-up and jewelry styling"
+    alt: "Pink Love bridal makeup close-up and jewellery styling"
   },
   {
     src: "",
@@ -1142,7 +1142,7 @@ function GallerySlotEditor({
               <Input
                 value={alt}
                 onChange={(e) => setAlt(e.target.value)}
-                placeholder="e.g. Elegant bridal jewelry detail"
+                placeholder="e.g. Elegant bridal jewellery detail"
                 className="h-7 text-xs px-2 py-0 border-rose-100 focus-visible:ring-rose-400"
               />
               <Button
@@ -1387,6 +1387,19 @@ export function CouponsPanel() {
                 </div>
               ))
             )}
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="mt-16 pt-8 border-t border-rose-100 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs text-muted-foreground/70">
+          <div className="text-center md:text-left">
+            © {new Date().getFullYear()} Pink Love Beauty Studio. All Rights Reserved
+          </div>
+          <div className="text-center">
+            Powered by <a href="https://www.cenexasystems.com" target="_blank" rel="noreferrer" className="font-semibold text-rose-600 hover:text-rose-700 transition-colors">Cenexa Systems</a> © {new Date().getFullYear()}
+          </div>
+          <div className="text-center md:text-right font-bold tracking-widest text-[10px] uppercase text-muted-foreground/60">
+            LOVE • GLOW • PERFECTION
           </div>
         </div>
       </div>

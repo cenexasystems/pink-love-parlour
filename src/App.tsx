@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import heroBride from "@/assets/hero-bride.jpg";
 import serviceFacial from "@/assets/service-facial.jpg";
 import serviceHair from "@/assets/service-hair.jpg";
-import serviceJewelry from "@/assets/service-jewelry.jpg";
+import serviceJewellery from "@/assets/service-jewellery.jpg";
 import g4 from "@/assets/gallery-4.jpg";
 import logo from "@/assets/logo.png";
 import { MenuBook } from "@/components/MenuBook";
@@ -73,9 +73,9 @@ const SERVICES = [
     img: "/services/hair-styling.png",
   },
   {
-    name: "Bridal Jewelry & Accessories",
-    desc: "On-site selection of bridal jewelry, earrings and bangles to complete your look.",
-    img: "/services/bridal-jewelry.png",
+    name: "Bridal Jewellery & Accessories",
+    desc: "On-site selection of bridal jewellery, earrings and bangles to complete your look.",
+    img: "/services/bridal-jewellery.png",
   },
 ];
 
@@ -83,7 +83,7 @@ const DEFAULT_GALLERY: GalleryImage[] = [
   {
     src: "",
     cloudinaryId: "v1782023965/WhatsApp_Image_2026-06-20_at_12.54.44_1_rjgdsw",
-    alt: "Pink Love bridal makeup close-up and jewelry styling"
+    alt: "Pink Love bridal makeup close-up and jewellery styling"
   },
   {
     src: "",
@@ -152,7 +152,7 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
         "Full face makeup using Kryolan or MAC",
         "Bridal hair styling & fresh flower setting",
         "Saree prepleating & drape setting",
-        "Jewelry setting & placement"
+        "Jewellery setting & placement"
       ],
       waText: "Hi Pink Love Studio! 🌸 I completed the Look Matcher and matched with the Bridal Package: 'Mac / Kryolan' (₹7,000 / ₹12,000). I'd love to check dates and package details!"
     },
@@ -370,7 +370,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What does a bridal package cost?",
-    a: "Pricing depends on the services chosen (HD makeup, hair, jewelry, etc.). Contact us on WhatsApp for a personalised quote.",
+    a: "Pricing depends on the services chosen (HD makeup, hair, jewellery, etc.). Contact us on WhatsApp for a personalised quote.",
   },
   {
     q: "What is a Korean Glass Skin Facial?",
@@ -954,7 +954,7 @@ function Hero({ onVideoReady }: { onVideoReady?: () => void }) {
 }
 
 function Marquee() {
-  const items = ["HD Bridal Makeover", "Glass Skin Facial", "Hydrafacial", "Hair Spa", "Manicure & Pedicure", "Bridal Jewelry", "Korean Glow", "Advanced Haircuts"];
+  const items = ["HD Bridal Makeover", "Glass Skin Facial", "Hydrafacial", "Hair Spa", "Manicure & Pedicure", "Bridal Jewellery", "Korean Glow", "Advanced Haircuts"];
   return (
     <section className="relative z-10 border-y border-foreground/10 bg-[color:var(--blush)]/40 py-6 overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee">
@@ -1189,8 +1189,8 @@ function LookFinder() {
         </div>
 
         {/* Brand Partners Showcase */}
-        <div className="mt-20 border-t border-[color:var(--rose)]/10 pt-16">
-          <p className="text-center text-xs font-bold tracking-[0.25em] text-foreground/50 uppercase mb-8">
+        <div className="mt-10 border-t border-[color:var(--rose)]/10 pt-8">
+          <p className="text-center text-xs font-bold tracking-[0.25em] text-foreground/50 uppercase mb-4">
             The premium brands we trust on you
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
@@ -1296,7 +1296,7 @@ function Gallery() {
     if (lower.includes("embroidery") || lower.includes("blouse") || lower.includes("stitch") || lower.includes("pleat") || lower.includes("drape")) {
       return { category: "EMBROIDERY", alt: rawAlt };
     }
-    if (lower.includes("craft") || lower.includes("jewelry") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
+    if (lower.includes("craft") || lower.includes("jewellery") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
       return { category: "CRAFTS", alt: rawAlt };
     }
     
@@ -1551,7 +1551,7 @@ function GalleryPage() {
     if (lower.includes("embroidery") || lower.includes("blouse") || lower.includes("stitch") || lower.includes("pleat") || lower.includes("drape")) {
       return { category: "EMBROIDERY", alt: rawAlt };
     }
-    if (lower.includes("craft") || lower.includes("jewelry") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
+    if (lower.includes("craft") || lower.includes("jewellery") || lower.includes("accessory") || lower.includes("accessories") || lower.includes("hair") || lower.includes("flower") || lower.includes("floral")) {
       return { category: "CRAFTS", alt: rawAlt };
     }
     
