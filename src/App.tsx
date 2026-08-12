@@ -297,16 +297,7 @@ const MATCHES: Record<string, Record<string, LookMatch>> = {
   }
 };
 
-const BRANDS = [
-  { name: "MAC Cosmetics", logo: "M·A·C" },
-  { name: "Estée Lauder", logo: "ESTÉE LAUDER" },
-  { name: "NARS Cosmetics", logo: "NARS" },
-  { name: "Huda Beauty", logo: "HUDA BEAUTY" },
-  { name: "Kryolan Professional", logo: "KRYOLAN" },
-  { name: "Charlotte Tilbury", logo: "Charlotte Tilbury" },
-  { name: "Anastasia Beverly Hills", logo: "ANASTASIA" },
-  { name: "Laneige", logo: "LANEIGE" },
-];
+
 
 const CLOUDINARY_VIDEOS: IgPost[] = [
   {
@@ -1188,22 +1179,7 @@ function LookFinder() {
           )}
         </div>
 
-        {/* Brand Partners Showcase */}
-        <div className="mt-10 border-t border-[color:var(--rose)]/10 pt-8">
-          <p className="text-center text-xs font-bold tracking-[0.25em] text-foreground/50 uppercase mb-4">
-            The premium brands we trust on you
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
-            {BRANDS.map((b) => (
-              <span
-                key={b.name}
-                className="font-display text-lg sm:text-xl font-bold tracking-[0.15em] text-foreground/70 hover:text-[color:var(--rose)] transition duration-300"
-              >
-                {b.logo}
-              </span>
-            ))}
-          </div>
-        </div>
+
       </div>
     </section>
   );
