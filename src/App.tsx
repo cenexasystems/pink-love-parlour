@@ -1054,7 +1054,7 @@ function LookFinder() {
   const match = selectedOccasion && selectedVibe ? MATCHES[selectedOccasion]?.[selectedVibe] : null;
 
   return (
-    <section id="look-finder" className="relative z-10 px-6 py-24 bg-gradient-to-b from-[color:var(--blush)]/20 to-background">
+    <section id="look-finder" className="relative z-10 px-6 pt-24 pb-12 bg-gradient-to-b from-[color:var(--blush)]/20 to-background">
       <div className="mx-auto max-w-4xl">
         <div className="text-center mb-14">
           <p className="font-script text-3xl text-[color:var(--rose)]">personalized glam</p>
@@ -1348,7 +1348,7 @@ function Gallery() {
   }, [activeImageIndex]);
 
   return (
-    <section id="gallery" className="relative z-10 px-6 pt-16 pb-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
+    <section id="gallery" className="relative z-10 px-6 pt-8 pb-24 bg-gradient-to-b from-transparent via-rose-50/5 to-transparent">
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-14">
           <p className="font-script text-3xl text-[color:var(--rose)]">our brides</p>
