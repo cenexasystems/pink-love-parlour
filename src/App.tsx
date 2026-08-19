@@ -35,6 +35,7 @@ interface GalleryImage {
   cloudinaryId?: string;
   alt: string;
   position?: number;
+  type?: string;
 }
 
 interface QuizOption {
@@ -1214,12 +1215,12 @@ function Gallery() {
         .limit(20);
       
       if (data && data.length > 0) {
-        const imageItems = data.filter((item: any) => item.type === "image" || !item.type);
-        const mapped = imageItems.map((item) => ({
+        const mapped = data.map((item) => ({
           src: item.url,
           cloudinaryId: item.cloudinary_id || undefined,
           alt: item.alt,
           position: item.position,
+          type: item.type || "image",
         }));
         setGalleryImages(mapped);
       } else {
@@ -1366,16 +1367,30 @@ function Gallery() {
             return (
               <div
                 key={i}
-                onClick={() => setActiveImageIndex(i)}
-                className="relative w-full aspect-[2/3] overflow-hidden rounded-3xl group shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)] bg-card cursor-pointer"
+                onClick={() => {
+                  if (item.type !== "video") {
+                    setActiveImageIndex(i);
+                  }
+                }}
+                className={`relative w-full aspect-[2/3] overflow-hidden rounded-3xl group shadow-[var(--shadow-soft)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(219,112,147,0.2)] bg-card ${item.type !== "video" ? "cursor-pointer" : ""}`}
               >
-                <img
-                  src={imageUrl}
-                  alt={item.displayAlt || `Pink Love bridal portfolio ${i + 1}`}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.2_0.1_5/0.7)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                {item.type === "video" ? (
+                  <video
+                    src={imageUrl}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={imageUrl}
+                    alt={item.displayAlt || `Pink Love bridal portfolio ${i + 1}`}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.2_0.1_5/0.7)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
                   <span className="text-amber-400 text-[10px] font-bold tracking-widest uppercase mb-1 block">
                     {item.category}
                   </span>
@@ -1482,12 +1497,12 @@ function GalleryPage() {
         .limit(20);
       
       if (data && data.length > 0) {
-        const imageItems = data.filter((item: any) => item.type === "image" || !item.type);
-        const mapped = imageItems.map((item) => ({
+        const mapped = data.map((item) => ({
           src: item.url,
           cloudinaryId: item.cloudinary_id || undefined,
           alt: item.alt,
           position: item.position,
+          type: item.type || "image",
         }));
         setGalleryImages(mapped);
       }
@@ -1699,17 +1714,27 @@ function GalleryPage() {
               <span className="text-lg md:text-xl">→</span>
             </button>
 
-            {/* Image Container */}
+            {/* Media Container */}
             <div 
               className="relative max-w-4xl max-h-[80vh] flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                key={activeImageIndex}
-                src={imageUrl}
-                alt={item.displayAlt || "Full portfolio image"}
-                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 transition-opacity duration-300 animate-fade-in"
-              />
+              {item.type === "video" ? (
+                <video
+                  key={activeImageIndex}
+                  src={imageUrl}
+                  controls
+                  autoPlay
+                  className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 transition-opacity duration-300 animate-fade-in"
+                />
+              ) : (
+                <img
+                  key={activeImageIndex}
+                  src={imageUrl}
+                  alt={item.displayAlt || "Full portfolio image"}
+                  className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 transition-opacity duration-300 animate-fade-in"
+                />
+              )}
             </div>
 
             {/* Info / Alt Caption */}
