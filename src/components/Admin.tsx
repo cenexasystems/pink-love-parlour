@@ -37,7 +37,8 @@ import {
   Upload,
   Loader2,
   Grid,
-  Ticket
+  Ticket,
+  Video
 } from "lucide-react";
 
 const PASSCODE = "0265";
@@ -812,10 +813,13 @@ type DbGalleryImage = {
   cloudinary_id: string | null;
   alt: string;
   position: number;
+  type?: string;
 };
 
 function GalleryPanel() {
+  const [activeTab, setActiveTab] = useState<"photos" | "videos">("photos");
   const [images, setImages] = useState<DbGalleryImage[]>([]);
+  const [videos, setVideos] = useState<DbGalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
@@ -824,7 +828,10 @@ function GalleryPanel() {
       .from("gallery_images")
       .select("*")
       .order("position", { ascending: true });
-    setImages((data || []) as DbGalleryImage[]);
+    
+    const allItems = (data || []) as DbGalleryImage[];
+    setImages(allItems.filter((img) => img.type === "image" || !img.type));
+    setVideos(allItems.filter((img) => img.type === "video"));
     setLoading(false);
   };
 
@@ -832,25 +839,62 @@ function GalleryPanel() {
     load();
   }, []);
 
-  // Build an array of 20 slots
-  const slots = Array.from({ length: 20 }, (_, index) => {
+  // Build 20 slots for images
+  const imageSlots = Array.from({ length: 20 }, (_, index) => {
     const existing = images.find((img) => img.position === index);
     return { position: index, existing };
   });
 
-  const previewSlots = slots.slice(0, 6);
-  const remainingSlots = slots.slice(6);
+  const previewImageSlots = imageSlots.slice(0, 6);
+  const remainingImageSlots = imageSlots.slice(6);
+
+  // Build 20 slots for videos
+  const videoSlots = Array.from({ length: 20 }, (_, index) => {
+    const existing = videos.find((img) => img.position === index);
+    return { position: index, existing };
+  });
+
+  const previewVideoSlots = videoSlots.slice(0, 6);
+  const remainingVideoSlots = videoSlots.slice(6);
 
   return (
     <div className="space-y-8 animate-fade-up">
       <Card className="border-rose-100 shadow-md bg-white/70 backdrop-blur-sm rounded-2xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6">
-          <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
-            <Image className="w-5 h-5 text-rose-500" /> Live Gallery Editor
-          </CardTitle>
-          <CardDescription>
-            This layout matches the homepage portfolio grid exactly. Drag & drop any photo directly onto a slot to update it in real-time on the live site!
-          </CardDescription>
+        <CardHeader className="bg-gradient-to-r from-rose-50/60 to-pink-50/60 border-b border-rose-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-xl font-bold text-rose-700 flex items-center gap-2">
+              <Image className="w-5 h-5 text-rose-500" /> Live Gallery Editor
+            </CardTitle>
+            <CardDescription className="mt-1">
+              Manage website portfolio photos and gallery videos in real-time. (Testimonial videos remain completely separate).
+            </CardDescription>
+          </div>
+
+          {/* Photos / Videos Toggle Switch */}
+          <div className="inline-flex p-1 bg-rose-100/70 rounded-xl border border-rose-200 shrink-0 self-start md:self-auto shadow-inner">
+            <button
+              onClick={() => setActiveTab("photos")}
+              className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                activeTab === "photos"
+                  ? "bg-white text-rose-700 shadow-sm"
+                  : "text-rose-900/60 hover:text-rose-900"
+              }`}
+            >
+              <Image className="w-4 h-4 text-rose-500" />
+              Gallery Photos
+            </button>
+            <button
+              onClick={() => setActiveTab("videos")}
+              className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                activeTab === "videos"
+                  ? "bg-white text-rose-700 shadow-sm"
+                  : "text-rose-900/60 hover:text-rose-900"
+              }`}
+            >
+              <Video className="w-4 h-4 text-rose-500" />
+              Gallery Videos
+            </button>
+          </div>
         </CardHeader>
         <CardContent className="p-6">
           {loading ? (
@@ -858,13 +902,13 @@ function GalleryPanel() {
               <Loader2 className="w-10 h-10 animate-spin" />
               <span className="font-semibold text-sm">Loading visual editor...</span>
             </div>
-          ) : (
+          ) : activeTab === "photos" ? (
             <div className="space-y-10">
               {/* Primary Portfolio Grid Replica (First 6 Slots) */}
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Homepage Portfolio Grid Slots (1 - 6)</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-5xl">
-                  {previewSlots.map((slot) => (
+                  {previewImageSlots.map((slot) => (
                     <div key={slot.position} className="w-full aspect-[2/3]">
                       <GallerySlotEditor
                         position={slot.position}
@@ -883,7 +927,7 @@ function GalleryPanel() {
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Additional Gallery Slots (7 - 20)</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {remainingSlots.map((slot) => (
+                  {remainingImageSlots.map((slot) => (
                     <div key={slot.position} className="h-[260px]">
                       <GallerySlotEditor
                         position={slot.position}
@@ -896,9 +940,293 @@ function GalleryPanel() {
                 </div>
               </div>
             </div>
+          ) : (
+            /* Videos Tab */
+            <div className="space-y-10">
+              {/* Primary Video Slots (1 - 6) */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Homepage Video Slots (1 - 6)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+                  {previewVideoSlots.map((slot) => (
+                    <div key={slot.position} className="w-full aspect-video min-h-[220px]">
+                      <GalleryVideoSlotEditor
+                        position={slot.position}
+                        existing={slot.existing}
+                        onChanged={load}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <hr className="border-rose-100" />
+
+              {/* Additional Video Slots (7 - 20) */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-rose-900 uppercase tracking-wider px-1">Additional Video Slots (7 - 20)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {remainingVideoSlots.map((slot) => (
+                    <div key={slot.position} className="h-[220px]">
+                      <GalleryVideoSlotEditor
+                        position={slot.position}
+                        existing={slot.existing}
+                        onChanged={load}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function GalleryVideoSlotEditor({
+  position,
+  existing,
+  onChanged,
+}: {
+  position: number;
+  existing: DbGalleryImage | undefined;
+  onChanged: () => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showConfirmRemove, setShowConfirmRemove] = useState(false);
+
+  const isDefaultAvailable = position === 0;
+  const defaultUrl = isDefaultAvailable ? "/videos/landing_page.mp4" : "";
+
+  const handleVideoUpload = async (file: File) => {
+    const validTypes = ["video/mp4", "video/webm", "video/quicktime"];
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const validExts = ["mp4", "webm", "mov"];
+
+    if (!validTypes.includes(file.type) && !validExts.includes(ext)) {
+      toast.error("Unsupported video format");
+      return;
+    }
+
+    setUploading(true);
+    setUploadProgress(15);
+    const fileName = `videos/gallery_video_${position}_${Date.now()}.${ext || "mp4"}`;
+
+    try {
+      setUploadProgress(45);
+      const { data, error: uploadErr } = await supabase.storage
+        .from("gallery")
+        .upload(fileName, file, { cacheControl: "3600", upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      setUploadProgress(75);
+      const { data: { publicUrl } } = supabase.storage
+        .from("gallery")
+        .getPublicUrl(fileName);
+
+      setUploadProgress(90);
+
+      if (existing) {
+        const { error: dbErr } = await supabase
+          .from("gallery_images")
+          .update({
+            url: publicUrl,
+            cloudinary_id: null,
+            type: "video",
+          })
+          .eq("id", existing.id);
+        if (dbErr) throw dbErr;
+      } else {
+        const { error: dbErr } = await supabase
+          .from("gallery_images")
+          .insert({
+            url: publicUrl,
+            cloudinary_id: null,
+            alt: `Pink Love video slot ${position + 1}`,
+            position,
+            type: "video",
+          });
+        if (dbErr) throw dbErr;
+      }
+
+      setUploadProgress(100);
+      toast.success("Video uploaded successfully");
+      onChanged();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to upload video.");
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleRemove = async () => {
+    if (!existing) return;
+    setUploading(true);
+    try {
+      const { error } = await supabase
+        .from("gallery_images")
+        .delete()
+        .eq("id", existing.id);
+      if (error) throw error;
+
+      toast.success(`Video Slot ${position + 1} removed`);
+      setShowConfirmRemove(false);
+      onChanged();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to remove video.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const fileInputId = `video-file-input-${position}`;
+  const displayUrl = existing ? existing.url : defaultUrl;
+
+  const progressPercent = Math.min(100, Math.max(0, uploadProgress));
+  const filledBlocks = Math.floor(progressPercent / 10);
+  const emptyBlocks = 10 - filledBlocks;
+  const progressText = `[${"█".repeat(filledBlocks)}${"░".repeat(emptyBlocks)}] ${progressPercent}%`;
+
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={async (e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) await handleVideoUpload(file);
+      }}
+      className={`group relative w-full h-full rounded-2xl overflow-hidden border transition-all duration-300 ${
+        isDragOver
+          ? "border-rose-500 ring-2 ring-rose-300"
+          : "border-rose-100 shadow-[var(--shadow-soft)] hover:shadow-md"
+      } bg-rose-50/10 flex flex-col justify-center items-center`}
+    >
+      {/* Uploading Progress Overlay */}
+      {uploading && (
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-xs flex flex-col items-center justify-center text-rose-600 z-30 p-4 space-y-2">
+          <Loader2 className="w-8 h-8 animate-spin" />
+          <span className="text-xs font-bold tracking-wider uppercase">Uploading video...</span>
+          <div className="w-3/4 bg-rose-100 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-rose-500 h-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <span className="text-[10px] font-mono font-bold text-rose-600">{progressText}</span>
+        </div>
+      )}
+
+      {displayUrl ? (
+        <div className="relative w-full h-full flex flex-col justify-between group">
+          {/* HTML5 Video Preview */}
+          <div className="relative w-full h-full bg-black/90 flex items-center justify-center overflow-hidden">
+            <video
+              src={displayUrl}
+              controls
+              preload="metadata"
+              playsInline
+              className="w-full h-full object-cover rounded-2xl"
+            />
+          </div>
+
+          {/* Slot Number & Custom / Default Badge */}
+          <div className="absolute top-3 left-3 bg-rose-600/90 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full z-10 shadow flex items-center gap-1.5 pointer-events-none">
+            <span>Video Slot {position + 1}</span>
+            {existing ? (
+              <span className="bg-emerald-500 text-white text-[8px] uppercase px-1.5 py-0.2 rounded-sm font-bold">CUSTOM</span>
+            ) : (
+              <span className="bg-amber-500 text-white text-[8px] uppercase px-1.5 py-0.2 rounded-sm font-bold">DEFAULT</span>
+            )}
+          </div>
+
+          {/* Controls Bar Overlay */}
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 z-20 bg-black/70 backdrop-blur-md p-1.5 rounded-xl border border-white/10 opacity-90 group-hover:opacity-100 transition-opacity">
+            <label
+              htmlFor={fileInputId}
+              className="bg-white/95 hover:bg-white text-rose-600 text-[10px] font-bold px-3 py-1 rounded-lg transition cursor-pointer shadow hover:scale-105 active:scale-95"
+            >
+              Replace
+            </label>
+            {existing && (
+              <button
+                onClick={() => setShowConfirmRemove(true)}
+                className="bg-red-600/90 hover:bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg transition shadow hover:scale-105 active:scale-95 flex items-center gap-1"
+              >
+                <Trash2 className="w-3 h-3" />
+                Remove
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Empty Video Slot Card */
+        <div className="p-4 text-center flex flex-col items-center justify-center h-full w-full border-2 border-dashed border-rose-300 rounded-2xl bg-rose-50/10 hover:bg-rose-50/20 transition-colors">
+          <Upload className="w-6 h-6 text-rose-400 mb-1.5 animate-bounce" />
+          <span className="text-xs font-bold text-rose-900">
+            Video Slot {position + 1}
+          </span>
+          <p className="text-[10px] text-rose-500/80 mt-0.5 font-medium">Drag video here</p>
+          <label
+            htmlFor={fileInputId}
+            className="mt-2 text-[10px] bg-rose-500 hover:bg-rose-600 text-white font-bold px-3.5 py-1.5 rounded-full cursor-pointer transition shadow-sm hover:scale-105 active:scale-95"
+          >
+            Browse
+          </label>
+        </div>
+      )}
+
+      {/* Hidden file input */}
+      <input
+        id={fileInputId}
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (file) await handleVideoUpload(file);
+          e.target.value = "";
+        }}
+      />
+
+      {/* Remove Confirmation Modal */}
+      {showConfirmRemove && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-xs w-full shadow-2xl border border-rose-100 flex flex-col items-center text-center animate-fade-up">
+            <Trash2 className="w-10 h-10 text-red-500 mb-2" />
+            <h4 className="text-base font-bold text-zinc-900">Remove this video?</h4>
+            <p className="text-xs text-zinc-500 mt-1 mb-5">
+              This will remove the gallery video from Video Slot {position + 1}. Testimonial videos will remain unchanged.
+            </p>
+            <div className="flex gap-3 w-full">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl text-xs font-semibold"
+                onClick={() => setShowConfirmRemove(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold"
+                onClick={handleRemove}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

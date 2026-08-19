@@ -1214,7 +1214,8 @@ function Gallery() {
         .limit(20);
       
       if (data && data.length > 0) {
-        const mapped = data.map((item) => ({
+        const imageItems = data.filter((item: any) => item.type === "image" || !item.type);
+        const mapped = imageItems.map((item) => ({
           src: item.url,
           cloudinaryId: item.cloudinary_id || undefined,
           alt: item.alt,
@@ -1481,7 +1482,8 @@ function GalleryPage() {
         .limit(20);
       
       if (data && data.length > 0) {
-        const mapped = data.map((item) => ({
+        const imageItems = data.filter((item: any) => item.type === "image" || !item.type);
+        const mapped = imageItems.map((item) => ({
           src: item.url,
           cloudinaryId: item.cloudinary_id || undefined,
           alt: item.alt,

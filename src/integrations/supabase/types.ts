@@ -84,6 +84,7 @@ export type Database = {
           cloudinary_id: string | null
           alt: string
           position: number
+          type: string
           created_at: string
         }
         Insert: {
@@ -92,6 +93,7 @@ export type Database = {
           cloudinary_id?: string | null
           alt: string
           position: number
+          type?: string
           created_at?: string
         }
         Update: {
@@ -100,6 +102,7 @@ export type Database = {
           cloudinary_id?: string | null
           alt?: string
           position?: number
+          type?: string
           created_at?: string
         }
         Relationships: []
